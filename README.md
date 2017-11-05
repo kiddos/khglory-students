@@ -1,6 +1,29 @@
 高雄榮光堂學生統計系統
 ======================
 
+## Setup
+
+* install [nodejs](https://nodejs.org/en/)
+* clone the project
+
+```shell
+git clone https://github.com/kiddos/khglory-students
+```
+
+* install dependencies
+
+```shell
+npm install
+```
+
+* Start the server
+
+```shell
+npm start
+```
+
+
+## Implementation Details
 
 ### Models
 
