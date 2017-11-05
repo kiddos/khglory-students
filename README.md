@@ -16,6 +16,12 @@ git clone https://github.com/kiddos/khglory-students
 npm install
 ```
 
+* run schema migration
+
+```shell
+npm run migration
+```
+
 * Start the server
 
 ```shell
