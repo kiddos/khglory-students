@@ -1,8 +1,14 @@
 var sqlite3 = require('sqlite3').verbose();
 var settings = require('../settings.js');
-var db = new sqlite3.Database(settings.db);
 var md5 = require('md5');
 var colors = require('colors');
+
+var db = new sqlite3.Database(settings.db, function(err) {
+  if (err) {
+    return console.error(colors.red(err.message));
+  }
+  console.log('Connected to sqlite3 database');
+});
 
 function Admin(username, password) {
   this.username = username;
@@ -10,17 +16,43 @@ function Admin(username, password) {
 }
 
 Admin.prototype.login = function(callback) {
+  var username = this.username;
   var password = this.password;
   db.serialize(function() {
     db.all(
-        'SELECT username FROM admins WHERE passwordMD5 = ?', [md5(password)],
-        function(err, rows) {
-          if (rows.length === 1 && rows.username === this.username) {
+        'SELECT username FROM admins WHERE username = ? AND passwordMD5 = ?',
+        [username, md5(password)], function(err, rows) {
+          if (err) {
+            callback(false);
+          }
+
+          if (rows.length === 1 && rows[0].username === username) {
             callback(true);
           } else {
             callback(false);
           }
         });
+  });
+};
+
+Admin.prototype.edit = function(newUsername, newPassword, callback) {
+  var admin = this;
+  this.login(function(status) {
+    if (status) {
+      db.run(
+          'UPDATE admins SET username = ?, passwordMD5 = ?' +
+              'WHERE username = ?',
+          [newUsername, md5(newPassword), admin.username], function(err) {
+            if (err) {
+              callback(false);
+            }
+            admin.username = newUsername;
+            admin.password = newPassword;
+            callback(true);
+          });
+    } else {
+      callback(false);
+    }
   });
 };
 
@@ -52,7 +84,12 @@ function migrate() {
     console.log(colors.green('admin migration done.'));
   });
 
-  db.close();
+  db.close(function(err) {
+    if (err) {
+      return console.error(colors.red(err.message));
+    }
+    console.log('close sqlite3 database connection');
+  });
 }
 
 module.exports = {
