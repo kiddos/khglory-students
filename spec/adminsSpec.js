@@ -16,4 +16,26 @@ describe('Admin module', function() {
          done();
        });
      });
+
+  it('Should not be able to login with incorrect username or password',
+    function(done) {
+       var admin = new admins.Admin('admin1', 'wrong');
+       admin.login(function(status) {
+         expect(status).toBe(false);
+         done();
+       });
+    });
+
+  it('Should be able to be edited', function(done) {
+    var admin = new admins.Admin('admin1', 'admin1');
+    admin.edit('newusername', 'newpassword', function(status) {
+      if (status) {
+        expect(status).toBe(true);
+        admin.edit('admin1', 'admin1', function(status) {
+          expect(status).toBe(true);
+          done();
+        });
+      }
+    });
+  });
 });
