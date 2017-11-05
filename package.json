@@ -22,7 +22,7 @@
     "serve-favicon": "~2.4.2",
     "sqlite3": "^3.1.13"
   },
-  "license": "ISC",
+  "license": "Apache 2.0",
   "bugs": {
     "url": "https://github.com/kiddos/khglory-students/issues"
   },
