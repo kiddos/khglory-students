@@ -1,14 +1,39 @@
-var sqlite3 = require('sqlite3').verbose();
-var settings = require('../settings.js');
+var db = require('./db_helper.js');
 var md5 = require('md5');
 var colors = require('colors');
 
-var db = new sqlite3.Database(settings.db, function(err) {
-  if (err) {
-    return console.error(colors.red(err.message));
-  }
-  console.log('Connected to sqlite3 database');
-});
+function migrate() {
+  db.serialize(function() {
+    db.run(
+        'CREATE TABLE IF NOT EXISTS admins(' +
+        'id INTEGER PRIMARY KEY AUTOINCREMENT,' +
+        'username TEXT NOT NULL,' +
+        'passwordMD5 TEXT NOT NULL);');
+
+    db.run('DELETE FROM admins;');
+
+    var statement =
+        db.prepare('INSERT INTO admins(username, passwordMD5) VALUES(?, ?)');
+    for (var i = 0; i < 3; ++i) {
+      statement.run("admin" + i, md5("admin" + i));
+    }
+    statement.finalize();
+
+    console.log(colors.green('admin migration done.'));
+  });
+}
+
+function queryAll(callback) {
+  db.serialize(function() {
+    db.all('SELECT username FROM admins;', [], function(err, rows) {
+      if (err) {
+        callback([]);
+      } else {
+        callback(rows);
+      }
+    });
+  });
+}
 
 function Admin(username, password) {
   this.username = username;
@@ -56,44 +81,8 @@ Admin.prototype.edit = function(newUsername, newPassword, callback) {
   });
 };
 
-function queryAll(callback) {
-  db.serialize(function() {
-    db.all('SELECT username FROM admins;', [], function(err, rows) {
-      callback(rows);
-    });
-  });
-}
-
-function migrate() {
-  db.serialize(function() {
-    db.run(
-        'CREATE TABLE IF NOT EXISTS admins(' +
-        'id INTEGER PRIMARY KEY AUTOINCREMENT,' +
-        'username TEXT NOT NULL,' +
-        'passwordMD5 TEXT NOT NULL);');
-
-    db.run('DELETE FROM admins;');
-
-    var statement =
-        db.prepare('INSERT INTO admins(username, passwordMD5) VALUES(?, ?)');
-    for (var i = 0; i < 3; ++i) {
-      statement.run("admin" + i, md5("admin" + i));
-    }
-    statement.finalize();
-
-    console.log(colors.green('admin migration done.'));
-  });
-
-  db.close(function(err) {
-    if (err) {
-      return console.error(colors.red(err.message));
-    }
-    console.log('close sqlite3 database connection');
-  });
-}
-
 module.exports = {
-  Admin: Admin,
   migrate: migrate,
   queryAll: queryAll,
+  Admin: Admin,
 };
