@@ -27,9 +27,9 @@ function queryAll(callback) {
   db.serialize(function() {
     db.all('SELECT username FROM admins;', [], function(err, rows) {
       if (err) {
-        callback([]);
+        if (callback) callback([]);
       } else {
-        callback(rows);
+        if (callback) callback(rows);
       }
     });
   });
@@ -48,13 +48,14 @@ Admin.prototype.login = function(callback) {
         'SELECT username FROM admins WHERE username = ? AND passwordMD5 = ?',
         [username, md5(password)], function(err, rows) {
           if (err) {
-            callback(false);
+            if (callback) callback(false);
           }
 
           if (rows.length === 1 && rows[0].username === username) {
-            callback(true);
+            console.log(colors.green(username + ' login.'));
+            if (callback) callback(true);
           } else {
-            callback(false);
+            if (callback) callback(false);
           }
         });
   });
@@ -69,14 +70,14 @@ Admin.prototype.edit = function(newUsername, newPassword, callback) {
               'WHERE username = ?',
           [newUsername, md5(newPassword), admin.username], function(err) {
             if (err) {
-              callback(false);
+             if (callback)  callback(false);
             }
             admin.username = newUsername;
             admin.password = newPassword;
-            callback(true);
+            if (callback) callback(true);
           });
     } else {
-      callback(false);
+      if (callback) callback(false);
     }
   });
 };
