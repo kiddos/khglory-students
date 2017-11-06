@@ -70,7 +70,7 @@ npm start
 
 * Basic Teacher information
   - Teacher
-  - Sex
+  - gender
   - Birthday
   - Social ID
   - Marriage
