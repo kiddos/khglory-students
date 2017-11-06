@@ -52,7 +52,6 @@ Admin.prototype.login = function(callback) {
           }
 
           if (rows.length === 1 && rows[0].username === username) {
-            console.log(colors.green(username + ' login.'));
             if (callback) callback(true);
           } else {
             if (callback) callback(false);
