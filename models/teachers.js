@@ -31,7 +31,7 @@ function queryAll(callback) {
             'ti.marriage,' +
             'ti.address,' +
             'ti.phone,' +
-            'ti.email, ' +
+            'ti.email ' +
             'FROM teachers t ' +
             'LEFT JOIN teacherInfo ti ON t.id = ti.teacherId;',
         function(err, rows) {
