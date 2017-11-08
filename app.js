@@ -41,7 +41,7 @@ app.use(
     express.static(path.join(__dirname, 'node_modules', 'jquery', 'dist')));
 
 app.use('/', index);
-app.use('/login', admin);
+app.use('/', admin);
 app.use('/users', users);
 app.use('/students', students);
 

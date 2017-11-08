@@ -3,7 +3,7 @@ var router = express.Router();
 var admins = require('../models/admins');
 var colors = require('colors');
 
-router.get('/', function(req, res) {
+router.get('/login', function(req, res) {
   if (req.session.login) {
     res.redirect('/');
   } else {
@@ -11,7 +11,7 @@ router.get('/', function(req, res) {
   }
 });
 
-router.post('/', function(req, res) {
+router.post('/login', function(req, res) {
   var admin = new admins.Admin(req.body.username, req.body.password);
   admin.login(function(status) {
     if (status) {
