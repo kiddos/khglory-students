@@ -4,9 +4,11 @@ block content
   .login-form
     form(action='/login', method='post')
       label(for='username') User
-      input(type='text', name='username')
+      input(type='text', name='username', class='input-field')
+      <br>
 
       label(for('password')) Password
-      input(type='password', name='password')
+      input(type='password', name='password', class='input-field')
+      <br>
 
-      input(type='submit', name='submit', value='submit')
+      input(type='submit', name='submit', value='登入', class='button')
