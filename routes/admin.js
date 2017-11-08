@@ -9,7 +9,7 @@ router.post('/', function(req, res) {
   var admin = new admins.Admin(req.body.username, req.body.password);
   admin.login(function(status) {
     if (status) {
-      console.log(colors.green(username + ' login success.'));
+      console.log(colors.green(admin.username + ' login success.'));
       req.session.login = true;
       req.session.save(function(err) {
         if (err) {
@@ -19,7 +19,7 @@ router.post('/', function(req, res) {
         }
       });
     } else {
-      console.log(color.red(username + ' login failed.'));
+      console.log(color.red(admin.username + ' login failed.'));
       res.redirect('/login');
     }
   });
