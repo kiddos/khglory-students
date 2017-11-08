@@ -5,6 +5,11 @@ html
     link(rel='stylesheet', href='/css/layout.css')
   body
     .header
-      img(src='/icon.png', alt='icon')
-      h2= title
-    block content
+      a(href='/')
+        img(src='/icon.png', alt='icon', class='icon')
+      a(href='/', class='header-text')
+        h1 高雄榮光堂學生統計系統
+      h2(class='content-title')= title
+
+    .main-content
+      block content
