@@ -4,7 +4,9 @@ $(document).ready(function() {
     $('#popup-text').text('您確定要登出嗎？');
     $('#popup-dialog').fadeIn(function() {
       $('#yes').on('click', function() {
-        $.post('/logout', function() {
+        $.post('/logout').done(function(msg) {
+          window.location.href = '/';
+        }).fail(function(xhr, status, err) {
           window.location.href = '/';
         });
       });
