@@ -98,7 +98,7 @@ describe('Student ExtraInfo', function() {
   it('Should be able to add ExtraInfo', function(done) {
     var student = new students.Student('002', '王大明');
     student.insert(function(status) {
-    expect(status).toBe(true);
+      expect(status).toBe(true);
       var extraInfo = new students.ExtraInfo({
         studentId: student.id,
         career: '倒垃圾的',
@@ -123,13 +123,92 @@ describe('Student ExtraInfo', function() {
   });
 
   it('Should be able to update its ExtraInfo', function() {
+    var student = new students.Student('003', '王小明');
+    student.insert(function(status) {
+      expect(status).toBe(true);
+      var extraInfo = new students.ExtraInfo({
+        studentId: student.id,
+        career: '洗碗工',
+        education: 'university',
+        religion: '天主教',
+        illness: 'none',
+        emergencyContact: '母',
+        emergencyContactPhone: '0934343434',
+      });
+      student.addExtraInfo(extraInfo, function(status) {
+        expect(status).toBe(true);
+        var newExtraInfo = new students.ExtraInfo({
+          studentId: student.id,
+          career: 'jobless',
+          education: '碩士',
+          religion: '天主教',
+          illness: 'none',
+        });
+        student.updateExtraInfo(newExtraInfo, function(status) {
+          expect(status).toBe(true);
+          student.getExtraInfo(function(info) {
+            for (var i = 0; i < Object.keys(info).length; ++i) {
+              var key = Object.keys(info)[i];
+              expect(info[key]).toBe(newExtraInfo[key]);
+            }
+            students.clear();
+            done();
+          });
+        });
+      });
+    });
   });
 });
 
 describe('Student HardCopy', function() {
   it('Should be able to add HardCopy', function() {
+    var student = new students.Student('004', '王大明');
+    student.insert(function(status) {
+      expect(status).toBe(true);
+      var hardCopy = new students.HardCopy({
+        studentId: student.id,
+        hardCopy: new Buffer([0, 0, 0, 1, 1, 1]),
+      });
+      student.addHardCopy(hardCopy, function(status) {
+        expect(status).toBe(true);
+        student.getHardCopy(function(info) {
+          for (var i = 0; i < Object.keys(info).length; ++i) {
+            var key = Object.keys(info)[i];
+            expect(info[key]).toBe(hardCopy[key]);
+          }
+          students.clear();
+          done();
+        });
+      });
+    });
   });
 
   it('Should be able to update its HardCopy', function() {
+    var student = new students.Student('005', '王小明');
+    student.insert(function(status) {
+      expect(status).toBe(true);
+      var hardCopy = new students.HardCopy({
+        studentId: student.id,
+        hardCopy: new Buffer([0, 0, 0, 0, 0, 0]),
+      });
+      student.addHardCopy(hardCopy, function(status) {
+        expect(status).toBe(true);
+        var newHardCopy = new students.HardCopy({
+          studentId: student.id,
+          hardCopy: new Buffer([1, 1, 1, 1, 1, 1]),
+        });
+        student.updateHardCopy(newHardCopy, function(status) {
+          expect(status).toBe(true);
+          student.getHardCopy(function(info) {
+            for (var i = 0; i < Object.keys(info).length; ++i) {
+              var key = Object.keys(info)[i];
+              expect(info[key]).toBe(newHardCopy[key]);
+            }
+            students.clear();
+            done();
+          });
+        });
+      });
+    });
   });
 });
