@@ -27,12 +27,13 @@ html
       display: flex
       flex-direction: row
       align-items: center
+      user-select: none
+
+      .icon
+        margin: 0 10px 0 10px
 
       .header-text
-        margin: 0 0 0 30px
-
-      .content-title
-        margin: 0 0 0 30px
+        margin: 0 0 0 10px
 
     .main-content
       background-color: #FAFAFA
@@ -44,7 +45,14 @@ html
       padding: $main-content-padding
       box-shadow: 0 0 10px $shadow-color
 
+      .content-title
+        user-select: none
+        cursor: default
+        text-align: center
+        margin: 0
+
       .button
+        user-select: none
         display: inline-block
         width: 100%
         text-align: center
@@ -54,9 +62,11 @@ html
         transition: box-shadow 0.3s ease-in-out
 
       .button:hover
+        user-select: none
         box-shadow: 0 0 10px $shadow-color
 
     .author
+      user-select: none
       font-size: 10px
       position: fixed
       right: 0
