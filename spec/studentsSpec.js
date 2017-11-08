@@ -1,8 +1,21 @@
 var students = require('../models/students');
 
-describe('Students Module', function() {
+describe('Student Model', function() {
   it('Should be able to create', function(done) {
-    var max = 3;
+    var student = new students.Student('50', 'Bob');
+    student.insert(function(status) {
+      expect(status).toBe(true);
+      students.queryAll(function(data) {
+        expect(data.length).toBe(1);
+        expect(data[0].id).toBe(student.id);
+        expect(data[0].name).toBe(student.name);
+        students.clear(function() { done(); });
+      });
+    });
+  });
+
+  it('Should be able to create multiple', function(done) {
+    var max = 20;
     var index = 0;
     var insert = function() {
       var student =
@@ -19,8 +32,7 @@ describe('Students Module', function() {
             }
           }
           expect(found).toBe(max);
-          students.clear();
-          done();
+          students.clear(function() { done(); });
         });
       }
     };
@@ -32,29 +44,28 @@ describe('Student BasicInfo', function() {
   it('Should be able to add BasicInfo', function(done) {
     var student = new students.Student('001', '王小明');
     student.insert(function(status) {
-      if (status) {
-        var basicInfo = new students.BasicInfo({
-          studentId: student.id,
-          gender: 'male',
-          birthday: new Date().toString(),
-          socialId: 'A123456789',
-          marriage: 'single',
-          address: '中山一路',
-          phone: '0912345678',
-          email: 'a123456789@gmail.com',
+      expect(status).toBe(true);
+
+      var basicInfo = new students.BasicInfo({
+        studentId: student.id,
+        gender: 'male',
+        birthday: new Date().toString(),
+        socialId: 'A123456789',
+        marriage: 'single',
+        address: '中山一路',
+        phone: '0912345678',
+        email: 'a123456789@gmail.com',
+      });
+      student.addBasicInfo(basicInfo, function(status) {
+        expect(status).toBe(true);
+        student.getBasicInfo(function(info) {
+          for (var i = 0; i < Object.keys(info).length; ++i) {
+            var key = Object.keys(info)[i];
+            expect(info[key]).toBe(basicInfo[key]);
+          }
+          students.clear(function() { done(); });
         });
-        student.addBasicInfo(basicInfo, function(status) {
-          expect(status).toBe(true);
-          student.getBasicInfo(function(info) {
-            for (var i = 0; i < Object.keys(info).length; ++i) {
-              var key = Object.keys(info)[i];
-              expect(info[key]).toBe(basicInfo[key]);
-            }
-            students.clear();
-            done();
-          });
-        });
-      }
+      });
     });
   });
 
@@ -91,8 +102,7 @@ describe('Student BasicInfo', function() {
               var key = Object.keys(info)[i];
               expect(info[key]).toBe(newBasicInfo[key]);
             }
-            students.clear();
-            done();
+            students.clear(function() { done(); });
           });
         });
       });
@@ -121,8 +131,7 @@ describe('Student ExtraInfo', function() {
             var key = Object.keys(info)[i];
             expect(info[key]).toBe(extraInfo[key]);
           }
-          students.clear();
-          done();
+          students.clear(function() { done(); });
         });
       });
     });
@@ -156,11 +165,9 @@ describe('Student ExtraInfo', function() {
             for (var i = 0; i < Object.keys(info).length; ++i) {
               var key = Object.keys(info)[i];
               expect(info[key]).toBe(
-                  newExtraInfo[key] === undefined ? null :
-                                                   newExtraInfo[key]);
+                  newExtraInfo[key] === undefined ? null : newExtraInfo[key]);
             }
-            students.clear();
-            done();
+            students.clear(function() { done(); });
           });
         });
       });
@@ -190,8 +197,7 @@ describe('Student HardCopy', function() {
               expect(hc[key]).toBe(hardCopy[key]);
             }
           }
-          students.clear();
-          done();
+          students.clear(function() { done(); });
         });
       });
     });
@@ -224,8 +230,7 @@ describe('Student HardCopy', function() {
                 expect(hc[key]).toBe(newHardCopy[key]);
               }
             }
-            students.clear();
-            done();
+            students.clear(function() { done(); });
           });
         });
       });
