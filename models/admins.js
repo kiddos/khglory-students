@@ -1,4 +1,4 @@
-var db = require('./db_helper.js');
+var db = require('./db_helper');
 var md5 = require('md5');
 var colors = require('colors');
 
