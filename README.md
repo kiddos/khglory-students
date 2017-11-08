@@ -1,6 +1,8 @@
 高雄榮光堂學生統計系統
 ======================
 
+![Cover](https://raw.githubusercontent.com/kiddos/khglory-students/master/public/images/background.jpg)
+
 ## Setup
 
 * install [nodejs](https://nodejs.org/en/)
