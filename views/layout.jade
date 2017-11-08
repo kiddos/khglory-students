@@ -4,6 +4,9 @@ html
     title= title
     link(rel='stylesheet', href='/css/layout.css')
     meta(name='viewport', content='width=device-width')
+
+    if title === 'Login'
+      link(rel='stylesheet', href='/css/login.css')
   body
     .header
       a(href='/', class='icon')
@@ -12,10 +15,17 @@ html
         h2 高雄榮光堂學生統計系統
 
       if login
-        input(type='button', class='logout', value='logout')
+        input(type='button', id='logout', class='logout', value='logout')
 
     .main-content
       h2(class='content-title')= title
       block content
+
+    div(class='popup-dialog', style='display: none')
+      h4(id='popup-title', class='popup-title') Title
+      p(id='popup-text', class='popup-text') There are some text
+      .popup-button-panel
+        input(type='button', id='yes', class='popup-button', value='確定')
+        input(type='button', id='no', class='popup-button', value='取消')
 
     .author Created by Joseph
