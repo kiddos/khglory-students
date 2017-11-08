@@ -63,7 +63,90 @@ function clear(callback) {
   });
 }
 
+function Teacher(name) {
+  this.name = name;
+}
+
+function BasicInfo(obj) {
+  this.teacherId = obj.teacherId;
+  this.gender = obj.gender;
+  this.birthday = obj.birthday;
+  this.socialId = obj.socialId;
+  this.marriage = obj.marriage;
+  this.address = obj.address;
+  this.phone = obj.phone;
+  this.email = obj.email;
+}
+
+Teacher.prototype.find = function(callback) {
+  var name = this.name;
+  db.serialize(function() {
+    db.all(
+        'SELECT FROM teachers WHERE name = ?;', [name], function(err, rows) {
+          if (err) {
+            if (callback) callback([]);
+          } else {
+            if (callback) callback(rows);
+          }
+        });
+  });
+};
+
+Teacher.prototype.insert = function(callback) {
+  var name = this.name;
+  db.serialize(function() {
+    db.run(
+        'INSERT INTO teachers(name) VALUES(?);', [name],
+        function(err) {
+          if (err) {
+            console.log(colors.red(err.message));
+            if (callback) callback(false);
+          } else {
+            if (callback) callback(true);
+          }
+        });
+  });
+};
+
+Teacher.prototype.addBasicInfo = function(basicInfo, callback) {
+  var id = this.id;
+  db.serialize(function() {
+    db.run(
+        'INSERT INTO teacherInfo VALUES(?, ?, ?, ?, ?, ?, ?, ?);',
+        [
+          id, basicInfo.gender, basicInfo.birthday, basicInfo.socialId,
+          basicInfo.marriage, basicInfo.address, basicInfo.phone,
+          basicInfo.email
+        ],
+        function(err) {
+          if (err) {
+            if (callback) callback(false);
+          } else {
+            if (callback) callback(true);
+          }
+        });
+  });
+};
+
+Teacher.prototype.getBasicInfo = function(callback) {
+  var id = this.id;
+  db.serialize(function() {
+    db.get(
+        'SELECT * FROM teacherInfo WHERE teacherId = ?;', [id],
+        function(err, row) {
+          if (err) {
+            if (callback) callback({});
+          } else {
+            if (callback) callback(row);
+          }
+        });
+  });
+};
+
 module.exports = {
   migrate: migrate,
   queryAll: queryAll,
+  clear: clear,
+  Teacher: Teacher,
+  BasicInfo: BasicInfo,
 };
