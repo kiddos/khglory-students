@@ -79,34 +79,50 @@ function BasicInfo(obj) {
 }
 
 Teacher.prototype.find = function(callback) {
-  var name = this.name;
+  if (!this.id) {
+    if (callback) callback(false);
+  } else {
+    var id = this.id;
+    db.serialize(function() {
+      db.all(
+          'SELECT * FROM teachers WHERE id = ?;', [id], function(err, rows) {
+            if (err) {
+              console.log(colors.red(err.message));
+              if (callback) callback([]);
+            } else {
+              if (callback) callback(rows);
+            }
+          });
+    });
+  }
+};
+
+Teacher.prototype.insert = function(callback) {
+  var teacher = this;
   db.serialize(function() {
-    db.all(
-        'SELECT FROM teachers WHERE name = ?;', [name], function(err, rows) {
+    db.run(
+        'INSERT INTO teachers(name) VALUES(?);', [teacher.name],
+        function(err) {
           if (err) {
-            if (callback) callback([]);
+            console.log(colors.red(err.message));
+            if (callback) callback(false);
           } else {
-            if (callback) callback(rows);
+            db.get('SELECT MAX(id) FROM teachers;', function(err, row) {
+              if (err) {
+                console.log(colors.red(err.message));
+                if (callback) callback(false);
+              } else {
+                teacher.id = row[Object.keys(row)[0]];
+                if (callback) callback(true);
+              }
+            });
           }
         });
   });
 };
 
-Teacher.prototype.insert = function(callback) {
-  var name = this.name;
-  db.serialize(function() {
-    db.run('INSERT INTO teachers(name) VALUES(?);', [name], function(err) {
-      if (err) {
-        console.log(colors.red(err.message));
-        if (callback) callback(false);
-      } else {
-        if (callback) callback(true);
-      }
-    });
-  });
-};
-
-Teacher.prototype.addBasicInfo = function(id, basicInfo, callback) {
+Teacher.prototype.addBasicInfo = function(basicInfo, callback) {
+  var id = this.id;
   db.serialize(function() {
     db.run(
         'INSERT INTO teacherInfo VALUES(?, ?, ?, ?, ?, ?, ?, ?);',
@@ -117,6 +133,7 @@ Teacher.prototype.addBasicInfo = function(id, basicInfo, callback) {
         ],
         function(err) {
           if (err) {
+            console.log(colors.red(err.message));
             if (callback) callback(false);
           } else {
             if (callback) callback(true);
@@ -132,6 +149,7 @@ Teacher.prototype.getId = function(callback) {
         'SELECT id FROM teachers WHERE name = ?;', [name],
         function(err, rows) {
           if (err) {
+            console.log(colors.red(err.message));
             if (callback) callback([]);
           } else {
             if (callback) callback(rows);
@@ -140,47 +158,57 @@ Teacher.prototype.getId = function(callback) {
   });
 };
 
-Teacher.prototype.getBasicInfo = function(id, callback) {
-  db.serialize(function() {
-    db.get(
-        'SELECT * FROM teacherInfo WHERE teacherId = ?;', [id],
-        function(err, row) {
-          if (err) {
-            console.log(err.message);
-            if (callback) callback({});
-          } else {
-            if (callback) callback(row);
-          }
-        });
-  });
+Teacher.prototype.getBasicInfo = function(callback) {
+  var id = this.id;
+  if (!id) {
+    if (callback) callback({});
+  } else {
+    db.serialize(function() {
+      db.get(
+          'SELECT * FROM teacherInfo WHERE teacherId = ?;', [id],
+          function(err, row) {
+            if (err) {
+              console.log(err.message);
+              if (callback) callback({});
+            } else {
+              if (callback) callback(row);
+            }
+          });
+    });
+  }
 };
 
-Teacher.prototype.updateBasicInfo = function(id, basicInfo, callback) {
-  db.serialize(function() {
-    db.run(
-        'UPDATE teacherInfo SET ' +
-            'gender = ?,' +
-            'birthday = ?,' +
-            'socialId = ?,' +
-            'marriage = ?,' +
-            'address = ?,' +
-            'phone = ?,' +
-            'email = ? ' +
-            'WHERE teacherId = ?;',
-        [
-          basicInfo.gender, basicInfo.birthday, basicInfo.socialId,
-          basicInfo.marriage, basicInfo.address, basicInfo.phone,
-          basicInfo.email, id
-        ],
-        function(err) {
-          if (err) {
-            console.log(err.message);
-            if (callback) callback(false);
-          } else {
-            if (callback) callback(true);
-          }
-        });
-  });
+Teacher.prototype.updateBasicInfo = function(basicInfo, callback) {
+  var id = this.id;
+  if (!id) {
+    if (callback) callback(false);
+  } else {
+    db.serialize(function() {
+      db.run(
+          'UPDATE teacherInfo SET ' +
+              'gender = ?,' +
+              'birthday = ?,' +
+              'socialId = ?,' +
+              'marriage = ?,' +
+              'address = ?,' +
+              'phone = ?,' +
+              'email = ? ' +
+              'WHERE teacherId = ?;',
+          [
+            basicInfo.gender, basicInfo.birthday, basicInfo.socialId,
+            basicInfo.marriage, basicInfo.address, basicInfo.phone,
+            basicInfo.email, id
+          ],
+          function(err) {
+            if (err) {
+              console.log(err.message);
+              if (callback) callback(false);
+            } else {
+              if (callback) callback(true);
+            }
+          });
+    });
+  }
 };
 
 module.exports = {
