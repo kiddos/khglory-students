@@ -2,6 +2,11 @@ $header-height: 60px
 $main-content-width: 600px
 $main-content-height: 500px
 $main-content-padding: 20px
+$shadow-color: #333
+
+a
+  text-decoration: none
+  color: black
 
 html, body
   padding: 0
@@ -12,13 +17,13 @@ html, body
 html
   body
     background: url('/images/backgroundtex.jpg') repeat
-    font: 14px "Lucida Grande", Helvetica, Arial, sans-serif
+    font: 16px "Lucida Grande", Helvetica, Arial, sans-serif
 
     .header
       background-color: #969696
       height: $header-height
       width: 100%
-      box-shadow: 0 2px 10px #333
+      box-shadow: 0 2px 10px $shadow-color
       display: flex
       flex-direction: row
       align-items: center
@@ -37,8 +42,22 @@ html
       max-width: $main-content-width
       margin: 60px auto
       padding: $main-content-padding
-      box-shadow: 0 0 10px #333
+      box-shadow: 0 0 10px $shadow-color
 
-a
-  text-decoration: none
-  color: black
+      .button
+        display: inline-block
+        width: 100%
+        text-align: center
+        font-size: 20px
+        margin-top: 20px
+        box-shadow: 0 0 3px $shadow-color
+        transition: box-shadow 0.3s ease-in-out
+
+      .button:hover
+        box-shadow: 0 0 10px $shadow-color
+
+    .author
+      font-size: 10px
+      position: fixed
+      right: 0
+      bottom: 0
