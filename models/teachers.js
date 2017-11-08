@@ -45,6 +45,24 @@ function queryAll(callback) {
   });
 }
 
+function clear(callback) {
+  db.serialize(function() {
+    db.beginTransaction(function(err, transaction) {
+      transaction.exec('DELETE FROM teachers;');
+      transaction.exec('DELETE FROM teacherInfo;');
+
+      transaction.commit(function(err) {
+        if (err) {
+          console.error(colors.red(err.message));
+          if (callback) callback(false);
+        } else {
+          if (callback) callback(true);
+        }
+      });
+    });
+  });
+}
+
 module.exports = {
   migrate: migrate,
   queryAll: queryAll,
