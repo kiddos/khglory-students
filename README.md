@@ -91,21 +91,23 @@ npm start
   - teacher
 
 
-### Index Page
+### Login Page
 
 * Admin Login
-  - Entry Page
-  - Edit Page
-  - Query Page
-  - Admin Edit Page
 
-* Entry Students
-* Entry Teachers
+* Entry Students (optional)
+* Entry Teachers (optional)
 
+### Index Page
 
-### Entry Page
+* link to Students Page
+* link to Teachers Page
+* link to Classes Page
+* link to Query Page
 
-* Students
+### Students Page
+
+* Entry
   1. Enter Name and Student Id
   2. Enter basic information
   3. Enter extra information
@@ -113,32 +115,38 @@ npm start
   5. Confirm Entry
   6. Submit
 
-* Teachers
-  1. Enter Name
-  2. Enter Basic Information
-  3. Confirm Entry
-  4. Submit
-
-* Class
-  1. Enter Class Name and start Date
-  2. Select Teacher(s) from DB using name search
-  3. Select Students from DB using name or id search
-
-### Edit Page
-
-* Students
+* Edit
   1. Select Student with name or id
   2. Choose Edit or Delete
     - Edit the students Information
     - Delete student entry
 
-* Teachers
+* list all students
+
+### Teachers Page
+
+* Entry
+  1. Enter Name
+  2. Enter Basic Information
+  3. Confirm Entry
+  4. Submit
+
+* Edit
   1. Select teacher with name
   2. Choose Edit or Delete
     - Edit the teachers Information
     - Delete teacher entry
 
-* Classes
+* list all teachers
+
+### Classes Page
+
+* Entry
+  1. Enter Class Name and start Date
+  2. Select Teacher(s) from DB using name search
+  3. Select Students from DB using name or id search
+
+* Edit
   1. Choose Edit or Delete
     - Edit
       1. Select class with name, or Start Date
@@ -147,6 +155,7 @@ npm start
       1. Select class with name, or Start Date
       2. delete class
 
+* list all classes
 
 ### Query Page
 
