@@ -1,4 +1,4 @@
-var students = require('../models/students.js');
+var students = require('../models/students');
 
 describe('Students Module', function() {
   it('Should be able to create', function(done) {
