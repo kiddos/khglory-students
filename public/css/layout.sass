@@ -11,14 +11,26 @@ html, body
 
 html
   body
+    background: url('/images/backgroundtex.jpg') repeat
     font: 14px "Lucida Grande", Helvetica, Arial, sans-serif
 
     .header
       background-color: #969696
       height: $header-height
       width: 100%
+      box-shadow: 0 2px 10px #333
+      display: flex
+      flex-direction: row
+      align-items: center
+
+      .header-text
+        margin: 0 0 0 30px
+
+      .content-title
+        margin: 0 0 0 30px
 
     .main-content
+      background-color: #FAFAFA
       width: calc(100% - 2 * #{$main-content-padding})
       height: 100%
       max-height: $main-content-height
