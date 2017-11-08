@@ -1,6 +1,32 @@
-body
-  padding: 50px
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif
+$header-height: 60px
+$main-content-width: 600px
+$main-content-height: 500px
+$main-content-padding: 20px
+
+html, body
+  padding: 0
+  margin: 0
+  width: 100%
+  height: 100%
+
+html
+  body
+    font: 14px "Lucida Grande", Helvetica, Arial, sans-serif
+
+    .header
+      background-color: #969696
+      height: $header-height
+      width: 100%
+
+    .main-content
+      width: calc(100% - 2 * #{$main-content-padding})
+      height: 100%
+      max-height: $main-content-height
+      max-width: $main-content-width
+      margin: 60px auto
+      padding: $main-content-padding
+      box-shadow: 0 0 10px #333
 
 a
-  color: #00B7FF
+  text-decoration: none
+  color: black
