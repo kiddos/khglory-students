@@ -289,7 +289,7 @@ Student.prototype.addHardCopy = function(hardCopy, callback) {
   });
 };
 
-Student.prototype.getHardCopy = function(hardCopy, callback) {
+Student.prototype.getHardCopy = function(callback) {
   var id = this.id;
   db.serialize(function() {
     db.get(
