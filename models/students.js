@@ -55,7 +55,7 @@ function queryAll(callback) {
             'FROM students s ' +
             'LEFT JOIN studentInfo si ON s.id = si.studentId ' +
             'LEFT JOIN studentExtraInfo sei ON s.id = sei.studentId ' +
-            'LEFT JOIN studentHardCopy shc ON s.id = shc.studentId;' + [],
+            'LEFT JOIN studentHardCopy shc ON s.id = shc.studentId;',
         function(err, rows) {
           if (err) {
             console.log(colors.red(err.message));
