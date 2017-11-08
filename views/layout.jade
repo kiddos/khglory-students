@@ -3,12 +3,16 @@ html
   head
     title= title
     link(rel='stylesheet', href='/css/layout.css')
+    meta(name='viewport', content='width=device-width')
   body
     .header
       a(href='/', class='icon')
         img(src='/images/logo.png', alt='icon')
       a(href='/', class='header-text')
         h2 高雄榮光堂學生統計系統
+
+      if login
+        input(type='button', value='logout')
 
     .main-content
       h2(class='content-title')= title
