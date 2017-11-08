@@ -1,4 +1,4 @@
-var admins = require('../models/admins.js');
+var admins = require('../models/admins');
 
 describe('Admin module', function() {
   it('Should have 3 default admins', function(done) {
