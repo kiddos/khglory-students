@@ -1,9 +1,20 @@
+$transparent: 0.87
 $header-height: 70px
 $main-content-width: 600px
 $main-content-height: 500px
 $main-content-padding: 20px
 $shadow-color: #333
-$main-color: #FAFAFA
+$main-color: rgba(250, 250, 250, $transparent)
+$title-text-color: rgba(66, 66, 66, $transparent)
+
+.button
+  background-color: #FFF
+  border: 1px solid #B0B0B0
+  transition: box-shadow 0.3s ease-in-out
+  opacity: 1.0
+
+@mixin button-hover($shadow-depth)
+  box-shadow: 0 0 $shadow-depth $shadow-color
 
 a
   text-decoration: none
@@ -21,10 +32,9 @@ html
     font: 16px "Lucida Grande", Helvetica, Arial, sans-serif
 
     .header
-      background-color: #BFBFBF
+      background-color: $main-color
       height: $header-height
       width: 100%
-      box-shadow: 0 2px 10px $shadow-color
       display: flex
       flex-direction: row
       align-items: center
@@ -35,17 +45,15 @@ html
 
       .header-text
         margin: 0 0 0 10px
+        color: $title-text-color
 
       .logout
         position: absolute
         right: 10px
-        background-color: $main-color
-        border: 1px solid #F0F0F0
-        transition: box-shadow 0.3s ease-in-out
-        box-shadow: 0 0 2px $shadow-color
+        @extend .button
 
       .logout:hover
-        box-shadow: 0 0 6px $shadow-color
+        @include button-hover(6px)
 
     .main-content
       background-color: $main-color
@@ -55,13 +63,13 @@ html
       max-width: $main-content-width
       margin: 60px auto
       padding: $main-content-padding
-      box-shadow: 0 0 10px $shadow-color
 
       .content-title
         user-select: none
         cursor: default
         text-align: center
         margin: 0
+        color: $title-text-color
 
       .button-panel
         display: flex
@@ -70,19 +78,47 @@ html
         align-items: center
 
         .button
-          background-color: #FFF
           padding: 5px 20px 5px 20px
           user-select: none
           display: inline-block
           text-align: center
           font-size: 20px
           margin-top: 20px
-          box-shadow: 0 0 3px $shadow-color
-          transition: box-shadow 0.3s ease-in-out
+          @extend .button
 
         .button:hover
           user-select: none
-          box-shadow: 0 0 10px $shadow-color
+          @include button-hover(6px)
+
+    .popup-dialog
+      width: 200px
+      height: 120px
+      position: fixed
+      left: calc(50% - 100px)
+      top: calc(50% - 45px)
+      border: 1px solid #B0B0B0
+      background-color: #FFF
+      padding: 10px
+
+      .popup-title
+        margin: 0
+
+      .popup-text
+        margin: 10px 0 0 0
+        font-size: 16px
+
+      .popup-button-panel
+        position: absolute
+        bottom: 10px
+        width: calc(100% - 20px)
+        display: flex
+        flex-direction: row
+        justify-content: center
+
+        .popup-button
+          margin: 0 5px 0 5px
+          display: inline-block
+          @extend .button
 
     .author
       user-select: none
