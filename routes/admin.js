@@ -26,7 +26,7 @@ router.post('/', function(req, res) {
         }
       });
     } else {
-      console.log(color.red(admin.username + ' login failed.'));
+      console.log(colors.red(admin.username + ' login failed.'));
       res.redirect('/login');
     }
   });
