@@ -17,6 +17,7 @@ router.post('/', function(req, res) {
     if (status) {
       console.log(colors.green(admin.username + ' login success.'));
       req.session.login = true;
+      req.session.user = admin;
       req.session.save(function(err) {
         if (err) {
           res.redirect('/login');
@@ -29,6 +30,15 @@ router.post('/', function(req, res) {
       res.redirect('/login');
     }
   });
+});
+
+router.post('/logout', function(req, res) {
+  req.session.login = false;
+  if (req.session.user) {
+    var admin = req.session.user;
+    console.log(colors.green(admin.username + ' logging out.'));
+  }
+  res.redirect('/');
 });
 
 module.exports = router;
