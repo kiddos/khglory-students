@@ -1,5 +1,5 @@
-var db = require('./db_helper.js');
-var settings = require('../settings.js');
+var db = require('./db_helper');
+var settings = require('../settings');
 var colors = require('colors');
 
 function migrate() {
