@@ -5,13 +5,13 @@ html
     link(rel='stylesheet', href='/css/layout.css')
   body
     .header
-      a(href='/')
-        img(src='/icon.png', alt='icon', class='icon')
+      a(href='/', class='icon')
+        img(src='/images/logo.png', alt='icon')
       a(href='/', class='header-text')
-        h1 高雄榮光堂學生統計系統
-      h2(class='content-title')= title
+        h2 高雄榮光堂學生統計系統
 
     .main-content
+      h2(class='content-title')= title
       block content
 
     .author Created by Joseph
