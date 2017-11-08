@@ -3,10 +3,11 @@ html
   head
     title= title
     link(rel='stylesheet', href='/css/layout.css')
-    meta(name='viewport', content='width=device-width')
-
     if title === 'Login'
       link(rel='stylesheet', href='/css/login.css')
+    meta(name='viewport', content='width=device-width')
+    script(type='text/javascript', src='/jquery.min.js')
+    script(type='text/javascript', src='/js/logout.js')
   body
     .header
       a(href='/', class='icon')
