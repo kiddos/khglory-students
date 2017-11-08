@@ -3,7 +3,13 @@ var router = express.Router();
 var admins = require('../models/admins');
 var colors = require('colors');
 
-router.get('/', function(req, res) { res.render('admin', {title: 'Login'}); });
+router.get('/', function(req, res) {
+  if (req.session.login) {
+    res.redirect('/');
+  } else {
+    res.render('admin', {title: 'Login'});
+  }
+});
 
 router.post('/', function(req, res) {
   var admin = new admins.Admin(req.body.username, req.body.password);
