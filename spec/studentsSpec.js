@@ -12,7 +12,13 @@ describe('Students Module', function() {
         student.insert(insert);
       } else {
         students.queryAll(function(data) {
-          expect(data.length).toBe(max);
+          var found = 0;
+          for (var i = 0; i < max; ++i) {
+            for (var j = 0; j < data.length; ++j) {
+              if (data[j].id === String(i + 1)) found += 1;
+            }
+          }
+          expect(found).toBe(max);
           students.clear();
           done();
         });
@@ -122,7 +128,7 @@ describe('Student ExtraInfo', function() {
     });
   });
 
-  it('Should be able to update its ExtraInfo', function() {
+  it('Should be able to update its ExtraInfo', function(done) {
     var student = new students.Student('003', '王小明');
     student.insert(function(status) {
       expect(status).toBe(true);
@@ -149,7 +155,9 @@ describe('Student ExtraInfo', function() {
           student.getExtraInfo(function(info) {
             for (var i = 0; i < Object.keys(info).length; ++i) {
               var key = Object.keys(info)[i];
-              expect(info[key]).toBe(newExtraInfo[key]);
+              expect(info[key]).toBe(
+                  newExtraInfo[key] === undefined ? null :
+                                                   newExtraInfo[key]);
             }
             students.clear();
             done();
@@ -161,7 +169,7 @@ describe('Student ExtraInfo', function() {
 });
 
 describe('Student HardCopy', function() {
-  it('Should be able to add HardCopy', function() {
+  it('Should be able to add HardCopy', function(done) {
     var student = new students.Student('004', '王大明');
     student.insert(function(status) {
       expect(status).toBe(true);
@@ -171,19 +179,25 @@ describe('Student HardCopy', function() {
       });
       student.addHardCopy(hardCopy, function(status) {
         expect(status).toBe(true);
-        student.getHardCopy(function(info) {
-          for (var i = 0; i < Object.keys(info).length; ++i) {
-            var key = Object.keys(info)[i];
-            expect(info[key]).toBe(hardCopy[key]);
+        student.getHardCopy(function(hc) {
+          for (var i = 0; i < Object.keys(hc).length; ++i) {
+            var key = Object.keys(hc)[i];
+            if (typeof(hc[key]) === 'object') {
+              for (var j = 0; j < hc[key].length; ++j) {
+                expect(hc[key][j]).toBe(hardCopy[key][j]);
+              }
+            } else {
+              expect(hc[key]).toBe(hardCopy[key]);
+            }
           }
           students.clear();
           done();
         });
       });
     });
-  });
+  }, 10000);
 
-  it('Should be able to update its HardCopy', function() {
+  it('Should be able to update its HardCopy', function(done) {
     var student = new students.Student('005', '王小明');
     student.insert(function(status) {
       expect(status).toBe(true);
@@ -199,10 +213,16 @@ describe('Student HardCopy', function() {
         });
         student.updateHardCopy(newHardCopy, function(status) {
           expect(status).toBe(true);
-          student.getHardCopy(function(info) {
-            for (var i = 0; i < Object.keys(info).length; ++i) {
-              var key = Object.keys(info)[i];
-              expect(info[key]).toBe(newHardCopy[key]);
+          student.getHardCopy(function(hc) {
+            for (var i = 0; i < Object.keys(hc).length; ++i) {
+              var key = Object.keys(hc)[i];
+              if (typeof(hc[key]) === 'object') {
+                for (var j = 0; j < hc[key].length; ++j) {
+                  expect(hc[key][j]).toBe(newHardCopy[key][j]);
+                }
+              } else {
+                expect(hc[key]).toBe(newHardCopy[key]);
+              }
             }
             students.clear();
             done();
@@ -210,5 +230,5 @@ describe('Student HardCopy', function() {
         });
       });
     });
-  });
+  }, 10000);
 });
