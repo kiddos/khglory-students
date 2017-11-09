@@ -100,13 +100,92 @@ Class.prototype.insert = function(callback) {
 };
 
 Class.prototype.addStudents = function(students, callback) {
-  db.serialize(function() {
-    var stmt = db.prepare("INSERT INTO classStudents VALUES (?, ?)");
-    for (var i = 0; i < students.length; ++i) {
-      stmt.run([id, students[i]]);
-    }
-    stmt.finalize();
-  });
+  var id = this.id;
+  if (!id) {
+    if (callback) callback(false);
+  } else {
+    db.serialize(function() {
+      var stmt = db.prepare('INSERT INTO classStudents VALUES(?, ?)');
+      for (var i = 0; i < students.length; ++i) {
+        stmt.run([id, students[i]]);
+      }
+      stmt.finalize(function(err) {
+        if (err) {
+          if (callback) callback(false);
+        } else {
+          if (callback) callback(true);
+        }
+      });
+    });
+  }
+};
+
+Class.prototype.removeStudents = function(students, callback) {
+  var id = this.id;
+  if (!id) {
+    if (callback) callback(false);
+  } else {
+    db.serialize(function() {
+      var stmt = db.prepare('DELETE FROM classStudents ' +
+        'WHERE classId = ? AND studentId = ?;');
+      for (var i = 0; i < students.length; ++i) {
+        stmt.run([id, students[i]]);
+      }
+      stmt.finalize(function(err) {
+        if (err) {
+          console.log(colors.red(err.message));
+          if (callback) callback(false);
+        } else {
+          if (callback) callback(true);
+        }
+      });
+    });
+  }
+};
+
+Class.prototype.addTeachers = function(teachers, callback) {
+  var id = this.id;
+  if (!id) {
+    if (callback) callback(false);
+  } else {
+    db.serialize(function() {
+      var stmt = db.prepare("INSERT INTO classTeachers VALUES(?, ?)");
+      for (var i = 0; i < students.length; ++i) {
+        stmt.run([id, students[i]]);
+      }
+      stmt.finalize(function(err) {
+        if (err) {
+          console.log(colors.red(err.message));
+          if (callback) callback(false);
+        } else {
+          if (callback) callback(true);
+        }
+      });
+    });
+  }
+};
+
+Class.prototype.removeTeachers = function(teachers, callback) {
+  var id = this.id;
+  if (!id) {
+    if (callback) callback(false);
+  } else {
+    db.serialize(function() {
+      var stmt = db.prepare('DELETE FROM classTeachers ' +
+        'WHERE classId = ? AND teacherId = ?;');
+      for (var i = 0; i < teachers.length; ++i) {
+        stmt.run([id, teachers[i]]);
+      }
+      stmt.finalize(function(err) {
+        if (err) {
+          console.log(colors.red(err.message));
+          if (callback) callback(false);
+        } else {
+          if (callback) callback(true);
+        }
+      });
+    });
+  }
 };
 
 module.exports = {
