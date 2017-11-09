@@ -1,6 +1,6 @@
-var classes = require('../models/classes');
-var students = require('../models/students');
-var teachers = require('../models/teachers');
+var classes = require('../../models/classes');
+var students = require('../../models/students');
+var teachers = require('../../models/teachers');
 
 describe('Class Model', function() {
   beforeEach(function(done) {

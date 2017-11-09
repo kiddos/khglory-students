@@ -1,4 +1,4 @@
-var teachers = require('../models/teachers');
+var teachers = require('../../models/teachers');
 
 describe('Teacher Model', function() {
   it('Shoudl be able to create', function(done) {
