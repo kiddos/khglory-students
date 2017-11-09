@@ -6,6 +6,7 @@
   "scripts": {
     "start": "node ./bin/www",
     "migration": "./migration.js",
+    "debug": "./node_modules/nodemon/bin/nodemon.js ./bin/www",
     "test": "./node_modules/jasmine/bin/jasmine.js"
   },
   "repository": {
@@ -25,6 +26,7 @@
     "md5": "^2.2.1",
     "morgan": "~1.8.1",
     "node-sass-middleware": "0.9.8",
+    "nodemon": "^1.12.1",
     "selenium-webdriver": "^3.6.0",
     "serve-favicon": "~2.4.2",
     "sqlite3": "^3.1.13",
