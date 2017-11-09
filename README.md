@@ -7,20 +7,21 @@
 
 ## Setup
 
-* install [nodejs](https://nodejs.org/en/)
-* clone the project
+* Install [nodejs](https://nodejs.org/en/)
+
+* Clone the project
 
 ```shell
 git clone https://github.com/kiddos/khglory-students
 ```
 
-* install dependencies
+* Install dependencies
 
 ```shell
 npm install
 ```
 
-* run schema migration
+* Run schema migration
 
 ```shell
 npm run migration
@@ -30,6 +31,12 @@ npm run migration
 
 ```shell
 npm start
+```
+
+* Run test
+
+```shell
+npm test
 ```
 
 
