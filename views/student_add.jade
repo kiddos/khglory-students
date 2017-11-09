@@ -1,0 +1,16 @@
+extends layout
+
+block content
+  .student-form
+    for field in fields
+      .field-label
+        label(for='#{field.name}')= field.text
+        if field.require
+          span(class='require-text') 必填
+      input(type='text', class='field-inputs', name='#{field.name}')
+      <br>
+
+  .confirm-button-panel
+    input(type='button', class='button', id='previous', value='上一步')
+    input(type='button', class='button', id='menu', value='回選單')
+    input(type='button', class='button', id='next', value='下一步')
