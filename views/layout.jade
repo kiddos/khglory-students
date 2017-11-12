@@ -5,7 +5,7 @@ html
     link(rel='stylesheet', href='/css/layout.css')
     if title === 'Login'
       link(rel='stylesheet', href='/css/login.css')
-    if title === '學生管理'
+    if student_style
       link(rel='stylesheet', href='/css/student.css')
     meta(name='viewport', content='width=device-width')
     script(type='text/javascript', src='/jquery.min.js')
@@ -18,7 +18,10 @@ html
         h2 高雄榮光堂學生統計系統
 
       if login
-        input(type='button', id='logout', class='logout', value='logout')
+        if user
+          p(class='user-status') 使用者:
+            span #{user.username}
+        input(type='button', id='logout', class='logout', value='登出')
 
     .main-content
       h2(class='content-title')= title
