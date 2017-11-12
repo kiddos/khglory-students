@@ -107,10 +107,11 @@ Class.prototype.addStudents = function(students, callback) {
     db.serialize(function() {
       var stmt = db.prepare('INSERT INTO classStudents VALUES(?, ?)');
       for (var i = 0; i < students.length; ++i) {
-        stmt.run([id, students[i].studentId]);
+        stmt.run([id, students[i]]);
       }
       stmt.finalize(function(err) {
         if (err) {
+          console.log(colors.red(err.message));
           if (callback) callback(false);
         } else {
           if (callback) callback(true);
@@ -155,7 +156,6 @@ Class.prototype.getStudents = function(callback) {
               'LEFT JOIN classStudents c ON s.id = c.studentId ' +
               'AND c.classId = ?',
           [id], function(err, rows) {
-            console.log(rows);
             if (err) {
               console.error(colors.red(err.message));
               if (callback) callback([]);
@@ -174,8 +174,8 @@ Class.prototype.addTeachers = function(teachers, callback) {
   } else {
     db.serialize(function() {
       var stmt = db.prepare("INSERT INTO classTeachers VALUES(?, ?)");
-      for (var i = 0; i < students.length; ++i) {
-        stmt.run([id, students[i]]);
+      for (var i = 0; i < teachers.length; ++i) {
+        stmt.run([id, teachers[i]]);
       }
       stmt.finalize(function(err) {
         if (err) {
