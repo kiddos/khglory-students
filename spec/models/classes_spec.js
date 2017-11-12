@@ -59,8 +59,11 @@ describe('Class Model', function() {
         expect(allStudents.length).toBeGreaterThan(0);
         c.addStudents(allStudents, function(status) {
           expect(status).toBe(true);
-          classes.clear(function() {
-            done();
+          c.getStudents(function(studentsData) {
+            expect(studentsData.length).toBe(10);
+            classes.clear(function() {
+              done();
+            });
           });
         });
       });
