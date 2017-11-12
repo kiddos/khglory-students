@@ -12,6 +12,7 @@ $title-text-color: rgba(66, 66, 66, $transparent)
   border: 1px solid #B0B0B0
   transition: box-shadow 0.3s ease-in-out
   opacity: 1.0
+  cursor: pointer
 
 @mixin button-hover($shadow-depth)
   box-shadow: 0 0 $shadow-depth $shadow-color
@@ -51,9 +52,19 @@ html
         position: absolute
         right: 10px
         @extend .button
+        cursor: pointer
 
       .logout:hover
         @include button-hover(6px)
+
+      .user-status
+        margin: 0
+        position: absolute
+        right: 60px
+
+        span
+          margin-left: 5px
+          color: rgba(137, 219, 117, $transparent)
 
     .main-content
       background-color: $main-color
