@@ -107,7 +107,7 @@ Class.prototype.addStudents = function(students, callback) {
     db.serialize(function() {
       var stmt = db.prepare('INSERT INTO classStudents VALUES(?, ?)');
       for (var i = 0; i < students.length; ++i) {
-        stmt.run([id, students[i]]);
+        stmt.run([id, students[i].studentId]);
       }
       stmt.finalize(function(err) {
         if (err) {
@@ -126,8 +126,9 @@ Class.prototype.removeStudents = function(students, callback) {
     if (callback) callback(false);
   } else {
     db.serialize(function() {
-      var stmt = db.prepare('DELETE FROM classStudents ' +
-        'WHERE classId = ? AND studentId = ?;');
+      var stmt = db.prepare(
+          'DELETE FROM classStudents ' +
+          'WHERE classId = ? AND studentId = ?;');
       for (var i = 0; i < students.length; ++i) {
         stmt.run([id, students[i]]);
       }
@@ -139,6 +140,29 @@ Class.prototype.removeStudents = function(students, callback) {
           if (callback) callback(true);
         }
       });
+    });
+  }
+};
+
+Class.prototype.getStudents = function(callback) {
+  var id = this.id;
+  if (!id) {
+    if (callback) callback([]);
+  } else {
+    db.serialize(function() {
+      db.all(
+          'SELECT * FROM students s ' +
+              'LEFT JOIN classStudents c ON s.id = c.studentId ' +
+              'AND c.classId = ?',
+          [id], function(err, rows) {
+            console.log(rows);
+            if (err) {
+              console.error(colors.red(err.message));
+              if (callback) callback([]);
+            } else {
+              if (callback) callback(rows);
+            }
+          });
     });
   }
 };
@@ -171,8 +195,9 @@ Class.prototype.removeTeachers = function(teachers, callback) {
     if (callback) callback(false);
   } else {
     db.serialize(function() {
-      var stmt = db.prepare('DELETE FROM classTeachers ' +
-        'WHERE classId = ? AND teacherId = ?;');
+      var stmt = db.prepare(
+          'DELETE FROM classTeachers ' +
+          'WHERE classId = ? AND teacherId = ?;');
       for (var i = 0; i < teachers.length; ++i) {
         stmt.run([id, teachers[i]]);
       }
