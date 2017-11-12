@@ -1,10 +1,49 @@
 $transparent: 0.87
-$student-form-font-size: 22px
 $text-color: rgba(66, 66, 66, $transparent)
+$student-form-font-size: 22px
+$student-button-panel-height: 40px
+
 
 html
   body
     .main-content
+      .student-list
+        height: calc(100% - 30px - #{$student-button-panel-height})
+        overflow: scroll
+        font-size: 20px
+
+        table
+          td
+            text-align: center
+
+          .student-edit
+            min-width: 100px
+
+            .hide
+              display: none
+
+          .student-id
+            max-width: 200px
+
+          .student-name
+            max-width: 200px
+
+          .student-gender
+            max-width: 100px
+
+          .student-birthday
+            min-width: 200px
+            max-width: 300px
+
+          .student-address
+            max-width: 200px
+
+          .student-phone
+            max-width: 100px
+
+          .student-email
+            max-width: 200px
+
       .student-form
         padding: 20px
         width: 100%
@@ -27,12 +66,16 @@ html
           width: 60%
           font-size: $student-form-font-size
 
-      .confirm-button-panel
+      .student-button-panel
         width: 100%
+        margin-top: 10px
+        max-height: $student-button-panel-height
         display: flex
         flex-direction: row
+        justify-content: center
 
         .button
           font-size: 20px
           margin: 0 5px 0 5px
           width: 30%
+          max-width: 300px
