@@ -1,0 +1,62 @@
+extends layout
+
+block content
+  .student-list
+    table
+      tr
+        th(class='student-edit')
+        th(class='student-id') ID
+        th(class='student-name') 姓名
+        th(class='student-gender') 性別
+        th(class='student-birthday') 生日
+        th(class='student-address') 住址
+        th(class='student-phone') 電話
+        th(class='student-email') Email
+      for student in students
+        tr
+          td(class='student-edit')
+            input(type='button', class='edit button', value='編輯')
+            input(type='button', class='confirm button hide', value='確定')
+            input(type='button', class='cancel button hide', value='取消')
+          td(class='student-id')= student.id
+          td(class='student-name')
+            input(type='text', class='edit-field',
+              value='#{student.name}' disabled)
+          td(class='student-gender')
+            input(type='text', class='edit-field',
+              value='#{student.gender}' disabled)
+          td(class='student-birthday')
+            input(type='text', class='edit-field',
+              value="#{new Date(student.birthday).toLocaleDateString('tw-zh')}"
+              disabled)
+          td(class='student-address')
+            input(type='text', class='edit-field',
+              value='#{student.address}' disabled)
+          td(class='student-phone')
+            input(type='text', class='edit-field',
+              value='#{student.phone}' disabled)
+          td(class='student-email')
+            input(type='text', class='edit-field',
+              value='#{student.email}' disabled)
+
+  if student_add
+    .student-form
+      for field in fields
+        .field-label
+          label(for='#{field.name}')= field.text
+          if field.require
+            span(class='require-text') 必填
+        input(type='text', class='field-inputs', name='#{field.name}')
+        <br>
+
+  .student-button-panel
+    if student_add
+      input(type='button', class='button', id='cancel', value='取消')
+    if student_edit
+      input(type='button', class='button', id='menu', value='回選單')
+    if student_add
+      input(type='button', class='button', id='confirm', value='確定')
+
+  script(src='/js/student.js' type='text/javascript')
+  if student_edit
+    script(src='/js/student_edit.js' type='text/javascript')
