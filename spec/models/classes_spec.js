@@ -77,7 +77,7 @@ describe('Class Model', function() {
       expect(status).toBe(true);
       teachers.queryAll(function(allTeachers) {
         expect(allTeachers.length).toBe(1);
-        c.addStudents(allTeachers, function(status) {
+        c.addTeachers(allTeachers, function(status) {
           expect(status).toBe(true);
           classes.clear(function() {
             done();
