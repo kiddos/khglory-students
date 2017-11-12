@@ -107,7 +107,7 @@ Class.prototype.addStudents = function(students, callback) {
     db.serialize(function() {
       var stmt = db.prepare('INSERT INTO classStudents VALUES(?, ?)');
       for (var i = 0; i < students.length; ++i) {
-        stmt.run([id, students[i]]);
+        stmt.run([id, students[i].id]);
       }
       stmt.finalize(function(err) {
         if (err) {
@@ -131,7 +131,7 @@ Class.prototype.removeStudents = function(students, callback) {
           'DELETE FROM classStudents ' +
           'WHERE classId = ? AND studentId = ?;');
       for (var i = 0; i < students.length; ++i) {
-        stmt.run([id, students[i]]);
+        stmt.run([id, students[i].id]);
       }
       stmt.finalize(function(err) {
         if (err) {
@@ -175,7 +175,7 @@ Class.prototype.addTeachers = function(teachers, callback) {
     db.serialize(function() {
       var stmt = db.prepare("INSERT INTO classTeachers VALUES(?, ?)");
       for (var i = 0; i < teachers.length; ++i) {
-        stmt.run([id, teachers[i]]);
+        stmt.run([id, teachers[i].id]);
       }
       stmt.finalize(function(err) {
         if (err) {
@@ -199,7 +199,7 @@ Class.prototype.removeTeachers = function(teachers, callback) {
           'DELETE FROM classTeachers ' +
           'WHERE classId = ? AND teacherId = ?;');
       for (var i = 0; i < teachers.length; ++i) {
-        stmt.run([id, teachers[i]]);
+        stmt.run([id, teachers[i].id]);
       }
       stmt.finalize(function(err) {
         if (err) {
