@@ -16,6 +16,7 @@ block content
           label(class='field-label', for='#{field.name}')= field.text
             if field.require
               span(class='require-text') 必填
+            span(class='error')
           input(type='text', class='field-inputs', name='#{field.name}')
         else if field.type === 'radio'
           label(class='field-label', for='#{field.name}')= field.text
@@ -24,7 +25,8 @@ block content
               class='field-options', value='#{option}')
             span(class='field-options') #{option}
             if option === '其他'
-              input(type='text', name='#{field.name}')
+              input(type='text', class='field-inputs option',
+                name='#{field.name}')
       <br>
 
   div(class='student-form hide')
@@ -36,6 +38,7 @@ block content
         label(class='field-label', for='#{field.name}')= field.text
           if field.require
             span(class='require-text') 必填
+          span(class='error')
         input(type='text', class='field-inputs', name='#{field.name}')
       else if field.type === 'radio'
         label(class='field-label', for='#{field.name}')= field.text
@@ -44,8 +47,11 @@ block content
             class='field-options', value='#{option}')
           span(class='field-options') #{option}
           if option === '其他'
-            input(type='text', name='#{field.name}')
+            input(type='text', class='field-inputs option',
+              name='#{field.name}')
       <br>
+    label(class='field-label', for='hardCopy') 紙本備份
+    input(type='file', name='hardCopy')
 
   .student-button-panel
     input(type='button', class='button', id='previous', value='上一步' disabled)
