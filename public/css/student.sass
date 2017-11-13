@@ -3,6 +3,8 @@ $text-color: rgba(66, 66, 66, $transparent)
 $student-form-font-size: 22px
 $student-button-panel-height: 40px
 
+.hide
+  display: none
 
 html
   body
@@ -18,9 +20,6 @@ html
 
           .student-edit
             min-width: 100px
-
-            .hide
-              display: none
 
           .student-id
             max-width: 200px
@@ -44,9 +43,9 @@ html
           .student-email
             max-width: 200px
 
-      .student-form
+      .student-basic-form
         padding: 20px
-        width: 100%
+        width: calc(100% - 40px)
         font-size: $student-form-font-size
 
         .field-label
@@ -60,11 +59,23 @@ html
             font-size: 12px
             color: red
 
+        .field-label.small
+          width: 30px
+
         .field-inputs
           color: $text-color
           display: inline-block
           width: 60%
           font-size: $student-form-font-size
+
+        .field-inputs.small
+          width: 12%
+          margin-right: 20px
+
+        .field-options
+          display: inline-block
+          font-size: $student-form-font-size
+          color: $text-color
 
       .student-button-panel
         width: 100%
