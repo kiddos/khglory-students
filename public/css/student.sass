@@ -3,9 +3,6 @@ $text-color: rgba(66, 66, 66, $transparent)
 $student-form-font-size: 22px
 $student-button-panel-height: 40px
 
-.hide
-  display: none
-
 html
   body
     .main-content
@@ -43,7 +40,7 @@ html
           .student-email
             max-width: 200px
 
-      .student-basic-form
+      .student-form
         padding: 20px
         width: calc(100% - 40px)
         font-size: $student-form-font-size
@@ -76,6 +73,9 @@ html
           display: inline-block
           font-size: $student-form-font-size
           color: $text-color
+
+      .student-form.hide
+        display: none
 
       .student-button-panel
         width: 100%
