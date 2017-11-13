@@ -2,15 +2,56 @@ extends layout
 
 block content
   .student-form
-    for field in fields
-      .field-label
-        label(for='#{field.name}')= field.text
-        if field.require
-          span(class='require-text') 必填
-      input(type='text', class='field-inputs', name='#{field.name}')
+    for field in basicFields
+      if field.name === 'birthday'
+        label(class='field-label', for='#{field.name}')= field.text
+        label(class='small field-label', for='year') 年
+        input(type='text', class='small field-inputs', name='year')
+        label(class='small field-label', for='month') 月
+        input(type='text', class='small field-inputs', name='month')
+        label(class='small field-label', for='day') 日
+        input(type='text', class='small field-inputs', name='day')
+      else
+        if field.type === 'text'
+          label(class='field-label', for='#{field.name}')= field.text
+            if field.require
+              span(class='require-text') 必填
+          input(type='text', class='field-inputs', name='#{field.name}')
+        else if field.type === 'radio'
+          label(class='field-label', for='#{field.name}')= field.text
+          for option in field.options
+            input(type='radio', name='#{field.name}',
+              class='field-options', value='#{option}')
+            span(class='field-options') #{option}
+            if option === '其他'
+              input(type='text', name='#{field.name}')
       <br>
 
-  .confirm-button-panel
-    input(type='button', class='button', id='previous', value='上一步')
+  div(class='student-form hide')
+    label(class='field-label', for='student-name') 學生姓名
+    input(type='text', class='field-inputs', name='student-name' disabled)
+
+    for field in extraFields
+      if field.type === 'text'
+        label(class='field-label', for='#{field.name}')= field.text
+          if field.require
+            span(class='require-text') 必填
+        input(type='text', class='field-inputs', name='#{field.name}')
+      else if field.type === 'radio'
+        label(class='field-label', for='#{field.name}')= field.text
+        for option in field.options
+          input(type='radio', name='#{field.name}',
+            class='field-options', value='#{option}')
+          span(class='field-options') #{option}
+          if option === '其他'
+            input(type='text', name='#{field.name}')
+      <br>
+
+  .student-button-panel
+    input(type='button', class='button', id='previous', value='上一步' disabled)
     input(type='button', class='button', id='menu', value='回選單')
     input(type='button', class='button', id='next', value='下一步')
+
+  script(src='/js/student.js', type='text/javascript')
+  if student_add
+    script(src='/js/student_add.js', type='text/javascript')
