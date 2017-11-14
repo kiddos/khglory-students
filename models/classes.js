@@ -93,7 +93,6 @@ Class.prototype.insert = function(callback) {
                     if (callback) callback(false);
                   } else {
                     c.id = rows[rows.length - 1].id;
-                    console.log(c.id);
                     if (callback) callback(true);
                   }
                 });
