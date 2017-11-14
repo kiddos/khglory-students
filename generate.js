@@ -1,4 +1,4 @@
-#!/usr/bin / env node
+#!/usr/bin/env node
 
 var faker = require('faker');
 var colors = require('colors');
