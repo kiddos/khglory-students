@@ -9,7 +9,7 @@ function migrate() {
         'name TEXT NOT NULL);');
     db.run(
         'CREATE TABLE IF NOT EXISTS studentInfo(' +
-        'studentId REFERENCES students(id),' +
+        'studentId TEXT REFERENCES students(id) ON DELETE CASCADE NOT NULL,' +
         'gender TEXT,' +
         'birthday INTEGER,' +
         'socialId TEXT,' +
@@ -19,7 +19,7 @@ function migrate() {
         'email TEXT);');
     db.run(
         'CREATE TABLE IF NOT EXISTS studentExtraInfo(' +
-        'studentId REFERENCES students(id),' +
+        'studentId TEXT REFERENCES students(id) ON DELETE CASCADE NOT NULL,' +
         'career TEXT,' +
         'education TEXT,' +
         'religion TEXT,' +
@@ -28,7 +28,7 @@ function migrate() {
         'emergencyContactPhone TEXT);');
     db.run(
         'CREATE TABLE IF NOT EXISTS studentHardCopy(' +
-        'studentId REFERENCES students(id),' +
+        'studentId TEXT REFERENCES students(id) ON DELETE CASCADE NOT NULL,' +
         'hardCopy BLOB);');
     console.log(colors.green('students migration done.'));
   });
@@ -209,6 +209,20 @@ Student.prototype.updateBasicInfo = function(basicInfo, callback) {
             if (callback) callback(true);
           }
         });
+  });
+};
+
+Student.prototype.remove = function(callback) {
+  var id = this.id;
+  db.serialize(function() {
+    db.run('DELETE FROM students WHERE id = ?', [id], function(err) {
+      if (err) {
+        console.error(colors.red(err.message));
+        if (callback) callback(false);
+      } else {
+        if (callback) callback(true);
+      }
+    });
   });
 };
 
