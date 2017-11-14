@@ -109,7 +109,7 @@ Teacher.prototype.insert = function(callback) {
           } else {
             db.all(
                 'SELECT id FROM teachers WHERE name = ?;', [teacher.name],
-                function(err, row) {
+                function(err, rows) {
                   if (err) {
                     console.log(colors.red(err.message));
                     if (callback) callback(false);

@@ -28,7 +28,7 @@ function addStudent(callback) {
         studentId: student.id,
         career: faker.name.jobTitle(),
         education: faker.random.boolean() ? 'graduate' : 'undergrad',
-        religion: faker.random.boolean() ? 'Catholic': 'Buddhist',
+        religion: faker.random.boolean() ? 'Catholic' : 'Buddhist',
         illness: faker.random.boolean() ? 'None' : 'common cold',
         emergencyContact: faker.random.boolean() ? 'mom' : 'dad',
         emergencyContactPhone: faker.phone.phoneNumberFormat(1),
@@ -48,15 +48,21 @@ function addStudent(callback) {
   });
 }
 
-function generateStudents() {
+function generateStudents(done) {
+  console.log('generating students...');
+
   var maxCount = 100;
   var index = 0;
   for (var i = 0; i < maxCount; ++i) {
-    addStudent();
+    if (i === maxCount - 1) {
+      addStudent(done);
+    } else {
+      addStudent();
+    }
   }
 }
 
-function addTeacher() {
+function addTeacher(callback) {
   var name = faker.name.firstName() + ' ' + faker.name.lastName();
   var teacher = new teachers.Teacher(name);
   teacher.insert(function(status) {
@@ -71,17 +77,25 @@ function addTeacher() {
         email: faker.internet.email(),
       });
       teacher.addBasicInfo(basicInfo);
+
+      if (callback) callback();
     } else {
       console.error(colos.red('fail to insert teacher ') + teacher.name);
     }
   });
 }
 
-function generateTeachers() {
+function generateTeachers(done) {
+  console.log('generating teachers...');
+
   var maxCount = 30;
   var index = 0;
   for (var i = 0; i < maxCount; ++i) {
-    addTeacher();
+    if (i === maxCount - 1) {
+      addTeacher(done);
+    } else {
+      addTeacher();
+    }
   }
 }
 
@@ -110,6 +124,8 @@ function addClass() {
 }
 
 function generateClasses() {
+  console.log('generating classes...');
+
   var maxCount = 3;
   var index = 0;
   for (var i = 0; i < maxCount; ++i) {
@@ -118,12 +134,5 @@ function generateClasses() {
 }
 
 (function generate() {
-  console.log('generating students...');
-  generateStudents();
-
-  console.log('generating teachers...');
-  generateTeachers();
-
-  console.log('generating classes...');
-  generateClasses();
+  generateStudents(function() { generateTeachers(generateClasses); });
 })();
