@@ -1,7 +1,7 @@
 var students = require('../../models/students');
 
 describe('Student Model', function() {
-  it('Should be able to create', function(done) {
+  it('Should be able to create and delete', function(done) {
     var student = new students.Student('50', 'Bob');
     student.insert(function(status) {
       expect(status).toBe(true);
@@ -9,10 +9,16 @@ describe('Student Model', function() {
         expect(data.length).toBe(1);
         expect(data[0].id).toBe(student.id);
         expect(data[0].name).toBe(student.name);
-        students.clear(function() { done(); });
+        student.remove(function(status) {
+          expect(status).toBe(true);
+          students.queryAll(function(allStudents) {
+            expect(allStudents.length).toBe(0);
+            done();
+          });
+        });
       });
     });
-  });
+  }, 10000);
 
   it('Should be able to create multiple', function(done) {
     var max = 20;
