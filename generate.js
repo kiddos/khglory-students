@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+#!/usr/bin / env node
 
 var faker = require('faker');
 var colors = require('colors');
@@ -134,5 +134,7 @@ function generateClasses() {
 }
 
 (function generate() {
-  generateStudents(function() { generateTeachers(generateClasses); });
+  generateStudents(function() {
+    generateTeachers(function() { setTimout(generateClasses, 1000); });
+  });
 })();
