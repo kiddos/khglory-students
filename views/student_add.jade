@@ -1,7 +1,7 @@
 extends layout
 
 block content
-  .student-form
+  .info-form
     for field in basicFields
       if field.name === 'birthday'
         label(class='field-label', for='#{field.name}')= field.text
@@ -29,7 +29,7 @@ block content
                 name='#{field.name}')
       <br>
 
-  div(class='student-form hide')
+  div(class='info-form hide')
     label(class='field-label', for='student-name') 學生姓名
     input(type='text', class='field-inputs', name='student-name' disabled)
 
@@ -53,11 +53,11 @@ block content
     label(class='field-label', for='hardCopy') 紙本備份
     input(type='file', name='hardCopy')
 
-  .student-button-panel
+  .info-button-panel
     input(type='button', class='button', id='previous', value='上一步' disabled)
     input(type='button', class='button', id='menu', value='回選單')
     input(type='button', class='button', id='next', value='下一步')
 
-  script(src='/js/student.js', type='text/javascript')
+  script(src='/js/student_menu.js', type='text/javascript')
   if student_add
     script(src='/js/student_add.js', type='text/javascript')
