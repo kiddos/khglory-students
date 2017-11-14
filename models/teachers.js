@@ -123,6 +123,25 @@ Teacher.prototype.insert = function(callback) {
   });
 };
 
+Teacher.prototype.remove = function(callback) {
+  var teacher = this;
+  if (teacher.id) {
+    db.serialize(function() {
+      db.run(
+          'DELETE FROM teachers WHERE id = ?;', [teacher.id], function(err) {
+            if (err) {
+              console.error(colors.red(err.message));
+              if (callback) callback(false);
+            } else {
+              if (callback) callback(true);
+            }
+          });
+    });
+  } else {
+    if (callback) callback(false);
+  }
+};
+
 Teacher.prototype.addBasicInfo = function(basicInfo, callback) {
   var id = this.id;
   db.serialize(function() {
