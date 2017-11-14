@@ -9,7 +9,6 @@ var session = require('express-session');
 
 var settings = require('./settings');
 var index = require('./routes/index');
-var users = require('./routes/users');
 var admin = require('./routes/admin');
 var students = require('./routes/students');
 var teachers = require('./routes/teachers');
@@ -43,7 +42,6 @@ app.use(
 
 app.use('/', index);
 app.use('/', admin);
-app.use('/users', users);
 app.use('/students', students);
 app.use('/teachers', teachers);
 
