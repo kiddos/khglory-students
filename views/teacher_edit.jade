@@ -1,0 +1,47 @@
+extends layout
+
+block content
+  .info-list
+    table
+      tr
+        th(class='info-edit')
+        th(class='info-id') ID
+        th(class='info-name') 姓名
+        th(class='info-gender') 性別
+        th(class='info-birthday') 生日
+        th(class='info-address') 住址
+        th(class='info-phone') 電話
+        th(class='info-email') Email
+      for teacher in teachers
+        tr
+          td(class='info-edit')
+            input(type='button', class='edit button', value='編輯')
+            input(type='button', class='confirm button hide', value='確定')
+            input(type='button', class='delete button hide', value='刪除')
+            input(type='button', class='cancel button hide', value='取消')
+          td(class='info-id')= teacher.id
+          td(class='info-name')
+            input(type='text', class='edit-field',
+              value='#{teacher.name}' disabled)
+          td(class='info-gender')
+            input(type='text', class='edit-field',
+              value='#{teacher.gender}' disabled)
+          td(class='info-birthday')
+            input(type='text', class='edit-field',
+              value="#{new Date(teacher.birthday).toLocaleDateString('tw-zh')}"
+              disabled)
+          td(class='info-address')
+            input(type='text', class='edit-field',
+              value='#{teacher.address}' disabled)
+          td(class='info-phone')
+            input(type='text', class='edit-field',
+              value='#{teacher.phone}' disabled)
+          td(class='info-email')
+            input(type='text', class='edit-field',
+              value='#{teacher.email}' disabled)
+
+  .info-button-panel
+    input(type='button', class='button', id='menu', value='回選單')
+
+  script(src='/js/teacher_menu.js' type='text/javascript')
+  script(src='/js/teacher_edit.js' type='text/javascript')
