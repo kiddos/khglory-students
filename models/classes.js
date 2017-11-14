@@ -10,12 +10,12 @@ function migrate() {
         'startDate TEXT NOT NULL);');
     db.run(
         'CREATE TABLE IF NOT EXISTS classStudents(' +
-        'classId REFERENCES classes(id),' +
-        'studentId REFERENCES students(id));');
+        'classId REFERENCES classes(id) ON DELETE CASCADE NOT NULL,' +
+        'studentId REFERENCES students(id) NOT NULL);');
     db.run(
         'CREATE TABLE IF NOT EXISTS classTeachers(' +
-        'classId REFERENCES classes(id),' +
-        'teacherId REFERENCES teachers(id));');
+        'classId REFERENCES classes(id) ON DELETE CASCADE NOT NULL,' +
+        'teacherId REFERENCES teachers(id) NOT NULL);');
 
     console.log(colors.green('classes migration done.'));
   });
