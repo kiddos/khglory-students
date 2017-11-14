@@ -85,15 +85,18 @@ Class.prototype.insert = function(callback) {
             console.log(colors.red(err.message));
             if (callback) callback(false);
           } else {
-            db.get('SELECT MAX(id) FROM classes', function(err, row) {
-              if (err) {
-                console.log(colors.red(err.message));
-                if (callback) callback(false);
-              } else {
-                c.id = row[Object.keys(row)[0]];
-                if (callback) callback(true);
-              }
-            });
+            db.all(
+                'SELECT id FROM classes WHERE name = ? AND startDate = ?',
+                [c.name, c.startDate], function(err, rows) {
+                  if (err) {
+                    console.log(colors.red(err.message));
+                    if (callback) callback(false);
+                  } else {
+                    c.id = rows[rows.length - 1].id;
+                    console.log(c.id);
+                    if (callback) callback(true);
+                  }
+                });
           }
         });
   });

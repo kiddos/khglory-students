@@ -107,15 +107,17 @@ Teacher.prototype.insert = function(callback) {
             console.log(colors.red(err.message));
             if (callback) callback(false);
           } else {
-            db.get('SELECT MAX(id) FROM teachers;', function(err, row) {
-              if (err) {
-                console.log(colors.red(err.message));
-                if (callback) callback(false);
-              } else {
-                teacher.id = row[Object.keys(row)[0]];
-                if (callback) callback(true);
-              }
-            });
+            db.all(
+                'SELECT id FROM teachers WHERE name = ?;', [teacher.name],
+                function(err, row) {
+                  if (err) {
+                    console.log(colors.red(err.message));
+                    if (callback) callback(false);
+                  } else {
+                    teacher.id = rows[rows.length - 1].id;
+                    if (callback) callback(true);
+                  }
+                });
           }
         });
   });
