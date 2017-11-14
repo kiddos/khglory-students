@@ -8,7 +8,7 @@ $(document).ready(function() {
     }
     $('#previous').attr('disabled', !$('#previous').attr('disabled'));
 
-    $('.student-form').each(function() {
+    $('.info-form').each(function() {
       if ($(this).hasClass('hide')) {
         $(this).removeClass('hide');
       } else {
