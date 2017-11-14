@@ -282,7 +282,10 @@ router.post('/delete', function(req, res, next) {
     var student = new students.Student(req.body.id, req.body.name);
     student.find(function(status) {
       if (status) {
+        student.remove();
         res.send('success');
+      } else {
+        res.send('failed');
       }
     });
   }
