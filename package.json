@@ -7,6 +7,8 @@
     "start": "node ./bin/www",
     "migration": "./migration.js",
     "debug": "./node_modules/nodemon/bin/nodemon.js ./bin/www",
+    "generate": "./generate.js",
+    "clear": "./clear.js",
     "test": "node ./spec/model_test.js"
   },
   "repository": {
