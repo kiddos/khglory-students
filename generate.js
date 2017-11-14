@@ -135,6 +135,6 @@ function generateClasses() {
 
 (function generate() {
   generateStudents(function() {
-    generateTeachers(function() { setTimout(generateClasses, 1000); });
+    generateTeachers(function() { setTimeout(generateClasses, 1000); });
   });
 })();
