@@ -15,10 +15,7 @@ var upload = multer({dest: uploadPath});
 
 router.get('/', function(req, res, next) {
   if (req.session.login) {
-    students.queryAll(function(allStudents) {
-      res.render(
-          'students', {title: '學生管理', login: true, students: allStudents});
-    });
+    res.render('students', {title: '學生管理', login: true});
   } else {
     res.redirect('/login');
   }
@@ -26,112 +23,109 @@ router.get('/', function(req, res, next) {
 
 router.get('/add', function(req, res, next) {
   if (req.session.login) {
-    students.queryAll(function(allStudents) {
-      res.render('student_add', {
-        title: '加入學生資料',
-        login: true,
-        students: allStudents,
-        student_style: true,
-        student_add: true,
-        basicFields: [
-          {
-            name: 'id',
-            type: 'text',
-            text: '號碼',
-            require: true,
-          },
-          {
-            name: 'name',
-            type: 'text',
-            text: '姓名',
-            require: true,
-          },
-          {
-            name: 'gender',
-            type: 'radio',
-            options: ['男', '女'],
-            text: '性別',
-            require: false,
-          },
-          {
-            name: 'birthday',
-            type: 'text',
-            text: '生日',
-            require: false,
-          },
-          {
-            name: 'socialId',
-            type: 'text',
-            text: '身份證字號',
-            require: false,
-          },
-          {
-            name: 'marriage',
-            type: 'radio',
-            options: ['單身', '已婚', '離婚'],
-            text: '婚姻',
-            require: false,
-          },
-          {
-            name: 'address',
-            type: 'text',
-            text: '地址',
-            require: false,
-          },
-          {
-            name: 'phone',
-            type: 'text',
-            text: '電話',
-            require: false,
-          },
-          {
-            name: 'email',
-            type: 'text',
-            text: '電子郵件',
-            require: false,
-          },
-        ],
-        extraFields: [
-          {
-            name: 'career',
-            type: 'text',
-            text: '職業',
-            require: false,
-          },
-          {
-            name: 'education',
-            type: 'radio',
-            options: ['高中以下', '大學', '碩士', '博士'],
-            text: '教育',
-            require: false,
-          },
-          {
-            name: 'religion',
-            type: 'radio',
-            options: ['基督教', '天主教', '佛教', '伊斯蘭教', '其他'],
-            text: '信仰',
-            require: false,
-          },
-          {
-            name: 'illness',
-            type: 'text',
-            text: '個人疾病',
-            require: false,
-          },
-          {
-            name: 'emergencyContact',
-            type: 'text',
-            text: '緊急聯絡人',
-            require: false,
-          },
-          {
-            name: 'emergencyContactPhone',
-            type: 'text',
-            text: '緊急聯絡人電話',
-            require: false,
-          },
-        ],
-      });
+    res.render('student_add', {
+      title: '加入學生資料',
+      login: true,
+      info_form: true,
+      student_add: true,
+      basicFields: [
+        {
+          name: 'id',
+          type: 'text',
+          text: '號碼',
+          require: true,
+        },
+        {
+          name: 'name',
+          type: 'text',
+          text: '姓名',
+          require: true,
+        },
+        {
+          name: 'gender',
+          type: 'radio',
+          options: ['男', '女'],
+          text: '性別',
+          require: false,
+        },
+        {
+          name: 'birthday',
+          type: 'text',
+          text: '生日',
+          require: false,
+        },
+        {
+          name: 'socialId',
+          type: 'text',
+          text: '身份證字號',
+          require: false,
+        },
+        {
+          name: 'marriage',
+          type: 'radio',
+          options: ['單身', '已婚', '離婚'],
+          text: '婚姻',
+          require: false,
+        },
+        {
+          name: 'address',
+          type: 'text',
+          text: '地址',
+          require: false,
+        },
+        {
+          name: 'phone',
+          type: 'text',
+          text: '電話',
+          require: false,
+        },
+        {
+          name: 'email',
+          type: 'text',
+          text: '電子郵件',
+          require: false,
+        },
+      ],
+      extraFields: [
+        {
+          name: 'career',
+          type: 'text',
+          text: '職業',
+          require: false,
+        },
+        {
+          name: 'education',
+          type: 'radio',
+          options: ['高中以下', '大學', '碩士', '博士'],
+          text: '教育',
+          require: false,
+        },
+        {
+          name: 'religion',
+          type: 'radio',
+          options: ['基督教', '天主教', '佛教', '伊斯蘭教', '其他'],
+          text: '信仰',
+          require: false,
+        },
+        {
+          name: 'illness',
+          type: 'text',
+          text: '個人疾病',
+          require: false,
+        },
+        {
+          name: 'emergencyContact',
+          type: 'text',
+          text: '緊急聯絡人',
+          require: false,
+        },
+        {
+          name: 'emergencyContactPhone',
+          type: 'text',
+          text: '緊急聯絡人電話',
+          require: false,
+        },
+      ],
     });
   } else {
     res.redirect('/login');
@@ -191,7 +185,7 @@ router.get('/edit', function(req, res, next) {
         title: '學生資料編輯',
         students: allStudents,
         login: true,
-        student_style: true,
+        info_form: true,
         student_edit: true,
         user: req.session.user,
       });
@@ -280,6 +274,17 @@ router.post('/edit', function(req, res, next) {
     });
   } else {
     res.redirect('/login');
+  }
+});
+
+router.post('/delete', function(req, res, next) {
+  if (req.session.login) {
+    var student = new students.Student(req.body.id, req.body.name);
+    student.find(function(status) {
+      if (status) {
+        res.send('success');
+      }
+    });
   }
 });
 
