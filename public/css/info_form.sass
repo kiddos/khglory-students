@@ -1,7 +1,7 @@
 $transparent: 0.87
 $text-color: rgba(66, 66, 66, $transparent)
-$student-form-font-size: 22px
-$student-button-panel-height: 40px
+$info-form-font-size: 22px
+$info-button-panel-height: 40px
 
 
 .hide
@@ -10,8 +10,8 @@ $student-button-panel-height: 40px
 html
   body
     .main-content
-      .student-list
-        height: calc(100% - 30px - #{$student-button-panel-height})
+      .info-list
+        height: calc(100% - 30px - #{$info-button-panel-height})
         overflow: scroll
         font-size: 20px
 
@@ -19,35 +19,35 @@ html
           td
             text-align: center
 
-          .student-edit
+          .info-edit
             min-width: 100px
 
-          .student-id
+          .info-id
             max-width: 200px
 
-          .student-name
+          .info-name
             max-width: 200px
 
-          .student-gender
+          .info-gender
             max-width: 100px
 
-          .student-birthday
+          .info-birthday
             min-width: 200px
             max-width: 300px
 
-          .student-address
+          .info-address
             max-width: 200px
 
-          .student-phone
+          .info-phone
             max-width: 100px
 
-          .student-email
+          .info-email
             max-width: 200px
 
-      .student-form
+      .info-form
         padding: 20px
         width: calc(100% - 40px)
-        font-size: $student-form-font-size
+        font-size: $info-form-font-size
 
         .field-label
           color: $text-color
@@ -71,7 +71,7 @@ html
           color: $text-color
           display: inline-block
           width: 60%
-          font-size: $student-form-font-size
+          font-size: $info-form-font-size
 
         .field-inputs.small
           width: 12%
@@ -86,10 +86,10 @@ html
           font-size: 16px
           color: $text-color
 
-      .student-button-panel
+      .info-button-panel
         width: 100%
         margin-top: 10px
-        max-height: $student-button-panel-height
+        max-height: $info-button-panel-height
         display: flex
         flex-direction: row
         justify-content: center
