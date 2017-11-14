@@ -9,7 +9,7 @@ function migrate() {
         'name TEXT NOT NULL);');
     db.run(
         'CREATE TABLE IF NOT EXISTS teacherInfo(' +
-        'teacherId REFERENCES teachers(id),' +
+        'teacherId INTEGER REFERENCES teachers(id) ON DELETE CASCADE NOT NULL,' +
         'gender TEXT,' +
         'birthday INTEGER,' +
         'socialId TEXT,' +
