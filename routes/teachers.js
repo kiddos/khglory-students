@@ -155,7 +155,7 @@ router.get('/edit', function(req, res, next) {
 });
 
 router.post('/edit', function(req, res, next) {
-  var teacher = new teachers.Teacher(req.name);
+  var teacher = new teachers.Teacher(req.body.name);
   teacher.id = req.body.id;
   teacher.find(function(status) {
     if (status) {
