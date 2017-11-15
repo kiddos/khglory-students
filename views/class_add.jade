@@ -1,7 +1,7 @@
 extends layout
 
 block content
-  .info-form
+  div(class='info-form', id='phase1')
     label(class='field-label', for='name') 課程名稱
       span(class='require-text') 必填
       span(class='error')
@@ -14,6 +14,32 @@ block content
     input(type='text', class='small field-inputs', name='month')
     label(class='small field-label', for='day') 日
     input(type='text', class='small field-inputs', name='day')
+
+  div(class='info-list hide', id='phase2')
+    table
+      tr
+        th
+        th ID
+        th 老師姓名
+      for teacher in teachers
+        tr
+          td
+            input(type='checkbox')
+          td= teacher.id
+          td= teacher.name
+
+  div(class='info-list hide', id='phase3')
+    table
+      tr
+        th
+        th ID
+        th 學生姓名
+      for student in students
+        tr
+          td
+            input(type='checkbox')
+          td= student.id
+          td= student.name
 
   .info-button-panel
     input(type='button', class='button', id='previous', value='上一步' disabled)
