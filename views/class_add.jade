@@ -1,0 +1,25 @@
+extends layout
+
+block content
+  .info-form
+    label(class='field-label', for='name') 課程名稱
+      span(class='require-text') 必填
+      span(class='error')
+    input(type='text', class='field-inputs', name='name')
+
+    label(class='field-label', for='startDate') 開課日期
+    label(class='small field-label', for='year') 年
+    input(type='text', class='small field-inputs', name='year')
+    label(class='small field-label', for='month') 月
+    input(type='text', class='small field-inputs', name='month')
+    label(class='small field-label', for='day') 日
+    input(type='text', class='small field-inputs', name='day')
+
+  .info-button-panel
+    input(type='button', class='button', id='previous', value='上一步' disabled)
+    input(type='button', class='button', id='menu', value='回選單')
+    input(type='button', class='button', id='next', value='下一步')
+    input(type='button', class='button hide', id='confirm', value='確定輸入')
+
+  script(src='/js/class_menu.js', type='text/javascript')
+  script(src='/js/class_add.js', type='text/javascript')
