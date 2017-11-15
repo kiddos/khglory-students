@@ -24,7 +24,7 @@ $(document).ready(function() {
     var $row = $(this).closest('tr');
     var student = {};
     $row.find('td').each(function() {
-      var key = $(this).attr('class').substr(8);
+      var key = $(this).attr('class').substr(5);
       if (key === 'id' || key === 'edit') return;
       var val = $(this).find('input.edit-field').val();
       student[key] = val;
