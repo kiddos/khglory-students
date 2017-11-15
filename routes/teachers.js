@@ -140,18 +140,18 @@ router.post('/add', function(req, res, next) {
 });
 
 router.get('/edit', function(req, res, next) {
-  // if (req.session.login) {
-  teachers.queryAll(function(allTeachers) {
-    res.render('teacher_edit', {
-      title: '編輯老師資料',
-      login: true,
-      info_form: true,
-      teachers: allTeachers,
+  if (req.session.login) {
+    teachers.queryAll(function(allTeachers) {
+      res.render('teacher_edit', {
+        title: '編輯老師資料',
+        login: true,
+        info_form: true,
+        teachers: allTeachers,
+      });
     });
-  });
-  // } else {
-  //   res.redirect('/login');
-  // }
+  } else {
+    res.redirect('/login');
+  }
 });
 
 router.post('/edit', function(req, res, next) {
