@@ -26,6 +26,7 @@ router.get('/add', function(req, res, next) {
     res.render('student_add', {
       title: '加入學生資料',
       login: true,
+      user: req.session.user,
       info_form: true,
       basicFields: [
         {
