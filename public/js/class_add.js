@@ -5,6 +5,10 @@ $(document).ready(function() {
   // 3: add students for this class
   var phase = 0;
 
+  // stored to submit
+  var teachers = [];
+  var students = [];
+
   function changeButton() {
     if (phase === 0) {
       $('#previous').removeClass('hide').prop('disabled', true);
@@ -38,8 +42,68 @@ $(document).ready(function() {
   });
 
   $('#next').on('click', function() {
-    if (phase < 2) phase += 1;
-    changeButton();
-    changeView();
+    var advance = function() {
+      if (phase < 2) phase += 1;
+      changeButton();
+      changeView();
+    };
+
+    if (phase === 0) {
+      if ($('input.field-inputs[name="name"]').val() === '') {
+        $('.error').text('課程名稱必填');
+      } else {
+        advance();
+      }
+    } else if (phase === 1) {
+      teachers = [];
+      $('#phase2').find('input[type="checkbox"]').each(function() {
+        var $row = $(this).closest('tr');
+        if ($row.find('input[type="checkbox"]').prop('checked')) {
+          teachers.push({
+            id: $row.find('td.info-id').text(),
+            name: $row.find('td.info-name').text(),
+          });
+        }
+      });
+      if (teachers.length > 0) {
+        advance();
+      } else {
+        alert('課程需要老師');
+      }
+    }
+  });
+
+  $('#confirm').on('click', function() {
+    $('#phase3').find('input[type="checkbox"]').each(function() {
+      var $row = $(this).closest('tr');
+      if ($row.find('input[type="checkbox"]').prop('checked')) {
+        students.push({
+          id: $row.find('td.info-id').text(),
+          name: $row.find('td.info-name').text(),
+        });
+      }
+    });
+
+    var data = JSON.stringify({
+      name: $('input[name="name"]').val(),
+      startDate: $('input[name="startDate"]').val(),
+      teachers: teachers,
+      students: students,
+    });
+    $.ajax({
+      url: '/classes/add',
+      type: 'POST',
+      data: {
+        data: data
+      }
+    }).done(function(data) {
+      if (data === 'success') {
+        phase = 0;
+        changeButton();
+        changeView();
+      } else {
+        alert('加入失敗');
+      }
+    });
   });
 });
