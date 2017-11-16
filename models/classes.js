@@ -215,6 +215,28 @@ Class.prototype.removeTeachers = function(teachers, callback) {
   }
 };
 
+Class.prototype.getTeachers = function(callback) {
+  var id = this.id;
+  if (!id) {
+    if (callback) callback([]);
+  } else {
+    db.serialize(function() {
+      db.all(
+          'SELECT * FROM teachers t ' +
+              'LEFT JOIN classTeachers c ON t.id = c.teacherId ' +
+              'AND c.classId = ?',
+          [id], function(err, rows) {
+            if (err) {
+              console.error(colors.red(err.message));
+              if (callback) callback([]);
+            } else {
+              if (callback) callback(rows);
+            }
+          });
+    });
+  }
+};
+
 module.exports = {
   migrate: migrate,
   queryAll: queryAll,
