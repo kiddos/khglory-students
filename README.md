@@ -40,6 +40,33 @@ npm test
 ```
 
 
+## Debugging
+
+* run migration
+
+```shell
+npm run migration
+```
+
+* generate fake data
+
+```shell
+npm run generate
+```
+
+* run debug server with nodemon
+
+```shell
+npm run debug
+```
+
+* finally clear fake data with admin username and password
+
+```shell
+npm run clear
+```
+
+
 ## Implementation Details
 
 ### Models
