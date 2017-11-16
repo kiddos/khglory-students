@@ -7,7 +7,7 @@ function migrate() {
         'CREATE TABLE IF NOT EXISTS classes(' +
         'id INTEGER PRIMARY KEY AUTOINCREMENT,' +
         'name TEXT NOT NULL,' +
-        'startDate TEXT NOT NULL);');
+        'startDate TEXT);');
     db.run(
         'CREATE TABLE IF NOT EXISTS classStudents(' +
         'classId REFERENCES classes(id) ON DELETE CASCADE NOT NULL,' +
