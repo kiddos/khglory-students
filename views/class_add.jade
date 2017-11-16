@@ -18,28 +18,28 @@ block content
   div(class='info-list hide', id='phase2')
     table
       tr
-        th
-        th ID
-        th 老師姓名
+        th(class='info-edit')
+        th(class='info-id') ID
+        th(class='info-name') 老師姓名
       for teacher in teachers
         tr
-          td
+          td(class='info-edit')
             input(type='checkbox')
-          td= teacher.id
-          td= teacher.name
+          td(class='info-id')= teacher.id
+          td(class='info-name')= teacher.name
 
   div(class='info-list hide', id='phase3')
     table
       tr
-        th
-        th ID
-        th 學生姓名
+        th(class='info-edit')
+        th(class='info-id') ID
+        th(class='info-name') 學生姓名
       for student in students
         tr
-          td
+          td(class='info-edit')
             input(type='checkbox')
-          td= student.id
-          td= student.name
+          td(class='info-id')= student.id
+          td(class='info-name')= student.name
 
   .info-button-panel
     input(type='button', class='button', id='previous', value='上一步' disabled)
