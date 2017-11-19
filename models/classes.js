@@ -155,9 +155,9 @@ Class.prototype.getStudents = function(callback) {
     db.serialize(function() {
       db.all(
           'SELECT * FROM students s ' +
-              'LEFT JOIN classStudents c ON s.id = c.studentId ' +
-              'AND c.classId = ?',
-          [id], function(err, rows) {
+              'WHERE s.id IN ' + ('(SELECT c.studentId FROM classStudents c ' +
+                                  'WHERE c.classId = ' + id + ');'),
+          function(err, rows) {
             if (err) {
               console.error(colors.red(err.message));
               if (callback) callback([]);
@@ -223,9 +223,9 @@ Class.prototype.getTeachers = function(callback) {
     db.serialize(function() {
       db.all(
           'SELECT * FROM teachers t ' +
-              'LEFT JOIN classTeachers c ON t.id = c.teacherId ' +
-              'AND c.classId = ?',
-          [id], function(err, rows) {
+              'WHERE t.id IN ' + ('(SELECT c.teacherId FROM classTeachers c ' +
+                                  'WHERE c.classId = ' + id + ');'),
+          function(err, rows) {
             if (err) {
               console.error(colors.red(err.message));
               if (callback) callback([]);
