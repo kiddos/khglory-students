@@ -101,7 +101,7 @@ function generateTeachers(done) {
 
 function addClass() {
   var name = 'Class ' + faker.random.number(10000);
-  var startDate = new Date(faker.date.past(1)).toString();
+  var startDate = faker.date.past(1);
   var c = new classes.Class(name, startDate);
   c.insert(function(status) {
     if (status) {
