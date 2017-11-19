@@ -14,21 +14,21 @@ router.get('/', function(req, res) {
 });
 
 router.get('/add', function(req, res) {
-  // if (req.session.login) {
-  students.queryAll(function(allStudents) {
-    teachers.queryAll(function(allTeachers) {
-      res.render('class_add', {
-        title: '增加課程',
-        login: true,
-        info_form: true,
-        students: allStudents,
-        teachers: allTeachers
+  if (req.session.login) {
+    students.queryAll(function(allStudents) {
+      teachers.queryAll(function(allTeachers) {
+        res.render('class_add', {
+          title: '增加課程',
+          login: true,
+          info_form: true,
+          students: allStudents,
+          teachers: allTeachers
+        });
       });
     });
-  });
-  // } else {
-  //   res.redirect('/login');
-  // }
+  } else {
+    res.redirect('/login');
+  }
 });
 
 router.post('/add', function(req, res) {
@@ -49,7 +49,36 @@ router.post('/add', function(req, res) {
   });
 });
 
-router.get('/edit', function(req, res) {});
+router.get('/edit', function(req, res) {
+  // if (req.session.login) {
+    classes.queryAll(function(allClasses) {
+      res.render('class_edit', {
+        title: '修改課程',
+        login: true,
+        info_form: true,
+        classes: allClasses,
+      });
+    });
+  // } else {
+  //   res.redirect('/login');
+  // }
+});
+
+router.get('/edit/:classId', function(req, res) {
+  var classId = req.params.classId;
+  var c = new classes.Class();
+  c.id = classId;
+
+  var data = {};
+  c.getStudents(function(allStudents) {
+    data.students = allStudents;
+
+    c.getTeachers(function(allTeachers) {
+      data.teachers = allTeachers;
+      res.end(JSON.stringify(data));
+    });
+  });
+});
 
 router.post('/edit', function(req, res) {});
 
