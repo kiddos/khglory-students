@@ -101,6 +101,26 @@ Class.prototype.insert = function(callback) {
   });
 };
 
+Class.prototype.edit = function(newName, newStartDate, callback) {
+  var id = this.id;
+  if (!id) {
+    if (callback) callback(false);
+  } else {
+    db.serialize(function() {
+      db.run(
+          'UPDATE classes SET name = ?, startDate = ? WHERE id = ?',
+          [newName, newStartDate, id], function(err) {
+            if (err) {
+              console.error(colors.red(err.message));
+              if (callback) callback(false);
+            } else {
+              if (callback) callback(true);
+            }
+          });
+    });
+  }
+};
+
 Class.prototype.addStudents = function(students, callback) {
   var id = this.id;
   if (!id) {
@@ -154,10 +174,9 @@ Class.prototype.getStudents = function(callback) {
   } else {
     db.serialize(function() {
       db.all(
-          'SELECT * FROM students s ' +
-              'WHERE s.id IN ' + ('(SELECT c.studentId FROM classStudents c ' +
-                                  'WHERE c.classId = ' + id + ');'),
-          function(err, rows) {
+          'SELECT * FROM students WHERE id IN ' +
+              '(SELECT studentId FROM classStudents WHERE classId = ?)',
+          [id], function(err, rows) {
             if (err) {
               console.error(colors.red(err.message));
               if (callback) callback([]);
@@ -222,10 +241,9 @@ Class.prototype.getTeachers = function(callback) {
   } else {
     db.serialize(function() {
       db.all(
-          'SELECT * FROM teachers t ' +
-              'WHERE t.id IN ' + ('(SELECT c.teacherId FROM classTeachers c ' +
-                                  'WHERE c.classId = ' + id + ');'),
-          function(err, rows) {
+          'SELECT * FROM teachers WHERE id IN ' +
+              '(SELECT teacherId FROM classTeachers WHERE classId = ?)',
+          [id], function(err, rows) {
             if (err) {
               console.error(colors.red(err.message));
               if (callback) callback([]);
