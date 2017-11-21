@@ -50,24 +50,24 @@ router.post('/add', function(req, res) {
 });
 
 router.get('/edit', function(req, res) {
-  // if (req.session.login) {
-  students.queryAll(function(allStudents) {
-    teachers.queryAll(function(allTeachers) {
-      classes.queryAll(function(allClasses) {
-        res.render('class_edit', {
-          title: '修改課程',
-          login: true,
-          info_form: true,
-          classes: allClasses,
-          students: allStudents,
-          teachers: allTeachers,
+  if (req.session.login) {
+    students.queryAll(function(allStudents) {
+      teachers.queryAll(function(allTeachers) {
+        classes.queryAll(function(allClasses) {
+          res.render('class_edit', {
+            title: '修改課程',
+            login: true,
+            info_form: true,
+            classes: allClasses,
+            students: allStudents,
+            teachers: allTeachers,
+          });
         });
       });
     });
-  });
-  // } else {
-  //   res.redirect('/login');
-  // }
+  } else {
+    res.redirect('/login');
+  }
 });
 
 router.get('/edit/:classId', function(req, res) {
