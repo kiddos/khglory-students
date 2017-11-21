@@ -51,14 +51,20 @@ router.post('/add', function(req, res) {
 
 router.get('/edit', function(req, res) {
   // if (req.session.login) {
-    classes.queryAll(function(allClasses) {
-      res.render('class_edit', {
-        title: '修改課程',
-        login: true,
-        info_form: true,
-        classes: allClasses,
+  students.queryAll(function(allStudents) {
+    teachers.queryAll(function(allTeachers) {
+      classes.queryAll(function(allClasses) {
+        res.render('class_edit', {
+          title: '修改課程',
+          login: true,
+          info_form: true,
+          classes: allClasses,
+          students: allStudents,
+          teachers: allTeachers,
+        });
       });
     });
+  });
   // } else {
   //   res.redirect('/login');
   // }
@@ -80,6 +86,37 @@ router.get('/edit/:classId', function(req, res) {
   });
 });
 
-router.post('/edit', function(req, res) {});
+router.post('/edit', function(req, res) {
+  var data = JSON.parse(req.body.data);
+  var c = new classes.Class();
+  c.id = data.classId;
+
+  c.edit(data.className, data.startDate, function(status) {
+    if (status) {
+      c.getStudents(function(originalStudents) {
+        c.removeStudents(originalStudents, function(status) {
+          if (status) {
+            console.log('edit students for class ' + data.className);
+            c.addStudents(data.students);
+          }
+        });
+      });
+
+      c.getTeachers(function(originalTeachers) {
+        c.removeTeachers(originalTeachers, function(status) {
+          if (status) {
+            console.log('edit teachers for class ' + data.className);
+            c.addTeachers(data.teachers);
+          }
+        });
+      });
+
+      res.send('success');
+    } else {
+      res.send('failed');
+    }
+
+  });
+});
 
 module.exports = router;
