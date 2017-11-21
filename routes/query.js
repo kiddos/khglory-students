@@ -8,7 +8,7 @@ var classes = require('../models/classes');
 
 function prepareResponseWithFile(res, fileName) {
   res.writeHead(200, {
-    'Content-Disposition': 'attachment; filename=' + filename,
+    'Content-Disposition': 'attachment; filename=' + fileName,
     'Content-Transfer-Encoding': 'binary',
     'Content-Type': 'application/octet-stream',
   });
