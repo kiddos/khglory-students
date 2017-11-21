@@ -55,10 +55,10 @@ router.get('/classes', function(req, res) {
   });
 });
 
-router.post('/classes/students', function(req, res, next) {
-  var classId = req.body.id;
-  var className = req.body.name;
-  var classStartDate = req.body.startDate;
+router.get('/classes/students', function(req, res, next) {
+  var classId = req.query.id;
+  var className = req.query.name;
+  var classStartDate = req.query.startDate;
   var c = new classes.Class(className, classStartDate);
   c.id = classId;
 
@@ -75,10 +75,10 @@ router.post('/classes/students', function(req, res, next) {
   });
 });
 
-router.post('/classes/teachers', function(req, res, next) {
-  var classId = req.body.id;
-  var className = req.body.name;
-  var classStartDate = req.body.startDate;
+router.get('/classes/teachers', function(req, res, next) {
+  var classId = req.query.id;
+  var className = req.query.name;
+  var classStartDate = req.query.startDate;
   var c = new classes.Class(className, classStartDate);
   c.id = classId;
 
