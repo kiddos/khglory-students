@@ -1,4 +1,6 @@
 $(document).ready(function() {
+  var classId, className, classStartDate;
+
   function toggleEditText($row) {
     $row.find('input[type="text"]').each(function() {
       $(this).prop('disabled', !$(this).prop('disabled'));
@@ -17,8 +19,8 @@ $(document).ready(function() {
   $('input[type="button"].delete').on('click', function() {
     var $row = $(this).closest('tr');
     var classId = $row.find('td.info-id').text();
-    var className = $row.find('td.info-name').text();
-    var startDate = $row.find('td.info-startDate').text();
+    var className = $row.find('td.info-name input[type="text"]').val();
+    var startDate = $row.find('td.info-startDate input[type="text"]').val();
 
     $.ajax({
       url: '/classes/delete',
@@ -70,11 +72,15 @@ $(document).ready(function() {
   }
 
   $('input[type="button"].confirm').on('click', function() {
+    var $row = $(this).closest('tr');
+
     toggleLists();
     toggleButtonPanel();
     togglePanelSize();
 
-    var classId = $(this).closest('tr').find('td.info-id').text();
+    classId = $row.find('td.info-id').text();
+    className = $row.find('td.info-name input[type="text"]').val();
+    classStartDate = $row.find('td.info-startDate input[type="text"]').val();
 
     // fetch all students and teachers to display
     $.ajax({
@@ -103,6 +109,8 @@ $(document).ready(function() {
       var $teacherTable = $('#teachers');
       var $teacherHeader = $teacherTable.find('tbody tr:first-child');
       $teacherTable.find('tr').each(function() {
+        $(this).find('td.info-edit input[type="checkbox"]').prop(
+          'checked', false);
         for (var i = 0; i < teachers.length; ++i) {
           $(this).find('td.info-edit input[type="checkbox"]').prop(
             'checked', false);
@@ -132,5 +140,45 @@ $(document).ready(function() {
   });
 
   $('#confirm').on('click', function() {
+    var data = {};
+    data.classId = classId;
+    data.className = className;
+    data.startDate = new Date(classStartDate).getTime();
+
+    data.students = [];
+    $('#students').find('tr').each(function() {
+      if ($(this).find('td.info-edit input[type="checkbox"]').prop('checked')) {
+        data.students.push({
+          id: $(this).find('td.info-id').text(),
+          name: $(this).find('td.info-name').text(),
+        });
+      }
+    });
+
+    data.teachers = [];
+    $('#teachers').find('tr').each(function() {
+      if ($(this).find('td.info-edit input[type="checkbox"]').prop('checked')) {
+        data.teachers.push({
+          id: parseInt($(this).find('td.info-id').text()),
+          name: $(this).find('td.info-name').text(),
+        });
+      }
+    });
+
+    $.ajax({
+      url: '/classes/edit',
+      method: 'POST',
+      data: { data: JSON.stringify(data)},
+    }).done(function(response) {
+      if (response === 'success') {
+        toggleLists();
+        toggleButtonPanel();
+        togglePanelSize();
+
+        classId = className = classStartDate = null;
+      } else {
+        alert('修改失敗');
+      }
+    });
   });
 });
