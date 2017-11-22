@@ -1,25 +1,20 @@
 $login-panel-width: 300px
 
-html
-  body
-    .main-content
-      .login-form
-        font-size: 20px
+form
+  font-size: 20px
+  position: absolute
+  display: inline-block
+  margin-left: calc(-#{$login-panel-width} / 2)
+  left: 50%
+  width: $login-panel-width
 
-        form
-          position: absolute
-          display: inline-block
-          margin-left: calc(-#{$login-panel-width} / 2)
-          left: 50%
-          width: $login-panel-width
+  label
+    display: inline-block
+    width: 90px
+    margin-top: 20px
 
-          label
-            display: inline-block
-            width: 90px
-            margin-top: 20px
+  .input-field
+    width: 200px
 
-          .input-field
-            width: 200px
-
-          input[type='submit']
-            margin-top: 20px
+  input[type='submit']
+    margin-top: 20px
