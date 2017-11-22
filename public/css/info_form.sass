@@ -1,5 +1,5 @@
-$transparent: 0.87
-$text-color: rgba(66, 66, 66, $transparent)
+@import "colors"
+
 $info-form-font-size: 22px
 $info-button-panel-height: 40px
 
@@ -11,6 +11,7 @@ html
   body
     .main-content
       .info-list
+        background-color: $main-color
         height: calc(100% - 30px - #{$info-button-panel-height})
         overflow: scroll
         font-size: 20px
