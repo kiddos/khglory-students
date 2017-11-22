@@ -5,8 +5,7 @@ html
     link(rel='stylesheet', href='/css/layout.css')
     if title === 'Login'
       link(rel='stylesheet', href='/css/login.css')
-    if info_form
-      link(rel='stylesheet', href='/css/info_form.css')
+    link(rel='stylesheet', href='/css/info_form.css')
     meta(name='viewport', content='width=device-width')
     script(type='text/javascript', src='/jquery.min.js')
     script(type='text/javascript', src='/js/logout.js')
@@ -18,10 +17,35 @@ html
         h2 高雄榮光堂學生統計系統
 
       if login
+        nav.navigation
+          div(class='menu-item')
+            .menu-dropdown 學生管理
+            .menu-dropdown-content
+              a(href='/students/add', class='menu-sub-item') 加入學生資料
+              a(href='/students/edit', class='menu-sub-item') 編輯學生資料
+          div(class='menu-item')
+            .menu-dropdown 老師管理
+            .menu-dropdown-content
+              a(href='/teachers/add', class='menu-sub-item') 加入老師資料
+              a(href='/teachers/edit', class='menu-sub-item') 編輯老師資料
+          div(class='menu-item')
+            .menu-dropdown 課程管理
+            .menu-dropdown-content
+              a(href='/classes/add', class='menu-sub-item') 新增課程
+              a(href='/classes/edit', class='menu-sub-item') 修改課程
+          div(class='menu-item')
+            .menu-dropdown 報表下載
+            .menu-dropdown-content
+              a(href='/query/students', class='menu-sub-item') 下載學生資料
+              a(href='/query/teachers', class='menu-sub-item') 下載老師資料
+              a(href='/query/classes', class='menu-sub-item') 下載課程資料
+
         if user
           p(class='user-status') 使用者:
             span #{user.username}
         input(type='button', id='logout', class='logout', value='登出')
+
+    div(id='message-dialog', class='message-dialog transparent')
 
     .main-content
       h2(class='content-title')= title
