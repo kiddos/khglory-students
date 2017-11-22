@@ -6,6 +6,11 @@ $main-content-padding: 20px
 $shadow-color: #333
 $main-color: rgba(250, 250, 250, $transparent)
 $title-text-color: rgba(66, 66, 66, $transparent)
+$login-color: rgba(137, 219, 117, $transparent)
+
+@font-face
+  font-family: 'SourceHanSerifTC'
+  src: url('/fonts/SourceHanSerifTC-Regular.otf') format('opentype')
 
 .button
   background-color: #FFF
@@ -30,7 +35,7 @@ html, body
 html
   body
     background: url('/images/background.jpg') 50% 0 no-repeat
-    font: 16px "Lucida Grande", Helvetica, Arial, sans-serif
+    font: 16px "SourceHanSerifTC", Helvetica, Arial, sans-serif
 
     .header
       background-color: $main-color
@@ -40,6 +45,44 @@ html
       flex-direction: row
       align-items: center
       user-select: none
+
+      nav.navigation
+        margin-left: 10px
+        font-size: 20px
+        height: 100%
+
+        .menu-item
+          display: inline-block
+          margin: 0 10px 0 10px
+          height: 100%
+
+          .menu-dropdown
+            cursor: pointer
+            height: 100%
+            display: flex
+            justify-content: center
+            align-items: center
+
+          .menu-dropdown-content
+            display: none
+            position: absolute
+            background-color: $main-color
+            margin-left: -10px
+            z-index: 1000
+
+            .menu-sub-item
+              display: block
+              padding: 10px
+              border: 1px solid lightgray
+
+            .menu-sub-item:hover
+              font-weight: 700
+
+        .menu-item:hover .menu-dropdown-content
+          display: block
+
+        .menu-item:hover .menu-dropdown
+          font-weight: 1000
 
       .icon
         margin: 0 10px 0 10px
@@ -64,7 +107,19 @@ html
 
         span
           margin-left: 5px
-          color: rgba(137, 219, 117, $transparent)
+          color: $login-color
+
+    .message-dialog
+      max-width: $main-content-width
+      margin: 20px auto
+      background-color: $main-color
+      padding: 20px
+      opacity: $transparent
+      transition: opacity 1s ease-in-out
+      z-index: 500
+
+    .message-dialog.transparent
+      opacity: 0
 
     .main-content
       background-color: $main-color
@@ -72,7 +127,7 @@ html
       height: 100%
       max-height: $main-content-height
       max-width: $main-content-width
-      margin: 60px auto
+      margin: 30px auto
       padding: $main-content-padding
 
       .content-title
