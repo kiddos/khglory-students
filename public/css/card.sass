@@ -1,13 +1,32 @@
 @import "colors"
 
+$card-width: 300px
+$card-height: 200px
 $one-card-size: 300px
+$multi-card-size: 600px
 
 .card
   background-color: $main-color
   padding: 10px
-  max-width: 360px
-  max-height: 200px
-  width: 100%
+  width: 33%
+  height: 100%
+  max-width: $card-width
+  max-height: $card-height
+  display: inline-block
+  margin: 5px
+
+  .label
+    user-select: none
+    font-size: 26px
+
+  .value
+    float: right
+    font-size: 5em
+
+  .chart
+    svg
+      .arc path
+        stroke: $main-color
 
 
 html
@@ -18,3 +37,8 @@ html
         display: flex
         justify-content: center
         height: $one-card-size
+
+      .multi-card-container
+        margin-top: 20px
+        height: $multi-card-size
+        flex-direction: row
