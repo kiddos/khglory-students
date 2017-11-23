@@ -4,11 +4,10 @@ var router = express.Router();
 var teachers = require('../models/teachers');
 
 router.get('/', function(req, res, next) {
-  if (req.session.login) {
-    res.render('teachers', {title: '老師管理', login: true});
-  } else {
-    res.redirect('/login');
-  }
+  teachers.queryAll(function(allTeachers) {
+    res.setHeader('Content-Type', 'application/json');
+    res.send(JSON.stringify(allTeachers));
+  });
 });
 
 router.get('/add', function(req, res, next) {
