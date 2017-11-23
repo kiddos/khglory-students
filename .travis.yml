@@ -7,5 +7,6 @@ before_install:
   - npm run migration
 
 script:
+  - export DEBUG=TRUE
   - npm test
   - npm run generate
