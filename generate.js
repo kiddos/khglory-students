@@ -28,11 +28,28 @@ function addStudent(callback) {
         studentId: student.id,
         career: faker.name.jobTitle(),
         education: faker.random.boolean() ? 'graduate' : 'undergrad',
-        religion: faker.random.boolean() ? 'Catholic' : 'Buddhist',
         illness: faker.random.boolean() ? 'None' : 'common cold',
         emergencyContact: faker.random.boolean() ? 'mom' : 'dad',
         emergencyContactPhone: faker.phone.phoneNumberFormat(1),
       });
+      var r = faker.random.number(5);
+      switch (r) {
+        case 0:
+          extraInfo.religion = '基督教';
+          break;
+        case 1:
+          extraInfo.religion = '天主教';
+          break;
+        case 2:
+          extraInfo.religion = '佛教';
+          break;
+        case 3:
+          extraInfo.religion = '伊斯蘭教';
+          break;
+        default:
+          extraInfo.religion = '睡教';
+          break;
+      }
       student.addExtraInfo(extraInfo);
 
       var hardCopy = new students.HardCopy({
@@ -113,11 +130,11 @@ function addClass() {
           }
         }
         c.addStudents(choosen);
-      });
 
-      teachers.queryAll(function(teachersData) {
-        var index = faker.random.number(teachersData.length);
-        c.addTeachers([teachersData[index]]);
+        teachers.queryAll(function(teachersData) {
+          var index = faker.random.number(teachersData.length);
+          c.addTeachers([teachersData[index]]);
+        });
       });
     }
   });
