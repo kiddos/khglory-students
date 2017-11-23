@@ -14,11 +14,10 @@ if (!fs.existsSync(uploadPath)) {
 var upload = multer({dest: uploadPath});
 
 router.get('/', function(req, res, next) {
-  if (req.session.login) {
-    res.render('students', {title: '學生管理', login: true});
-  } else {
-    res.redirect('/login');
-  }
+  students.queryAll(function(allStudents) {
+    res.setHeader('Content-Type', 'application/json');
+    res.send(JSON.stringify(allStudents));
+  });
 });
 
 router.get('/add', function(req, res, next) {
