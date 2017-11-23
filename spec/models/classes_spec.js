@@ -88,7 +88,8 @@ describe('Class Model', function() {
   });
 
   afterEach(function(done) {
-    students.clear(function() { done(); });
-    teachers.clear(function() { done(); });
+    students.clear(function() {
+      teachers.clear(function() { done(); });
+    });
   });
 });
