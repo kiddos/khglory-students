@@ -4,9 +4,10 @@ node_js:
 
 before_install:
   - npm install
-  - npm run migration
 
 script:
   - export DEBUG=TRUE
   - npm test
+  - export DEBUG=FALSE
+  - npm run migration
   - npm run generate
