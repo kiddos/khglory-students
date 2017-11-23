@@ -1,7 +1,7 @@
 @import "colors"
 
 $header-height: 70px
-$main-content-width: 1024px
+$main-content-width: 1280px
 $main-content-height: 500px
 $main-content-padding: 20px
 
@@ -121,8 +121,7 @@ html
 
     .main-content
       width: calc(100% - 2 * #{$main-content-padding})
-      height: 100%
-      max-height: $main-content-height
+      height: calc(80% - #{$header-height})
       max-width: $main-content-width
       margin: 30px auto
       padding: $main-content-padding
