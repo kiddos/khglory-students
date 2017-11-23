@@ -1,9 +1,9 @@
 @import "colors"
 
-$info-form-font-size: 22px
 $info-button-panel-height: 40px
+$info-form-font-size: 22px
 $info-form-width: 660px
-
+$info-form-height: 100%
 
 .hide
   display: none
@@ -15,6 +15,7 @@ html
         background-color: $main-color
         width: 100%
         max-width: $info-form-width
+        max-height: $info-form-height
         margin: auto
 
         h2.content-title
@@ -25,45 +26,8 @@ html
           margin: 0
           color: $title-text-color
 
-        .info-list
-          height: calc(100% - 30px - #{$info-button-panel-height})
-          overflow: scroll
-          font-size: 20px
-
-          table
-            td
-              text-align: center
-
-            .info-edit
-              min-width: 130px
-
-            .info-id
-              max-width: 200px
-
-            .info-name
-              max-width: 200px
-
-            .info-gender
-              max-width: 100px
-
-            .info-birthday
-              min-width: 200px
-              max-width: 300px
-
-            .info-address
-              max-width: 200px
-
-            .info-phone
-              max-width: 100px
-
-            .info-email
-              max-width: 200px
-
-        .info-list.half
-          height: calc(50% - 15px - #{$info-button-panel-height})
-
         .info-form
-          padding: 20px
+          padding: 20px 20px 0 20px
           width: calc(100% - 40px)
           height: calc(100% - 80px - #{$info-button-panel-height})
           font-size: $info-form-font-size
@@ -106,8 +70,9 @@ html
             color: $text-color
 
         .info-button-panel
+          padding-top: 10px
+          padding-bottom: 10px
           width: 100%
-          padding: 10px 0
           max-height: $info-button-panel-height
           display: flex
           flex-direction: row
