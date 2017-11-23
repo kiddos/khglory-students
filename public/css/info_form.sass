@@ -2,6 +2,7 @@
 
 $info-form-font-size: 22px
 $info-button-panel-height: 40px
+$info-form-width: 660px
 
 
 .hide
@@ -10,97 +11,110 @@ $info-button-panel-height: 40px
 html
   body
     .main-content
-      .info-list
+      .info
         background-color: $main-color
-        height: calc(100% - 30px - #{$info-button-panel-height})
-        overflow: scroll
-        font-size: 20px
+        width: 100%
+        max-width: $info-form-width
+        margin: auto
 
-        table
-          td
-            text-align: center
+        h2.content-title
+          padding-top: 10px
+          user-select: none
+          cursor: default
+          text-align: center
+          margin: 0
+          color: $title-text-color
 
-          .info-edit
-            min-width: 130px
+        .info-list
+          height: calc(100% - 30px - #{$info-button-panel-height})
+          overflow: scroll
+          font-size: 20px
 
-          .info-id
-            max-width: 200px
+          table
+            td
+              text-align: center
 
-          .info-name
-            max-width: 200px
+            .info-edit
+              min-width: 130px
 
-          .info-gender
-            max-width: 100px
+            .info-id
+              max-width: 200px
 
-          .info-birthday
-            min-width: 200px
-            max-width: 300px
+            .info-name
+              max-width: 200px
 
-          .info-address
-            max-width: 200px
+            .info-gender
+              max-width: 100px
 
-          .info-phone
-            max-width: 100px
+            .info-birthday
+              min-width: 200px
+              max-width: 300px
 
-          .info-email
-            max-width: 200px
+            .info-address
+              max-width: 200px
 
-      .info-list.half
-        height: calc(50% - 15px - #{$info-button-panel-height})
+            .info-phone
+              max-width: 100px
 
-      .info-form
-        padding: 20px
-        width: calc(100% - 40px)
-        height: calc(100% - 80px - #{$info-button-panel-height})
-        font-size: $info-form-font-size
+            .info-email
+              max-width: 200px
 
-        .field-label
-          color: $text-color
-          display: inline-block
-          width: 30%
-          margin-bottom: 10px
+        .info-list.half
+          height: calc(50% - 15px - #{$info-button-panel-height})
 
-          .require-text
-            margin-left: 10px
-            font-size: 12px
-            color: rgba(73, 151, 255, 255)
-
-          .error
-            font-size: 12px
-            color: red
-
-        .field-label.small
-          width: 30px
-
-        .field-inputs
-          color: $text-color
-          display: inline-block
-          width: 60%
+        .info-form
+          padding: 20px
+          width: calc(100% - 40px)
+          height: calc(100% - 80px - #{$info-button-panel-height})
           font-size: $info-form-font-size
 
-        .field-inputs.small
-          width: 12%
-          margin-right: 20px
+          .field-label
+            color: $text-color
+            display: inline-block
+            width: 30%
+            margin-bottom: 10px
 
-        .field-inputs.option
-          width: 50px
-          font-size: 16px
+            .require-text
+              margin-left: 10px
+              font-size: 12px
+              color: rgba(73, 151, 255, 255)
 
-        .field-options
-          display: inline-block
-          font-size: 16px
-          color: $text-color
+            .error
+              font-size: 12px
+              color: red
 
-      .info-button-panel
-        width: 100%
-        margin-top: 10px
-        max-height: $info-button-panel-height
-        display: flex
-        flex-direction: row
-        justify-content: center
+          .field-label.small
+            width: 30px
 
-        .button
-          font-size: 20px
-          margin: 0 5px 0 5px
-          width: 30%
-          max-width: 300px
+          .field-inputs
+            color: $text-color
+            display: inline-block
+            width: 60%
+            font-size: $info-form-font-size
+
+          .field-inputs.small
+            width: 12%
+            margin-right: 20px
+
+          .field-inputs.option
+            width: 50px
+            font-size: 16px
+
+          .field-options
+            display: inline-block
+            font-size: 16px
+            color: $text-color
+
+        .info-button-panel
+          width: 100%
+          padding: 10px 0
+          max-height: $info-button-panel-height
+          display: flex
+          flex-direction: row
+          justify-content: center
+
+          .button
+            font-size: 20px
+            margin: 0 5px 0 5px
+            width: 30%
+            max-width: 300px
