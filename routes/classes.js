@@ -6,11 +6,10 @@ var teachers = require('../models/teachers');
 var classes = require('../models/classes');
 
 router.get('/', function(req, res) {
-  if (req.session.login) {
-    res.render('classes', {title: '課程管理', login: true});
-  } else {
-    res.redirect('/login');
-  }
+  classes.queryAll(function(allClasses) {
+    res.setHeader('Content-Type', 'application/json');
+    res.send(JSON.stringify(allClasses));
+  });
 });
 
 router.get('/add', function(req, res) {
