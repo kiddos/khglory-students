@@ -55,7 +55,6 @@ $(document).ready(function() {
     for (var i = 0; i < data.length; ++i) {
       var found = false;
       for (var j = 0; j < religionData.length; ++j) {
-        console.log(data[i].religion);
         if (data[i].religion === religionData[j].religion) {
           religionData[j].count += 1;
           found = true;
@@ -65,7 +64,6 @@ $(document).ready(function() {
         religionData[religionData.length - 1].count += 1;
       }
     }
-    console.log(religionData);
 
     var svg = d3.select('#' + id).attr('width', 150).attr('height', 150);
     var g = svg.append('g').attr('transform', 'translate(75, 75)');
