@@ -1,8 +1,40 @@
 extends layout
 
+block stylesheet
+  link(rel='stylesheet', href='/css/card.css')
+
+block script
+  script(src='/d3.min.js', type='text/javascript')
+  script(src='/js/index.js', type='text/javascript')
+
 block content
-  .button-panel
-    a(href='/students', class='button') 學生管理
-    a(href='/teachers', class='button') 老師管理
-    a(href='/classes', class='button') 課程管理
-    a(href='/query', class='button') 報表計算
+  .multi-card-container
+    .card
+      .label 學生人數
+      .value
+        span(id='student-count') 0
+
+    .card
+      .label 老師人數
+      .value
+        span(id='teacher-count') 0
+
+    .card
+      .label 課程數量
+      .value
+        span(id='class-count') 0
+
+    .card
+      .label 學生性別統計
+      .chart
+        svg(id='student-gender')
+
+    .card
+      .label 老師性別統計
+      .chart
+        svg(id='teacher-gender')
+
+    .card
+      .label 學生宗教統計
+      .chart
+        svg(id='student-religion')
