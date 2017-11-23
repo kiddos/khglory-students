@@ -1,9 +1,4 @@
 $(document).ready(function() {
-  // adjust main content width and height
-  $('.main-content').css('max-width', '1280px');
-  $('.main-content').css('max-height', '700px');
-
-
   $('.edit').on('click', function() {
     var $row = $(this).closest('tr');
     $row.find('.edit-field').prop('disabled', false);
@@ -29,7 +24,8 @@ $(document).ready(function() {
       var val = $(this).find('input.edit-field').val();
       student[key] = val;
     });
-    student.id = $row.find('td.student-id').text();
+    student.id = $row.find('td.info-id').text();
+
     $.ajax({
       url: '/students/edit',
       type: 'POST',
