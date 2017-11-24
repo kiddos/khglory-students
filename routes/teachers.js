@@ -15,8 +15,7 @@ router.get('/add', function(req, res, next) {
     res.render('teacher_add', {
       title: '加入老師資料',
       login: true,
-      info_form: true,
-      teacher_add: true,
+      user: req.session.user,
       basicFields: [
         {
           name: 'name',
@@ -144,8 +143,8 @@ router.get('/edit', function(req, res, next) {
       res.render('teacher_edit', {
         title: '編輯老師資料',
         login: true,
-        info_form: true,
         teachers: allTeachers,
+        user: req.session.user,
       });
     });
   } else {
