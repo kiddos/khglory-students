@@ -223,6 +223,13 @@ router.post('/edit', function(req, res, next) {
         });
 
         student.getExtraInfo(function(extraInfo) {
+          // create new object if not exists
+          if (!extraInfo) {
+            extraInfo = new students.ExtraInfo({
+              studentId: student.id
+            });
+          }
+
           var mod = false;
           var keys = Object.keys(extraInfo);
           for (var i = 0; i < keys.length; ++i) {
@@ -244,6 +251,12 @@ router.post('/edit', function(req, res, next) {
         });
 
         student.getHardCopy(function(hardCopy) {
+          if (!hardCopy) {
+            hardCopy = new students.HardCopy({
+              studentId: student.id
+            });
+          }
+
           var mod = false;
           var keys = Object.keys(hardCopy);
           for (var i = 0; i < keys.length; ++i) {
