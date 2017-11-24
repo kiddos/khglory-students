@@ -3,6 +3,7 @@ $(document).ready(function() {
     var $row = $(this).closest('tr');
     $row.find('.edit-field').prop('disabled', false);
     $row.find('.confirm').removeClass('hide');
+    $row.find('.delete').removeClass('hide');
     $row.find('.cancel').removeClass('hide');
     $(this).addClass('hide');
   });
@@ -12,6 +13,7 @@ $(document).ready(function() {
     $row.find('.edit-field').prop('disabled', true);
     $row.find('.edit').removeClass('hide');
     $row.find('.confirm').addClass('hide');
+    $row.find('.delete').addClass('hide');
     $(this).addClass('hide');
   });
 
@@ -32,12 +34,34 @@ $(document).ready(function() {
       data: student,
     }).done(function(data) {
       if (data !== 'success') {
-        alert('編輯失敗');
+        errorMessage('編輯資料失敗, 請稍後再試', 1000);
+      } else {
+        infoMessage('編輯成功', 1000);
       }
       $row.find('.edit-field').prop('disabled', true);
       $row.find('.edit').removeClass('hide');
       $row.find('.cancel').addClass('hide');
       $row.find('.confirm').addClass('hide');
+    });
+  });
+
+  $('.delete').on('click', function() {
+    var $row = $(this).closest('tr');
+    var student = {};
+    student.name = $row.find('td.info-name input.edit-field').val();
+    student.id = $row.find('td.info-id').text();
+
+    $.ajax({
+      url: '/students/delete',
+      type: 'POST',
+      data: student
+    }).done(function(data) {
+      if (data !== 'success') {
+        errorMessage('刪除資料失敗, 請稍後再試', 1000);
+      } else {
+        infoMessage('刪除成功', 1000);
+        $row.fadeOut();
+      }
     });
   });
 });
