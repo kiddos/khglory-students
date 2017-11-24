@@ -59,17 +59,20 @@ $(document).ready(function() {
         method: 'POST',
         data: student,
       }).done(function(data) {
+        $('input.field-inputs').val('');
         if (data !== 'success') {
-          alert('加入資料失敗');
+          errorMessage('加入資料失敗, 請稍後再試', 1000);
+        } else {
+          infoMessage('加入成功', 1000);
         }
       });
     }
-    console.log(student);
   }
 
   $('#next').on('click', function() {
     var swap = true;
     if ($(this).val() === '確定輸入') {
+      // clear input field
       submitData();
     } else if ($(this).val() === '下一步') {
       $('input.field-inputs').each(function() {
