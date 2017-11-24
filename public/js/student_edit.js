@@ -42,26 +42,29 @@ $(document).ready(function() {
       $row.find('.edit').removeClass('hide');
       $row.find('.cancel').addClass('hide');
       $row.find('.confirm').addClass('hide');
+      $row.find('.delete').addClass('hide');
     });
   });
 
   $('.delete').on('click', function() {
-    var $row = $(this).closest('tr');
-    var student = {};
-    student.name = $row.find('td.info-name input.edit-field').val();
-    student.id = $row.find('td.info-id').text();
+    popupMessage('刪除', '您確定要刪除嗎？', function() {
+      var $row = $(this).closest('tr');
+      var student = {};
+      student.name = $row.find('td.info-name input.edit-field').val();
+      student.id = $row.find('td.info-id').text();
 
-    $.ajax({
-      url: '/students/delete',
-      type: 'POST',
-      data: student
-    }).done(function(data) {
-      if (data !== 'success') {
-        errorMessage('刪除資料失敗, 請稍後再試', 1000);
-      } else {
-        infoMessage('刪除成功', 1000);
-        $row.fadeOut();
-      }
+      $.ajax({
+        url: '/students/delete',
+        type: 'POST',
+        data: student
+      }).done(function(data) {
+        if (data !== 'success') {
+          errorMessage('刪除資料失敗, 請稍後再試', 1000);
+        } else {
+          infoMessage('刪除成功', 1000);
+          $row.fadeOut();
+        }
+      });
     });
   });
 });
