@@ -28,8 +28,10 @@ $(document).ready(function() {
 
   function collectData($row) {
     var teacher = {};
+    console.log($row);
     $row.find('td').each(function() {
       var key = $(this).attr('class').substring(5);
+      console.log(key);
       if (key === 'edit') return;
       if (key === 'id') {
         teacher[key] = $(this).text();
@@ -52,7 +54,9 @@ $(document).ready(function() {
       data: teacher,
     }).done(function(data) {
       if (data !== 'success') {
-        alert('編輯失敗');
+        errorMessage('編輯資料失敗', 1000);
+      } else {
+        infoMessage('編輯成功', 1000);
       }
     });
   });
@@ -60,17 +64,23 @@ $(document).ready(function() {
   // delete button
   $('input.delete').on('click', function() {
     var $row = $(this).closest('tr');
-    var teacher = collectData($row);
+    popupMessage('刪除', '確定要刪除資料嗎？', function() {
+      var teacher = collectData($row);
 
-    $.ajax({
-      url: '/teachers/delete',
-      type: 'POST',
-      data: teacher,
-    }).done(function(data) {
-      if (data !== 'success') {
-        alert('刪除失敗');
-      }
-      $row.fadeOut();
+      console.log(teacher);
+
+      $.ajax({
+        url: '/teachers/delete',
+        type: 'POST',
+        data: teacher,
+      }).done(function(data) {
+        if (data !== 'success') {
+          errorMessage('刪除資料失敗', 1000);
+        } else {
+          infoMessage('刪除成功', 1000);
+          $row.fadeOut();
+        }
+      });
     });
   });
 

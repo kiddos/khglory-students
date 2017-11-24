@@ -47,8 +47,8 @@ $(document).ready(function() {
   });
 
   $('.delete').on('click', function() {
+    var $row = $(this).closest('tr');
     popupMessage('刪除', '您確定要刪除嗎？', function() {
-      var $row = $(this).closest('tr');
       var student = {};
       student.name = $row.find('td.info-name input.edit-field').val();
       student.id = $row.find('td.info-id').text();
