@@ -109,12 +109,30 @@ html
 
     .message-dialog
       max-width: $main-content-width
-      margin: 20px auto
-      background-color: $main-color
+      margin: 10px auto
       padding: 0
       opacity: $transparent
       transition: opacity 1s ease-in-out
       z-index: 500
+      display: flex
+      justify-content: center
+
+      .message-text
+        display: inline-block
+        margin: 0
+        padding: 20px
+        width: 100%
+        max-width: 600px
+        color: #FFF
+        font-weight: 700
+        font-size: 30px
+        text-align: center
+
+      .message-text.success
+        background-color: $message-success-color
+
+      .message-text.error
+        background-color: $message-error-color
 
     .message-dialog.transparent
       opacity: 0
@@ -123,7 +141,7 @@ html
       width: calc(100% - 2 * #{$main-content-padding})
       height: calc(80% - #{$header-height})
       max-width: $main-content-width
-      margin: 30px auto
+      margin: 0 auto
       padding: $main-content-padding
 
       .button-panel
