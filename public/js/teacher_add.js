@@ -40,7 +40,10 @@ $(document).ready(function() {
       data: teacher,
     }).done(function(data) {
       if (data !== 'success') {
-        alert('加入資料失敗');
+        errorMessage('加入資料失敗, 請稍後再試', 1000);
+      } else {
+        $('input.field-inputs').val('');
+        infoMessage('加入成功', 1000);
       }
     });
   }
