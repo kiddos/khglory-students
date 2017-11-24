@@ -26,7 +26,6 @@ router.get('/add', function(req, res, next) {
       title: '加入學生資料',
       login: true,
       user: req.session.user,
-      info_form: true,
       basicFields: [
         {
           name: 'id',
@@ -184,7 +183,6 @@ router.get('/edit', function(req, res, next) {
         title: '學生資料編輯',
         students: allStudents,
         login: true,
-        info_form: true,
         user: req.session.user,
       });
     });
