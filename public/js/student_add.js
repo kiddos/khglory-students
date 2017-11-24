@@ -59,10 +59,10 @@ $(document).ready(function() {
         method: 'POST',
         data: student,
       }).done(function(data) {
-        $('input.field-inputs').val('');
         if (data !== 'success') {
           errorMessage('加入資料失敗, 請稍後再試', 1000);
         } else {
+          $('input.field-inputs').val('');
           infoMessage('加入成功', 1000);
         }
       });
