@@ -101,6 +101,23 @@ Class.prototype.insert = function(callback) {
   });
 };
 
+Class.prototype.remove = function(callback) {
+  var c = this;
+  if (!c.id) {
+    if (callback) callback(false);
+  }
+  db.serialize(function() {
+    db.run('DELETE FROM classes WHERE id = ?', [c.id], function(err) {
+      if (err) {
+        console.error(colors.red(err.message));
+        if (callback) callback(false);
+      } else {
+        if (callback) callback(true);
+      }
+    });
+  });
+};
+
 Class.prototype.edit = function(newName, newStartDate, callback) {
   var id = this.id;
   if (!id) {
