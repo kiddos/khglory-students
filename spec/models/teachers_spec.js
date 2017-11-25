@@ -1,5 +1,7 @@
 var teachers = require('../../models/teachers');
 
+teachers.migrate();
+
 describe('Teacher Model', function() {
   it('Shoudl be able to create', function(done) {
     var teacher = new teachers.Teacher('老吳');

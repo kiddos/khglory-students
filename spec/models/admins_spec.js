@@ -1,5 +1,7 @@
 var admins = require('../../models/admins');
 
+admins.migrate();
+
 describe('Admin module', function() {
   it('Should have 3 default admins', function(done) {
     var data = admins.queryAll(function(rows) {

@@ -2,6 +2,10 @@ var classes = require('../../models/classes');
 var students = require('../../models/students');
 var teachers = require('../../models/teachers');
 
+students.migrate();
+teachers.migrate();
+classes.migrate();
+
 describe('Class Model', function() {
   beforeEach(function(done) {
     var maxCount = 10;
