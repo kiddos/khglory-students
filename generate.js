@@ -18,7 +18,7 @@ function addStudent(callback) {
         birthday: faker.date.between('1900-01-01', '2016-12-31'),
         socialId: 'Z' + faker.random.number({min: 100000000, max: 999999999}),
         marriage: faker.random.boolean() ? 'married' : 'single',
-        address: faker.address.streetAddress("###"),
+        address: faker.address.streetAddress('###'),
         phone: faker.phone.phoneNumberFormat(1),
         email: faker.internet.email(),
       });
@@ -89,7 +89,7 @@ function addTeacher(callback) {
         birthday: faker.date.between('1900-01-01', '2016-12-31'),
         socialId: 'Z' + faker.random.number({min: 100000000, max: 999999999}),
         marriage: faker.random.boolean() ? 'married' : 'single',
-        address: faker.address.streetAddress("###"),
+        address: faker.address.streetAddress('###'),
         phone: faker.phone.phoneNumberFormat(1),
         email: faker.internet.email(),
       });
