@@ -68,7 +68,7 @@ $(document).ready(function() {
       if (teachers.length > 0) {
         advance();
       } else {
-        alert('課程需要老師');
+        errorMessage('課程需要老師', 1000);
       }
     }
   });
@@ -101,8 +101,11 @@ $(document).ready(function() {
         phase = 0;
         changeButton();
         changeView();
+        // empty inputs
+        $('input.field-inputs').val('');
+        infoMessage('加入課程成功', 1000);
       } else {
-        alert('加入失敗');
+        errorMessage('加入課程失敗, 請稍後再試', 1000);
       }
     });
   });
