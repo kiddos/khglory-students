@@ -18,11 +18,9 @@ describe('Admin Login Page', function() {
       expect(text).toBe('密碼');
     });
 
-    var userField =
-    driver.findElement(By.css('input[name="username"]'));
+    var userField = driver.findElement(By.css('input[name="username"]'));
     userField.sendKeys('admin1');
-    var passField =
-    driver.findElement(By.css('input[name="password"]'));
+    var passField = driver.findElement(By.css('input[name="password"]'));
     passField.sendKeys('admin1');
     var submit = driver.findElement(By.css('input[name="submit"]'));
     submit.sendKeys(Key.RETURN);
