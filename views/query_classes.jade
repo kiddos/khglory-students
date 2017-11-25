@@ -1,22 +1,35 @@
 extends layout
 
+block stylesheet
+  link(rel='stylesheet', href='/css/info_list.css')
+
+block script
+  script(src='/js/main_menu.js', type='text/javascript')
+
 block content
-  .info-list
-    table
-      tr
-        th(class='info-edit')
-        th(class='info-id') 課程 ID
-        th(class='info-name') 課程名稱
-        th(class='info-startDate') 課程開始時間
-      for c in classes
+  .info.small
+    h2.content-title= title
+
+    .info-list
+      table
         tr
-          td(class='info-edit')
-            a(href='/query/classes/students?' +
-              'id=#{c.id}&name=#{c.name}&startDate=#{c.startDate}',
-              class='student download button') 學生資料下載
-            a(href='/query/classes/teachers?' +
-              'id=#{c.id}&name=#{c.name}&startDate=#{c.startDate}',
-              class='student download button') 老師資料下載
-          td(class='info-id')= c.id
-          td(class='info-name')= c.name
-          td(class='info-startDate')= new Date(c.startDate).toLocaleDateString('tw-zh')
+          th(class='info-edit')
+          th(class='info-id') 課程 ID
+          th(class='info-name') 課程名稱
+          th(class='info-startDate') 課程開始時間
+        for c in classes
+          tr
+            td(class='info-edit')
+              a(href='/query/classes/students?' +
+                'id=#{c.id}&name=#{c.name}&startDate=#{c.startDate}',
+                class='student download') 學生資料下載
+              a(href='/query/classes/teachers?' +
+                'id=#{c.id}&name=#{c.name}&startDate=#{c.startDate}',
+                class='teacher download') 老師資料下載
+            td(class='info-id')= c.id
+            td(class='info-name')= c.name
+            td(class='info-startDate')= new Date(c.startDate).toLocaleDateString('tw-zh')
+
+    .info-button-panel
+      input(type='button', class='button', id='menu',
+        value='回選單')
