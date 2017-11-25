@@ -5,7 +5,7 @@ var router = express.Router();
 router.get('/', function(req, res, next) {
   if (req.session.login) {
     res.render('index', {
-      title: '管理',
+      title: '高雄榮光堂統計系統',
       login: true,
       user: req.session.user,
     });
