@@ -54,7 +54,28 @@ describe('Student Model', function() {
   }, 10000);
 
   it('Should be able to be deleted', function(done) {
-    done();
+    var name = faker.name.firstName() + ' ' + faker.name.lastName();
+    var student = new students.Student(faker.random.uuid(), name);
+    student.insert(function(status) {
+      expect(status).toBe(true);
+      student.remove(function(status) {
+        expect(status).toBe(true);
+        students.queryAll(function(allStudents) {
+          expect(allStudents.length).toBe(0);
+          done();
+        });
+      });
+    });
+  });
+
+  afterEach(function(done) {
+    students.clear(function(status) {
+      expect(status).toBe(true);
+      students.queryAll(function(allStudents) {
+        expect(allStudents.length).toBe(0);
+        done();
+      });
+    });
   });
 });
 
@@ -129,6 +150,16 @@ describe('Student BasicInfo', function() {
       });
     });
   });
+
+  afterEach(function(done) {
+    students.clear(function(status) {
+      expect(status).toBe(true);
+      students.queryAll(function(allStudents) {
+        expect(allStudents.length).toBe(0);
+        done();
+      });
+    });
+  });
 });
 
 describe('Student ExtraInfo', function() {
@@ -198,6 +229,16 @@ describe('Student ExtraInfo', function() {
       });
     });
   });
+
+  afterEach(function(done) {
+    students.clear(function(status) {
+      expect(status).toBe(true);
+      students.queryAll(function(allStudents) {
+        expect(allStudents.length).toBe(0);
+        done();
+      });
+    });
+  });
 });
 
 function downloadImage(url, filename, callback) {
@@ -247,7 +288,7 @@ describe('Student HardCopy', function() {
         });
       });
     });
-  }, 10000);
+  }, 20000);
 
   it('Should be able to update its HardCopy', function(done) {
     var name = '中文' + faker.name.firstName() + ' ' + faker.name.lastName();
@@ -309,7 +350,7 @@ describe('Student HardCopy', function() {
         });
       });
     });
-  }, 10000);
+  }, 20000);
 
   afterEach(function(done) {
     students.clear(function(status) {
