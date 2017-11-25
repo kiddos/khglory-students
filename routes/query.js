@@ -45,20 +45,24 @@ router.get('/teachers', function(req, res, next) {
 });
 
 router.get('/classes', function(req, res) {
-  classes.queryAll(function(allClasses) {
-    res.render('query_classes', {
-      title: '課程列表',
-      login: true,
-      info_form: true,
-      classes: allClasses,
+  if (req.session.login) {
+    classes.queryAll(function(allClasses) {
+      res.render('query_classes', {
+        title: '課程列表下載',
+        login: true,
+        classes: allClasses,
+        user: req.session.user,
+      });
     });
-  });
+  } else {
+    res.redirect('/login');
+  }
 });
 
 router.get('/classes/students', function(req, res, next) {
-  var classId = req.query.id;
+  var classId = parseInt(req.query.id);
   var className = req.query.name;
-  var classStartDate = req.query.startDate;
+  var classStartDate = parseInt(req.query.startDate);
   var c = new classes.Class(className, classStartDate);
   c.id = classId;
 
@@ -68,7 +72,9 @@ router.get('/classes/students', function(req, res, next) {
         next();
       } else {
         prepareResponseWithFile(
-            res, className + '-' + classStartDate + '-students.csv');
+            res, className + '-' +
+                new Date(classStartDate).toLocaleDateString('tw-zh') +
+                '-students.csv');
         res.end(output);
       }
     });
@@ -76,9 +82,9 @@ router.get('/classes/students', function(req, res, next) {
 });
 
 router.get('/classes/teachers', function(req, res, next) {
-  var classId = req.query.id;
+  var classId = parseInt(req.query.id);
   var className = req.query.name;
-  var classStartDate = req.query.startDate;
+  var classStartDate = parseInt(req.query.startDate);
   var c = new classes.Class(className, classStartDate);
   c.id = classId;
 
@@ -88,7 +94,9 @@ router.get('/classes/teachers', function(req, res, next) {
         next();
       } else {
         prepareResponseWithFile(
-            res, className + '-' + classStartDate + '-teachers.csv');
+            res, className + '-' +
+                new Date(classStartDate).toLocaleDateString('tw-zh') +
+                '-teachers.csv');
         res.end(output);
       }
     });
