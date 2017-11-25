@@ -18,7 +18,7 @@ $(document).ready(function() {
 
   $('input[type="button"].delete').on('click', function() {
     var $row = $(this).closest('tr');
-    var classId = $row.find('td.info-id').text();
+    var classId = parseInt($row.find('td.info-id').text());
     var className = $row.find('td.info-name input[type="text"]').val();
     var startDate = $row.find('td.info-startDate input[type="text"]').val();
 
@@ -33,6 +33,9 @@ $(document).ready(function() {
     }).done(function(response) {
       if (response === 'success') {
         $row.fadeOut();
+        infoMessage('刪除課程成功', 1000);
+      } else {
+        errorMessage('刪除課程失敗, 請稍後再試', 1000);
       }
     });
   });
@@ -78,7 +81,7 @@ $(document).ready(function() {
     toggleButtonPanel();
     togglePanelSize();
 
-    classId = $row.find('td.info-id').text();
+    classId = parseInt($row.find('td.info-id').text());
     className = $row.find('td.info-name input[type="text"]').val();
     classStartDate = $row.find('td.info-startDate input[type="text"]').val();
 
@@ -88,9 +91,10 @@ $(document).ready(function() {
       method: 'GET',
       contentType: 'application/json',
     }).done(function(data) {
-      var obj = JSON.parse(data);
-      var teachers = obj.teachers;
-      var students = obj.students;
+      var teachers = data.teachers;
+      var students = data.students;
+      console.log(teachers);
+      console.log(students);
 
       var $studentTable = $('#students');
       var $studentHeader = $studentTable.find('tbody tr:first-child');
@@ -141,7 +145,7 @@ $(document).ready(function() {
 
   $('#confirm').on('click', function() {
     var data = {};
-    data.classId = classId;
+    data.classId = parseInt(classId);
     data.className = className;
     data.startDate = new Date(classStartDate).getTime();
 
@@ -176,8 +180,9 @@ $(document).ready(function() {
         togglePanelSize();
 
         classId = className = classStartDate = null;
+        infoMessage('修改課程成功', 1000);
       } else {
-        alert('修改失敗');
+        errorMessage('修改課程失敗, 請稍後再試', 1000);
       }
     });
   });
