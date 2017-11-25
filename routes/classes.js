@@ -72,8 +72,9 @@ router.get('/edit', function(req, res) {
 router.get('/edit/:classId', function(req, res) {
   var classId = req.params.classId;
   var c = new classes.Class();
-  c.id = classId;
+  c.id = parseInt(classId);
 
+  res.setHeader('Content-Type', 'application/json');
   var data = {};
   c.getStudents(function(allStudents) {
     data.students = allStudents;
@@ -115,6 +116,19 @@ router.post('/edit', function(req, res) {
       res.send('failed');
     }
 
+  });
+});
+
+router.post('/delete', function(req, res) {
+  var c = new classes.Class(req.body.name, req.body.startDate);
+  c.id = req.body.id;
+
+  c.remove(function(status) {
+    if (status) {
+      res.send('success');
+    } else {
+      res.send('failed');
+    }
   });
 });
 
