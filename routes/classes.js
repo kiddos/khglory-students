@@ -19,7 +19,7 @@ router.get('/add', function(req, res) {
         res.render('class_add', {
           title: '增加課程',
           login: true,
-          info_form: true,
+          user: req.session.user,
           students: allStudents,
           teachers: allTeachers
         });
@@ -56,7 +56,7 @@ router.get('/edit', function(req, res) {
           res.render('class_edit', {
             title: '修改課程',
             login: true,
-            info_form: true,
+            user: req.session.user,
             classes: allClasses,
             students: allStudents,
             teachers: allTeachers,
