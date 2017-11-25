@@ -43,6 +43,7 @@ describe('Admin Login Page', function() {
     driver.wait(until.elementIsVisible(yesButton), 6000).then(function() {
       yesButton.click();
       driver.wait(until.titleIs('Login'), 6000).then(function() {
+        driver.close();
         done();
       });
     });
