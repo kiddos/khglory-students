@@ -195,8 +195,12 @@ router.get('/edit', function(req, res, next) {
 router.post('/edit', function(req, res, next) {
   if (req.session.login) {
     var student = new students.Student(req.body.id, req.body.name);
-    student.find(function(status) {
-      if (status) {
+    student.find(function(studentData) {
+      if (studentData) {
+        if (studentData.name !== student.name) {
+          student.changeName(student.name);
+        }
+
         student.getBasicInfo(function(basicInfo) {
           var mod = false;
           var keys = Object.keys(basicInfo);
