@@ -4,12 +4,11 @@ node_js:
 
 before_install:
   - npm install
-  - npm run debug
-  - sleep 3
 
 script:
   - export DEBUG=TRUE
   - npm test
   - export DEBUG=FALSE
   - npm run migration
+  - npm test
   - npm run generate
