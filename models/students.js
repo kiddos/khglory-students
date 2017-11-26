@@ -119,14 +119,15 @@ function HardCopy(obj) {
 }
 
 Student.prototype.find = function(callback) {
-  var name = this.name;
+  var id = this.id;
   db.serialize(function() {
-    db.all(
-        'SELECT FROM students WHERE name = ?;', [name], function(err, rows) {
+    db.get(
+        'SELECT * FROM students WHERE id = ?;', [id], function(err, row) {
           if (err) {
-            if (callback) callback([]);
+            console.error(colors.red(err.message));
+            if (callback) callback(null);
           } else {
-            if (callback) callback(rows);
+            if (callback) callback(row);
           }
         });
   });
