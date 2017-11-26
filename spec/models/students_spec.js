@@ -10,6 +10,7 @@ describe('Student Model', function() {
   it('Should be able to create and delete', function(done) {
     var name = faker.name.firstName() + ' ' + faker.name.lastName();
     var student = new students.Student(faker.random.uuid(), name);
+
     student.insert(function(status) {
       expect(status).toBe(true);
       students.queryAll(function(data) {
@@ -56,6 +57,7 @@ describe('Student Model', function() {
   it('Should be able to be deleted', function(done) {
     var name = faker.name.firstName() + ' ' + faker.name.lastName();
     var student = new students.Student(faker.random.uuid(), name);
+
     student.insert(function(status) {
       expect(status).toBe(true);
       student.remove(function(status) {
@@ -68,9 +70,55 @@ describe('Student Model', function() {
     });
   });
 
+  it('Should be found with given id', function(done) {
+    var name = faker.name.firstName() + ' ' + faker.name.lastName();
+    var student = new students.Student(faker.random.uuid(), name);
+
+    student.insert(function(status) {
+      student.find(function(studentData) {
+        var keys = Object.keys(studentData);
+        for (var i = 0; i < keys.length; ++i) {
+          var key = keys[i];
+          expect(student[key]).toBe(studentData[key]);
+        }
+        done();
+      });
+    });
+  });
+
+  it('Should not be found with incorrect id', function(done) {
+    var name = faker.name.firstName() + ' ' + faker.name.lastName();
+    var student = new students.Student(faker.random.uuid(), name);
+
+    student.insert(function(status) {
+      student.id = 'random id';
+      student.find(function(studentData) {
+        expect(studentData).toBe(undefined);
+        done();
+      });
+    });
+  });
+
+  it('Should be able to change name', function(done) {
+    var name = faker.name.firstName() + ' ' + faker.name.lastName();
+    var student = new students.Student(faker.random.uuid(), name);
+
+    student.insert(function(status) {
+      var newName = faker.name.firstName() + ' ' + faker.name.lastName();
+      student.changeName(newName, function(status) {
+        expect(status).toBe(true);
+        student.find(function(studentData) {
+          expect(studentData.name).toBe(newName);
+          done();
+        });
+      });
+    });
+  });
+
   afterEach(function(done) {
     students.clear(function(status) {
       expect(status).toBe(true);
+
       students.queryAll(function(allStudents) {
         expect(allStudents.length).toBe(0);
         done();
@@ -83,6 +131,7 @@ describe('Student BasicInfo', function() {
   it('Should be able to add BasicInfo', function(done) {
     var name = '中文' + faker.name.firstName() + ' ' + faker.name.lastName();
     var student = new students.Student(faker.random.uuid(), name);
+
     student.insert(function(status) {
       expect(status).toBe(true);
 
@@ -131,7 +180,8 @@ describe('Student BasicInfo', function() {
           studentId: student.id,
           gender: faker.random.boolean() ? '男' : '女',
           birthday: new Date().getTime(),
-          socialId: 'A' + faker.random.number({min: 100000000, max: 999999999}),
+          socialId:
+              'A' + faker.random.number({min: 100000000, max: 999999999}),
           marriage: faker.random.boolean() ? '已婚' : '單身',
           address: faker.address.streetAddress('###'),
           phone: faker.phone.phoneNumberFormat(1),
@@ -288,7 +338,7 @@ describe('Student HardCopy', function() {
         });
       });
     });
-  }, 20000);
+  }, 60000);
 
   it('Should be able to update its HardCopy', function(done) {
     var name = '中文' + faker.name.firstName() + ' ' + faker.name.lastName();
@@ -314,43 +364,38 @@ describe('Student HardCopy', function() {
               if (err) throw err;
 
               var newImageUrl = faker.image.image();
-              downloadImage(newImageUrl, tempImagePath, function() {
-                fs.readFile(tempImagePath, function(err, data) {
-                  if (err) throw err;
+              fs.readFile(
+                  './public/images/background.jpg', function(err, data) {
+                    if (err) throw err;
 
-                  var newHardCopy = new students.HardCopy({
-                    studentId: student.id,
-                    hardCopy: data,
-                  });
-                  student.updateHardCopy(newHardCopy, function(status) {
-                    expect(status).toBe(true);
-                    student.getHardCopy(function(hc) {
-                      for (var i = 0; i < Object.keys(hc).length; ++i) {
-                        var key = Object.keys(hc)[i];
-                        if (typeof(hc[key]) === 'object') {
-                          for (var j = 0; j < hc[key].length; ++j) {
-                            expect(hc[key][j]).toBe(newHardCopy[key][j]);
+                    var newHardCopy = new students.HardCopy({
+                      studentId: student.id,
+                      hardCopy: data,
+                    });
+                    student.updateHardCopy(newHardCopy, function(status) {
+                      expect(status).toBe(true);
+                      student.getHardCopy(function(hc) {
+                        for (var i = 0; i < Object.keys(hc).length; ++i) {
+                          var key = Object.keys(hc)[i];
+                          if (typeof(hc[key]) === 'object') {
+                            for (var j = 0; j < hc[key].length; ++j) {
+                              expect(hc[key][j]).toBe(newHardCopy[key][j]);
+                            }
+                          } else {
+                            expect(hc[key]).toBe(newHardCopy[key]);
                           }
-                        } else {
-                          expect(hc[key]).toBe(newHardCopy[key]);
                         }
-                      }
-
-                      fs.unlink(tempImagePath, function(err) {
-                        if (err) throw err;
 
                         done();
                       });
                     });
                   });
-                });
-              });
             });
           });
         });
       });
     });
-  }, 20000);
+  }, 60000);
 
   afterEach(function(done) {
     students.clear(function(status) {
