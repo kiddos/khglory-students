@@ -121,13 +121,28 @@ function HardCopy(obj) {
 Student.prototype.find = function(callback) {
   var id = this.id;
   db.serialize(function() {
-    db.get(
-        'SELECT * FROM students WHERE id = ?;', [id], function(err, row) {
+    db.get('SELECT * FROM students WHERE id = ?;', [id], function(err, row) {
+      if (err) {
+        console.error(colors.red(err.message));
+        if (callback) callback(null);
+      } else {
+        if (callback) callback(row);
+      }
+    });
+  });
+};
+
+Student.prototype.changeName = function(newName, callback) {
+  var id = this.id;
+  db.serialize(function() {
+    db.run(
+        'UPDATE students SET name = ? WHERE id = ?;', [newName, id],
+        function(err) {
           if (err) {
             console.error(colors.red(err.message));
-            if (callback) callback(null);
+            if (callback) callback(false);
           } else {
-            if (callback) callback(row);
+            if (callback) callback(true);
           }
         });
   });
