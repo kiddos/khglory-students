@@ -47,9 +47,10 @@ $(document).ready(function() {
     if ($('input.field-inputs[name="year"]').val() !== '' &&
         $('input.field-inputs[name="month"]').val() !== '' &&
         $('input.field-inputs[name="day"]').val() !== '') {
-      student.birthday = new Date($('input.field-inputs[name="year"]').val() +
-        '-' + $('input.field-inputs[name="month"]').val() +
-        '-' + $('input.field-inputs[name="day"]').val()).toString();
+      var y = $('input.field-inputs[name="year"]').val();
+      var m = $('input.field-inputs[name="month"]').val();
+      var d = $('input.field-inputs[name="day"]').val();
+      student.birthday = new Date(y + '-' + m + '-' + d).getTime();
     }
 
     // check id exist
