@@ -132,6 +132,7 @@ router.get('/add', function(req, res, next) {
 
 router.post('/add', upload.single('hardCopy'), function(req, res, next) {
   var student = new students.Student(req.body.id, req.body.name);
+
   student.insert(function(status) {
     if (status) {
       var basicInfo = new students.BasicInfo({
@@ -223,9 +224,7 @@ router.post('/edit', function(req, res, next) {
         student.getExtraInfo(function(extraInfo) {
           // create new object if not exists
           if (!extraInfo) {
-            extraInfo = new students.ExtraInfo({
-              studentId: student.id
-            });
+            extraInfo = new students.ExtraInfo({studentId: student.id});
           }
 
           var mod = false;
@@ -250,9 +249,7 @@ router.post('/edit', function(req, res, next) {
 
         student.getHardCopy(function(hardCopy) {
           if (!hardCopy) {
-            hardCopy = new students.HardCopy({
-              studentId: student.id
-            });
+            hardCopy = new students.HardCopy({studentId: student.id});
           }
 
           var mod = false;
