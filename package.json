@@ -9,6 +9,7 @@
     "debug": "./node_modules/nodemon/bin/nodemon.js ./bin/www",
     "generate": "./generate.js",
     "clear": "./clear.js",
+    "selenium": "node ./spec/view_test.js",
     "test": "node ./spec/model_test.js"
   },
   "repository": {
