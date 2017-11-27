@@ -395,7 +395,7 @@ describe('Student HardCopy', function() {
         });
       });
     });
-  }, 60000);
+  }, 120000);
 
   afterEach(function(done) {
     students.clear(function(status) {
