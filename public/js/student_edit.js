@@ -1,7 +1,4 @@
 $(document).ready(function() {
-    $('.delete').on('click', function() {
-    });
-
   $.get('/students', function(allStudents) {
     var createRow = function(student) {
       var $row = $('<tr>', {});
