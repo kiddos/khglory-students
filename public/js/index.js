@@ -69,7 +69,7 @@ $(document).ready(function() {
       }
     }
 
-    var svg = d3.select('#' + id).attr('width', 150).attr('height', 150);
+    var svg = d3.select('#' + id).attr('width', 250).attr('height', 150);
     var g = svg.append('g').attr('transform', 'translate(75, 75)');
     var pie = d3.pie().sort(null).value(function(d) {
       return d.count;
