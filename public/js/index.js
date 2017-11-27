@@ -1,11 +1,15 @@
 $(document).ready(function() {
   function animateNumbers($field, startNumber, endNumber, time) {
+    var ticks = 66;
+    var increment = Math.max(parseInt((endNumber - startNumber) / ticks), 1);
     var current = startNumber;
     var next = function() {
+      current += increment;
+      if (current > endNumber) current = endNumber;
       $field.text(current);
-      current += 1;
-      if (current <= endNumber) {
-        setTimeout(next, parseInt(time / (endNumber - startNumber)));
+
+      if (current < endNumber) {
+        setTimeout(next, time / ticks);
       }
     };
     next();
