@@ -154,9 +154,13 @@ router.get('/edit', function(req, res, next) {
 
 router.post('/edit', function(req, res, next) {
   var teacher = new teachers.Teacher(req.body.name);
-  teacher.id = req.body.id;
-  teacher.find(function(status) {
-    if (status) {
+  teacher.id = parseInt(req.body.id);
+  teacher.find(function(teacherData) {
+    if (teacherData) {
+      if (teacherData.name !== teacher.name) {
+        teacher.changeName(teacher.name);
+      }
+
       teacher.getBasicInfo(function(basicInfo) {
         var mod = false;
         var keys = Object.keys(basicInfo);
@@ -188,7 +192,7 @@ router.post('/edit', function(req, res, next) {
 
 router.post('/delete', function(req, res, next) {
   var teacher = new teachers.Teacher(req.body.name);
-  teacher.id = req.body.id;
+  teacher.id = parseInt(req.body.id);
   teacher.find(function(status) {
     if (status) {
       teacher.remove();
