@@ -198,29 +198,32 @@ describe('Student Web Function', function() {
     var editStudentTab = driver.findElement(By.linkText('編輯學生資料'));
     driver.wait(until.elementIsVisible(editStudentTab), 1000).then(function() {
       editStudentTab.click();
-      var editButton = driver.findElement(By.css('.edit:first-of-type'));
-      editButton.click().then(function() {
-        var nameField =
-            driver.findElement(By.css('.edit-field:first-of-type'));
-        driver.wait(until.elementIsEnabled(nameField), 1000).then(function() {
-          nameField.sendKeys(' edited');
+      driver.wait(until.titleIs('學生資料編輯'), 1000).then(function() {
+        var editButton = driver.findElement(By.css('.edit:first-of-type'));
+        editButton.click().then(function() {
+          var nameField =
+              driver.findElement(By.css('.edit-field:first-of-type'));
+          driver.wait(until.elementIsEnabled(nameField), 1000)
+              .then(function() {
+                nameField.sendKeys(' edited');
 
-          var confirmButton =
-              driver.findElement(By.className('confirm'));
-          confirmButton.click();
+                var confirmButton =
+                    driver.findElement(By.className('confirm'));
+                confirmButton.click();
 
-          nameField.getAttribute('value').then(function(name) {
-            driver.navigate().refresh();
+                nameField.getAttribute('value').then(function(name) {
+                  driver.navigate().refresh();
 
-            var refreshedNameField =
-                driver.findElement(By.css('.edit-field:first-of-type'));
+                  var refreshedNameField =
+                      driver.findElement(By.css('.edit-field:first-of-type'));
 
-            refreshedNameField.getAttribute('value').then(
-                function(refreshedName) {
-                  expect(name).toBe(refreshedName);
-                  done();
+                  refreshedNameField.getAttribute('value').then(
+                      function(refreshedName) {
+                        expect(name).toBe(refreshedName);
+                        done();
+                      });
                 });
-          });
+              });
         });
       });
     });
