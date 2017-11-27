@@ -13,42 +13,17 @@ block content
 
     .info-list
       table
-        tr
-          th(class='info-edit')
-          th(class='info-id') ID
-          th(class='info-name') 姓名
-          th(class='info-gender') 性別
-          th(class='info-birthday') 生日
-          th(class='info-address') 住址
-          th(class='info-phone') 電話
-          th(class='info-email') Email
-        for student in students
+        thead
           tr
-            td(class='info-edit')
-              input(type='button', class='edit button', value='編輯')
-              input(type='button', class='confirm button hide', value='確定')
-              input(type='button', class='delete button hide', value='刪除')
-              input(type='button', class='cancel button hide', value='取消')
-            td(class='info-id')= student.id
-            td(class='info-name')
-              input(type='text', class='edit-field',
-                value='#{student.name}' disabled)
-            td(class='info-gender')
-              input(type='text', class='edit-field',
-                value='#{student.gender}' disabled)
-            td(class='info-birthday')
-              input(type='text', class='edit-field',
-                value="#{new Date(student.birthday).toLocaleDateString('tw-zh')}"
-                disabled)
-            td(class='info-address')
-              input(type='text', class='edit-field',
-                value='#{student.address}' disabled)
-            td(class='info-phone')
-              input(type='text', class='edit-field',
-                value='#{student.phone}' disabled)
-            td(class='info-email')
-              input(type='text', class='edit-field',
-                value='#{student.email}' disabled)
+            th(class='info-edit')
+            th(class='info-id hide') ID
+            th(class='info-name') 姓名
+            th(class='info-gender') 性別
+            th(class='info-birthday') 生日
+            th(class='info-address') 住址
+            th(class='info-phone') 電話
+            th(class='info-email') Email
+        tbody(id='student-table')
 
     .info-button-panel
       input(type='button', class='button', id='main-menu', value='回選單')
