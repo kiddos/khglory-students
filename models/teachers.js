@@ -84,13 +84,33 @@ Teacher.prototype.find = function(callback) {
   } else {
     var id = this.id;
     db.serialize(function() {
-      db.all(
-          'SELECT * FROM teachers WHERE id = ?;', [id], function(err, rows) {
+      db.get('SELECT * FROM teachers WHERE id = ?;', [id], function(err, row) {
+        if (err) {
+          console.log(colors.red(err.message));
+          if (callback) callback([]);
+        } else {
+          if (callback) callback(row);
+        }
+      });
+    });
+  }
+};
+
+Teacher.prototype.changeName = function(newName, callback) {
+  if (!this.id) {
+    if (callback) callback(false);
+  } else {
+    this.name = newName;
+    var id = this.id;
+    db.serialize(function() {
+      db.get(
+          'UPDATE teachers SET name = ? WHERE id = ?;', [newName, id],
+          function(err) {
             if (err) {
               console.log(colors.red(err.message));
-              if (callback) callback([]);
+              if (callback) callback(false);
             } else {
-              if (callback) callback(rows);
+              if (callback) callback(true);
             }
           });
     });
