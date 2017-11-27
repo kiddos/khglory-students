@@ -338,7 +338,7 @@ describe('Student HardCopy', function() {
         });
       });
     });
-  }, 60000);
+  }, 120000);
 
   it('Should be able to update its HardCopy', function(done) {
     var name = '中文' + faker.name.firstName() + ' ' + faker.name.lastName();
