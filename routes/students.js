@@ -179,13 +179,10 @@ router.post('/add', upload.single('hardCopy'), function(req, res, next) {
 
 router.get('/edit', function(req, res, next) {
   if (req.session.login) {
-    students.queryAll(function(allStudents) {
-      res.render('student_edit', {
-        title: '學生資料編輯',
-        students: allStudents,
-        login: true,
-        user: req.session.user,
-      });
+    res.render('student_edit', {
+      title: '學生資料編輯',
+      login: true,
+      user: req.session.user,
     });
   } else {
     res.redirect('/login');
