@@ -1,13 +1,63 @@
 $(document).ready(function() {
+    $('.delete').on('click', function() {
+    });
+
   $.get('/students', function(allStudents) {
     var createRow = function(student) {
       var $row = $('<tr>', {});
 
       var $edit = $('<td>', {class: 'info-edit'});
-      $edit.append($('<input>',
-        {type: 'button', class: 'confirm button', value: '寫入'}));
-      $edit.append($('<input>',
-        {type: 'button', class: 'delete button', value: '刪除'}));
+      var $confirm = $('<input>',
+        {type: 'button', class: 'confirm button', value: '寫入'});
+      $confirm.on('click', function() {
+        var $row = $(this).closest('tr');
+        var student = {};
+        $row.find('td').each(function() {
+          var key = $(this).attr('class').substr(5);
+          if (key === 'id' || key === 'edit') return;
+          var val = $(this).find('input.edit-field').val();
+          student[key] = val;
+        });
+        student.id = $row.find('td.info-id').text();
+
+        $.ajax({
+          url: '/students/edit',
+          type: 'POST',
+          data: student,
+        }).done(function(data) {
+          if (data !== 'success') {
+            errorMessage('編輯資料失敗, 請稍後再試', 1000);
+          } else {
+            infoMessage('編輯成功', 1000);
+          }
+        });
+      });
+      $edit.append($confirm);
+
+      var $delete = $('<input>',
+        {type: 'button', class: 'delete button', value: '刪除'});
+      $delete.on('click', function() {
+        var $row = $(this).closest('tr');
+        popupMessage('刪除', '您確定要刪除嗎？', function() {
+          var student = {};
+          student.name = $row.find('td.info-name input.edit-field').val();
+          student.id = $row.find('td.info-id').text();
+
+          $.ajax({
+            url: '/students/delete',
+            type: 'POST',
+            data: student
+          }).done(function(data) {
+            if (data !== 'success') {
+              errorMessage('刪除資料失敗, 請稍後再試', 1000);
+            } else {
+              infoMessage('刪除成功', 1000);
+              $row.fadeOut();
+            }
+          });
+        });
+      });
+      $edit.append($delete);
       $row.append($edit);
 
       var $id = $('<td>', {class: 'info-id hide'});
@@ -34,7 +84,7 @@ $(document).ready(function() {
       $birthday.append($('<input>', {
         type: 'text',
         class: 'edit-field',
-        value: student.birthday ? new Date(student.birthday).toString() : ''
+        value: student.birthday ? new Date(student.birthday).toLocaleDateString('tw-zh') : ''
       }));
       $row.append($birthday);
 
@@ -101,52 +151,6 @@ $(document).ready(function() {
         }
         index -= loadCount;
       }
-    });
-
-    $('.confirm').on('click', function() {
-      var $row = $(this).closest('tr');
-      var student = {};
-      $row.find('td').each(function() {
-        var key = $(this).attr('class').substr(5);
-        if (key === 'id' || key === 'edit') return;
-        var val = $(this).find('input.edit-field').val();
-        student[key] = val;
-      });
-      student.id = $row.find('td.info-id').text();
-
-      $.ajax({
-        url: '/students/edit',
-        type: 'POST',
-        data: student,
-      }).done(function(data) {
-        if (data !== 'success') {
-          errorMessage('編輯資料失敗, 請稍後再試', 1000);
-        } else {
-          infoMessage('編輯成功', 1000);
-        }
-      });
-    });
-
-    $('.delete').on('click', function() {
-      var $row = $(this).closest('tr');
-      popupMessage('刪除', '您確定要刪除嗎？', function() {
-        var student = {};
-        student.name = $row.find('td.info-name input.edit-field').val();
-        student.id = $row.find('td.info-id').text();
-
-        $.ajax({
-          url: '/students/delete',
-          type: 'POST',
-          data: student
-        }).done(function(data) {
-          if (data !== 'success') {
-            errorMessage('刪除資料失敗, 請稍後再試', 1000);
-          } else {
-            infoMessage('刪除成功', 1000);
-            $row.fadeOut();
-          }
-        });
-      });
     });
   });
 });
