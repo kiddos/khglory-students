@@ -1,121 +1,242 @@
+var faker = require('faker');
+
 var teachers = require('../../models/teachers');
 
 teachers.migrate();
 
 describe('Teacher Model', function() {
-  it('Shoudl be able to create', function(done) {
-    var teacher = new teachers.Teacher('老吳');
+  it('Should be able to create', function(done) {
+    var name = '中文: ' + faker.name.firstName() + ' ' + faker.name.lastName();
+    var teacher = new teachers.Teacher(name);
     teacher.insert(function(status) {
       expect(status).toBe(true);
       expect(teacher.id).not.toBe(undefined);
-      teachers.clear(function() {
-        done();
-      });
+      done();
     });
   });
 
   it('Should be able to create mutiple', function(done) {
-    var max = 20;
+    var maxCount = 300;
     var index = 0;
+    var teacherContainer = [];
     var insert = function() {
-      var teacher = new teachers.Teacher('teacher' + (index + 1));
-      if (index < max) {
+      var name =
+          '中文: ' + faker.name.firstName() + ' ' + faker.name.lastName();
+      var teacher = new teachers.Teacher(name);
+      teacherContainer.push(teacher);
+
+      if (index < maxCount) {
         index += 1;
         teacher.insert(insert);
       } else {
-        teachers.queryAll(function(data) {
-          expect(data.length).toBe(max);
+        teachers.queryAll(function(allTeachers) {
+          expect(allTeachers.length).toBe(maxCount);
 
           var found = 0;
-          for (var i = 0; i < max; ++i) {
-            for (var j = 0; j < data.length; ++j) {
-              if (data[j].name === ('teacher' + (i + 1))) found += 1;
+          for (var i = 0; i < maxCount; ++i) {
+            for (var j = 0; j < teacherContainer.length; ++j) {
+              if (allTeachers[i].name === teacherContainer[j].name) {
+                found += 1;
+                break;
+              }
             }
           }
-          expect(found).toBe(max);
-          teachers.clear(function() {
-            done();
-          });
+          expect(found).toBe(maxCount);
+          done();
         });
       }
     };
     insert();
   }, 10000);
-});
 
-describe('Teacher BasicInfo Model', function() {
-  it('Should be able to add BasicInfo', function(done) {
-    var teacher = new teachers.Teacher('王老先生');
+  it('Should be able to be found with correct id', function(done) {
+    var name = '中文: ' + faker.name.firstName() + ' ' + faker.name.lastName();
+    var teacher = new teachers.Teacher(name);
     teacher.insert(function(status) {
       expect(status).toBe(true);
-      expect(teacher.id).not.toBe(undefined);
 
-      var basicInfo = new teachers.BasicInfo({
-        teacherId: teacher.id,
-        gender: 'male',
-        birthday: new Date().toString(),
-        socialId: 'A123456789',
-        address: '中山一路',
-        phone: '0912345678',
-        email: 'a123456789@gmail.com',
+      teacher.find(function(teacherData) {
+        expect(teacherData.id).toBe(teacher.id);
+        expect(teacherData.name).toBe(teacher.name);
+        done();
       });
-      teacher.addBasicInfo(basicInfo, function(status) {
+    });
+  });
+
+  it('Should be able to be removed', function(done) {
+    var name = '中文: ' + faker.name.firstName() + ' ' + faker.name.lastName();
+    var teacher = new teachers.Teacher(name);
+    teacher.insert(function(status) {
+      expect(status).toBe(true);
+
+      teacher.remove(function(status) {
         expect(status).toBe(true);
-        teacher.getBasicInfo(function(info) {
-          expect(Object.keys(info).length).not.toBe({});
-          for (var i = 0; i < Object.keys(info).length; ++i) {
-            var key = Object.keys(info)[i];
-            expect(info[key]).toBe(
-                basicInfo[key] === undefined ? null : basicInfo[key]);
-          }
-          teachers.clear(function() {
-            done();
-          });
+        teachers.queryAll(function(allTeachers) {
+          expect(allTeachers.length).toBe(0);
+          done();
         });
       });
     });
   });
 
-  it('Should be able to update its BasicInfo', function(done) {
-    var teacher = new teachers.Teacher('王老太太');
+  it('Should be able to change name', function(done) {
+    var name = '中文: ' + faker.name.firstName() + ' ' + faker.name.lastName();
+    var teacher = new teachers.Teacher(name);
     teacher.insert(function(status) {
       expect(status).toBe(true);
 
-      var basicInfo = new teachers.BasicInfo({
-        teacherId: teacher.id,
-        gender: 'female',
-        birthday: new Date().toString(),
-        socialId: 'A123456789',
-        phone: '0912345678',
-        email: 'a123456789@gmail.com',
-      });
-      teacher.addBasicInfo(basicInfo, function(status) {
+      var newName =
+          '中文: ' + faker.name.firstName() + ' ' + faker.name.lastName();
+      teacher.changeName(newName, function(status) {
         expect(status).toBe(true);
-
-        var newBasicInfo = new teachers.BasicInfo({
-          teacherId: teacher.id,
-          birthday: new Date().toString(),
-          socialId: 'A987654321',
-          marriage: 'married',
-          address: '中山二路',
-          phone: '0987654321',
-          email: 'a987654321@gmail.com',
+        expect(teacher.name).toBe(newName);
+        teacher.find(function(teacherData) {
+          expect(teacherData.name).toBe(newName);
+          done();
         });
-        teacher.updateBasicInfo(newBasicInfo, function(status) {
-          expect(status).toBe(true);
-          teacher.getBasicInfo(function(info) {
-            expect(Object.keys(info).length).not.toBe(0);
-            for (var i = 0; i < Object.keys(info).length; ++i) {
-              var key = Object.keys(info)[i];
-              expect(info[key]).toBe(
-                  newBasicInfo[key] === undefined ? null :
-                                                    newBasicInfo[key]);
-            }
-            teachers.clear(function() {
+      });
+    });
+  });
+
+  afterEach(function(done) {
+    teachers.clear(function() {
+      teachers.queryAll(function(allTeachers) {
+        expect(allTeachers.length).toBe(0);
+        done();
+      });
+    });
+  });
+});
+
+describe('Teacher BasicInfo Model', function() {
+  beforeEach(function(done) {
+    var maxCount = 100;
+    var index = 0;
+    var insert = function() {
+      var name =
+          '中文: ' + faker.name.firstName() + ' ' + faker.name.lastName();
+      var teacher = new teachers.Teacher(name);
+      if (index < maxCount) {
+        index += 1;
+        teacher.insert(insert);
+      } else {
+        teachers.queryAll(function(allTeachers) {
+          expect(allTeachers.length).toBe(maxCount);
+          done();
+        });
+      }
+    };
+    insert();
+  });
+
+  it('Should be able to add BasicInfo', function(done) {
+    teachers.queryAll(function(allTeachers) {
+      var index = 0;
+      var basicInfos = [];
+      var teacherList = [];
+      var addBasicInfo = function() {
+        if (index < allTeachers.length) {
+          index += 1;
+
+          var basicInfo = new teachers.BasicInfo({
+            teacherId: allTeachers[index].id,
+            gender: faker.random.boolean() ? '男' : '女',
+            birthday: faker.date.between('1900-01-01', '2016-12-31').getTime(),
+            socialId:
+                'Z' + faker.random.number({min: 100000000, max: 999999999}),
+            address: faker.address.streetAddress('###'),
+            phone: faker.phone.phoneNumberFormat(1),
+            email: faker.internet.email(),
+          });
+          basicInfos.push(basicInfo);
+
+          var teacher = new teachers.Teacher(allTeachers[index].name);
+          teacher.id = allTeachers[index].id;
+          teacher.addBasicInfo(basicInfo, function(status) {
+            expect(status).toBe(true);
+            teacher.getBasicInfo(function(basicInfoData) {
+              var keys = Object.keys(basicInfoData);
+              for (var i = 0; i < keys.length; ++i) {
+                var key = keys[i];
+                if (basicInfoData[key]) {
+                  expect(basicInfoData[key]).toBe(basicInfo[key]);
+                }
+              }
               done();
             });
           });
-        });
+
+          teacherList.push(teacher);
+        }
+      };
+      addBasicInfo();
+    });
+  }, 10000);
+
+  it('Should be able to update its BasicInfo', function(done) {
+    teachers.queryAll(function(allTeachers) {
+      var index = 0;
+      var teacherList = [];
+      var addBasicInfo = function() {
+        if (index < allTeachers.length) {
+          index += 1;
+
+          var basicInfo = new teachers.BasicInfo({
+            teacherId: allTeachers[index].id,
+            gender: faker.random.boolean() ? '男' : '女',
+            birthday: faker.date.between('1900-01-01', '2016-12-31').getTime(),
+            socialId:
+                'Z' + faker.random.number({min: 100000000, max: 999999999}),
+            address: faker.address.streetAddress('###'),
+            phone: faker.phone.phoneNumberFormat(1),
+            email: faker.internet.email(),
+          });
+
+          var teacher = new teachers.Teacher(allTeachers[index].name);
+          teacher.id = allTeachers[index].id;
+          teacher.addBasicInfo(basicInfo, function(status) {
+            expect(status).toBe(true);
+
+            var newBasicInfo = new teachers.BasicInfo({
+              teacherId: allTeachers[index].id,
+              gender: faker.random.boolean() ? '男' : '女',
+              birthday:
+                  faker.date.between('1900-01-01', '2016-12-31').getTime(),
+              socialId:
+                  'Z' + faker.random.number({min: 100000000, max: 999999999}),
+              religion: faker.random.boolean() ? '基督教' : '佛教',
+              address: faker.address.streetAddress('###'),
+              phone: faker.phone.phoneNumberFormat(1),
+              email: faker.internet.email(),
+            });
+
+            teacher.updateBasicInfo(newBasicInfo, function(status) {
+              expect(status).toBe(true);
+              teacher.getBasicInfo(function(basicInfoData) {
+                var keys = Object.keys(basicInfoData);
+                for (var i = 0; i < keys.length; ++i) {
+                  var key = keys[i];
+                  if (basicInfoData[key]) {
+                    expect(basicInfoData[key]).toBe(newBasicInfo[key]);
+                  }
+                }
+                done();
+              });
+            });
+          });
+
+          teacherList.push(teacher);
+        }
+      };
+      addBasicInfo();
+    });
+  }, 10000);
+
+  afterEach(function(done) {
+    teachers.clear(function() {
+      teachers.queryAll(function(allTeacher) {
+        expect(allTeacher.length).toBe(0);
+        done();
       });
     });
   });
