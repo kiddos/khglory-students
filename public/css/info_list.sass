@@ -25,20 +25,47 @@ html
 
         .info-list
           height: calc(100% - 60px - #{$info-button-panel-height})
-          overflow: scroll
           font-size: 20px
 
           table
             margin: auto
+            height: 100%
+            max-height: 100%
+            display: block
 
-            td
-              text-align: center
+            thead
+              position: relative
+              top: 0
+              display: block
 
-              .edit-field
-                width: calc(100% - 4px)
+              tr
+                height: 30px
+                width: 100%
+                display: table
+                table-layout: fixed
+
+            tbody
+              overflow: scroll
+              height: calc(100% - 30px)
+              display: block
+
+              tr
+                width: 100%
+                display: table
+                table-layout: fixed
+
+                input
+                  font-size: 16px
+
+                td
+                  text-align: center
+
+                  .edit-field
+                    width: calc(100% - 4px)
 
             .info-edit
-              min-width: 130px
+              width: 100px
+              min-width: 100px
 
               a.download
                 margin: 0 5px
@@ -56,20 +83,22 @@ html
               max-width: 200px
 
             .info-gender
+              width: 100px
               max-width: 100px
 
             .info-birthday
-              min-width: 200px
-              max-width: 300px
-
-            .info-address
-              max-width: 200px
-
-            .info-phone
+              width: 100px
               max-width: 100px
 
+            .info-address
+              max-width: 300px
+
+            .info-phone
+              width: 150px
+              max-width: 150px
+
             .info-email
-              max-width: 200px
+              max-width: 300px
 
         .info-list.half
           height: calc(50% - 15px - #{$info-button-panel-height})
