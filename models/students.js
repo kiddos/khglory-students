@@ -1,5 +1,8 @@
 var db = require('./db_helper');
 var colors = require('colors');
+var faker = require('faker');
+var path = require('path');
+var fs = require('fs');
 
 function migrate() {
   db.serialize(function() {
@@ -351,10 +354,65 @@ Student.prototype.updateHardCopy = function(hardCopy, callback) {
   });
 };
 
+function generateStudents(num, callback) {
+  db.serialize(function() {
+    db.beginTransaction(function(err, transaction) {
+      var fileData = fs.readFileSync(
+          path.join(
+              'node_modules', 'node-gallery', 'examples', 'resources',
+              'photos', 'Ireland', 'East Coast', 'MG_0367.jpg'));
+
+      for (var i = 0; i < num; ++i) {
+        var id = faker.random.uuid();
+        var name = faker.name.firstName() + ' ' + faker.name.lastName();
+        transaction.run('INSERT INTO students VALUES(?, ?);', [id, name]);
+
+        transaction.run(
+            'INSERT INTO studentInfo ' +
+                'VALUES(?, ?, ?, ?, ?, ?, ?, ?)',
+            [
+
+              id,
+              faker.random.boolean() ? '男' : '女',
+              faker.date.between('1900-01-01', '2016-12-31'),
+              'Z' + faker.random.number({min: 100000000, max: 999999999}),
+              faker.random.boolean() ? '已婚' : '單生',
+              faker.address.streetAddress('###'),
+              faker.phone.phoneNumberFormat(1),
+              faker.internet.email(),
+            ]);
+        transaction.run(
+            'INSERT INTO studentExtraInfo VALUES(?, ?, ?, ?, ?, ?, ?);', [
+              id,
+              faker.name.jobTitle(),
+              faker.random.boolean() ? '高中以下' : '大學畢業',
+              faker.random.boolean() ? '基督教' : '天主教',
+              faker.random.boolean() ? '無' : '感冒',
+              faker.random.boolean() ? '母' : '父',
+              faker.phone.phoneNumberFormat(1),
+            ]);
+
+        transaction.run(
+            'INSERT INTO studentHardCopy VALUES(?, ?);', [id, fileData]);
+      }
+
+      transaction.commit(function(err) {
+        if (err) {
+          console.error(colors.red(err.message));
+          if (callback) callback(false);
+        } else {
+          if (callback) callback(true);
+        }
+      });
+    });
+  });
+}
+
 module.exports = {
   migrate: migrate,
   queryAll: queryAll,
   clear: clear,
+  generateStudents: generateStudents,
   Student: Student,
   BasicInfo: BasicInfo,
   ExtraInfo: ExtraInfo,
