@@ -1,5 +1,8 @@
 var db = require('./db_helper');
 var colors = require('colors');
+var faker = require('faker');
+var path = require('path');
+var fs = require('fs');
 
 function migrate() {
   db.serialize(function() {
@@ -252,10 +255,83 @@ Teacher.prototype.updateBasicInfo = function(basicInfo, callback) {
   }
 };
 
+function generateTeachers(num, callback) {
+  db.serialize(function() {
+    db.beginTransaction(function(err, transaction) {
+      if (err) {
+        console.error(colors.red(err.message));
+        if (callback) callback(false);
+      } else {
+        var fileData = fs.readFileSync(
+            path.join(
+                'node_modules', 'node-gallery', 'examples', 'resources',
+                'photos', 'Ireland', 'East Coast', 'MG_0367.jpg'));
+
+        var names = [];
+        for (var i = 0; i < num; ++i) {
+          var name = faker.name.firstName() + ' ' + faker.name.lastName();
+          names.push(name);
+          transaction.run('INSERT INTO teachers(name) VALUES(?)', [name]);
+        }
+
+        transaction.commit(function(err) {
+          if (err) {
+            console.error(colors.red(err.message));
+            if (callback) callback(false);
+          } else {
+            var query = 'SELECT id FROM teachers WHERE name IN (';
+            for (var i = 0; i < names.length; ++i) {
+              query += '"' + names[i] + '"';
+              if (i !== names.length - 1) query += ', ';
+            }
+            query += ');';
+            db.all(query, function(err, teacherIds) {
+              if (err) {
+                console.error(colors.red(err.message));
+                if (callback) callback(false);
+              } else {
+                db.beginTransaction(function(err, transaction) {
+                  for (var i = 0; i < teacherIds.length; ++i) {
+                    transaction.run(
+                        'INSERT INTO teacherInfo ' +
+                            'VALUES(?, ?, ?, ?, ?, ?, ?, ?)',
+                        [
+
+                          teacherIds[i].id,
+                          faker.random.boolean() ? '男' : '女',
+                          faker.date.between('1900-01-01', '2016-12-31'),
+                          'Z' +
+                              faker.random.number(
+                                  {min: 100000000, max: 999999999}),
+                          faker.random.boolean() ? '已婚' : '單生',
+                          faker.address.streetAddress('###'),
+                          faker.phone.phoneNumberFormat(1),
+                          faker.internet.email(),
+                        ]);
+                  }
+                  transaction.commit(function(err) {
+                    if (err) {
+                      console.error(colors.red(err.message));
+                      if (callback) callback(false);
+                    } else {
+                      if (callback) callback(true);
+                    }
+                  });
+                });
+              }
+            });
+          }
+        });
+      }
+    });
+  });
+}
+
 module.exports = {
   migrate: migrate,
   queryAll: queryAll,
   clear: clear,
+  generateTeachers: generateTeachers,
   Teacher: Teacher,
   BasicInfo: BasicInfo,
 };
