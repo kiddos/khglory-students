@@ -125,7 +125,7 @@ describe('Student Model', function() {
         done();
       });
     });
-  }, 10000);
+  }, 100000);
 
   afterEach(function(done) {
     students.clear(function(status) {
