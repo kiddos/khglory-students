@@ -13,52 +13,31 @@ block content
 
     .info-list
       table
-        tr
-          th(class='info-edit')
-          th(class='info-id') 課程 ID
-          th(class='info-name') 課程名稱
-          th(class='info-startDate') 課程開始時間
-        for c in classes
+        thead
           tr
-            td(class='info-edit')
-              input(type='button', class='edit button' value='編輯')
-              input(type='button', class='delete button hide' value='刪除')
-              input(type='button', class='confirm button hide' value='確定')
-              input(type='button', class='cancel button hide' value='取消')
-            td(class='info-id')= c.id
-            td(class='info-name')
-              input(type='text', class='info-name',
-                value='#{c.name}' disabled)
-            td(class='info-startDate')
-              input(type='text', class='info-startDate',
-                value="#{new Date(c.startDate).toLocaleDateString('tw-zh')}"
-                disabled)
+            th(class='info-edit')
+            th(class='info-id hide') 課程 ID
+            th(class='info-name') 課程名稱
+            th(class='info-startDate') 課程開始時間
+        tbody(id='class-table')
 
     .info-list.half.hide
       table(id='students')
-        tr
-          th(class='info-edit') 有註冊
-          th(class='info-id') 學生 ID
-          th(class='info-name') 學生姓名
-        for student in students
+        thead
           tr
-            td(class='info-edit')
-              input(type='checkbox')
-            td(class='info-id')= student.id
-            td(class='info-name')= student.name
+            th(class='info-edit') 有註冊
+            th(class='info-id hide') 學生 ID
+            th(class='info-name') 學生姓名
+        tbody(id='student-table')
 
     .info-list.half.hide
       table(id='teachers')
-        tr
-          th(class='info-edit') 上課
-          th(class='info-id') 老師 ID
-          th(class='info-name') 老師姓名
-        for teacher in teachers
+        thead
           tr
-            td(class='info-edit')
-              input(type='checkbox')
-            td(class='info-id')= teacher.id
-            td(class='info-name')= teacher.name
+            th(class='info-edit') 上課
+            th(class='info-id hide') 老師 ID
+            th(class='info-name') 老師姓名
+        tbody(id='teacher-table')
 
     .info-button-panel
       input(type='button', class='button hide', id='previous',
