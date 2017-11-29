@@ -292,12 +292,6 @@ describe('Student ExtraInfo', function() {
   });
 });
 
-function downloadImage(url, filename, callback) {
-  request(url).pipe(fs.createWriteStream(filename)).on('close', function() {
-    if (callback) callback();
-  });
-}
-
 describe('Student HardCopy', function() {
   it('Should be able to add HardCopy', function(done) {
     var name = '中文' + faker.name.firstName() + ' ' + faker.name.lastName();
