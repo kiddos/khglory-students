@@ -1,5 +1,6 @@
 var faker = require('faker');
 var request = require('request');
+var path = require('path');
 var fs = require('fs');
 
 var students = require('../../models/students');
@@ -306,34 +307,30 @@ describe('Student HardCopy', function() {
       expect(status).toBe(true);
 
       var imageUrl = faker.image.image();
-      var tempImagePath = 'temp.jpg';
-      downloadImage(imageUrl, tempImagePath, function() {
-        fs.readFile(tempImagePath, function(err, data) {
-          if (err) throw err;
+      var tempImagePath = path.join('node_modules', 'node-gallery',
+        'examples', 'resources', 'photos', 'Doo Lough.jpg');
+      fs.readFile(tempImagePath, function(err, data) {
+        if (err) throw err;
 
-          var hardCopy = new students.HardCopy({
-            studentId: student.id,
-            hardCopy: data,
-          });
-          student.addHardCopy(hardCopy, function(status) {
-            expect(status).toBe(true);
-            student.getHardCopy(function(hc) {
-              for (var i = 0; i < Object.keys(hc).length; ++i) {
-                var key = Object.keys(hc)[i];
-                if (typeof(hc[key]) === 'object') {
-                  for (var j = 0; j < hc[key].length; ++j) {
-                    expect(hc[key][j]).toBe(hardCopy[key][j]);
-                  }
-                } else {
-                  expect(hc[key]).toBe(hardCopy[key]);
+        var hardCopy = new students.HardCopy({
+          studentId: student.id,
+          hardCopy: data,
+        });
+        student.addHardCopy(hardCopy, function(status) {
+          expect(status).toBe(true);
+          student.getHardCopy(function(hc) {
+            for (var i = 0; i < Object.keys(hc).length; ++i) {
+              var key = Object.keys(hc)[i];
+              if (typeof(hc[key]) === 'object') {
+                for (var j = 0; j < hc[key].length; ++j) {
+                  expect(hc[key][j]).toBe(hardCopy[key][j]);
                 }
+              } else {
+                expect(hc[key]).toBe(hardCopy[key]);
               }
+            }
 
-              fs.unlink(tempImagePath, function(err) {
-                if (err) throw err;
-                done();
-              });
-            });
+            done();
           });
         });
       });
@@ -347,49 +344,43 @@ describe('Student HardCopy', function() {
       expect(status).toBe(true);
 
       var imageUrl = faker.image.image();
-      var tempImagePath = 'temp.jpg';
-      downloadImage(imageUrl, tempImagePath, function() {
-        fs.readFile(tempImagePath, function(err, data) {
-          if (err) throw err;
+      var tempImagePath = path.join('node_modules', 'node-gallery',
+        'examples', 'resources', 'photos', 'Doo Lough.jpg');
+      fs.readFile(tempImagePath, function(err, data) {
+        if (err) throw err;
 
-          var hardCopy = new students.HardCopy({
-            studentId: student.id,
-            hardCopy: data,
-          });
+        var hardCopy = new students.HardCopy({
+          studentId: student.id,
+          hardCopy: data,
+        });
 
-          student.addHardCopy(hardCopy, function(status) {
-            expect(status).toBe(true);
+        student.addHardCopy(hardCopy, function(status) {
+          expect(status).toBe(true);
 
-            fs.unlink(tempImagePath, function(err) {
-              if (err) throw err;
+          var newImageUrl = faker.image.image();
+          fs.readFile('./public/images/background.jpg', function(err, data) {
+            if (err) throw err;
 
-              var newImageUrl = faker.image.image();
-              fs.readFile(
-                  './public/images/background.jpg', function(err, data) {
-                    if (err) throw err;
+            var newHardCopy = new students.HardCopy({
+              studentId: student.id,
+              hardCopy: data,
+            });
+            student.updateHardCopy(newHardCopy, function(status) {
+              expect(status).toBe(true);
+              student.getHardCopy(function(hc) {
+                for (var i = 0; i < Object.keys(hc).length; ++i) {
+                  var key = Object.keys(hc)[i];
+                  if (typeof(hc[key]) === 'object') {
+                    for (var j = 0; j < hc[key].length; ++j) {
+                      expect(hc[key][j]).toBe(newHardCopy[key][j]);
+                    }
+                  } else {
+                    expect(hc[key]).toBe(newHardCopy[key]);
+                  }
+                }
 
-                    var newHardCopy = new students.HardCopy({
-                      studentId: student.id,
-                      hardCopy: data,
-                    });
-                    student.updateHardCopy(newHardCopy, function(status) {
-                      expect(status).toBe(true);
-                      student.getHardCopy(function(hc) {
-                        for (var i = 0; i < Object.keys(hc).length; ++i) {
-                          var key = Object.keys(hc)[i];
-                          if (typeof(hc[key]) === 'object') {
-                            for (var j = 0; j < hc[key].length; ++j) {
-                              expect(hc[key][j]).toBe(newHardCopy[key][j]);
-                            }
-                          } else {
-                            expect(hc[key]).toBe(newHardCopy[key]);
-                          }
-                        }
-
-                        done();
-                      });
-                    });
-                  });
+                done();
+              });
             });
           });
         });
