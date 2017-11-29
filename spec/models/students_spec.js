@@ -116,6 +116,17 @@ describe('Student Model', function() {
     });
   });
 
+  it('Should be able generate lots of students', function(done) {
+    var num = 3000;
+    students.generateStudents(num, function(status) {
+      expect(status).toBe(true);
+      students.queryAll(function(allStudents) {
+        expect(allStudents.length).toBe(num);
+        done();
+      });
+    });
+  }, 10000);
+
   afterEach(function(done) {
     students.clear(function(status) {
       expect(status).toBe(true);
