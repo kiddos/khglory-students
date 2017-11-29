@@ -98,6 +98,17 @@ describe('Teacher Model', function() {
     });
   });
 
+  it('Should be able to generate lots of teachers', function(done) {
+    var num = 100;
+    teachers.generateTeachers(num, function(status) {
+      expect(status).toBe(true);
+      teachers.queryAll(function(allTeachers) {
+        expect(allTeachers.length).toBe(num);
+        done();
+      });
+    });
+  }, 10000);
+
   afterEach(function(done) {
     teachers.clear(function() {
       teachers.queryAll(function(allTeachers) {
