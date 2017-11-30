@@ -200,6 +200,78 @@ describe('Teacher BasicInfo Model', function() {
     });
   }, 10000);
 
+  it('Should be able to add BasicInfo with partial data', function(done) {
+    teachers.queryAll(function(allTeachers) {
+      var index = 0;
+      var basicInfos = [];
+      var teacherList = [];
+      var addBasicInfo = function() {
+        if (index < allTeachers.length) {
+          index += 1;
+
+          var basicInfo = new teachers.BasicInfo({
+            teacherId: allTeachers[index].id,
+            gender: faker.random.boolean() ? '男' : '女',
+            birthday: faker.date.between('1900-01-01', '2016-12-31').getTime(),
+            socialId:
+                'Z' + faker.random.number({min: 100000000, max: 999999999}),
+            address: faker.address.streetAddress('###'),
+            phone: faker.phone.phoneNumberFormat(1),
+            email: faker.internet.email(),
+          });
+          var keys = Object.keys(basicInfo);
+          for (var i = 0; i < keys.length; ++i) {
+            if (faker.random.boolean()) {
+              var key = keys[i];
+              basicInfo[key] = null;
+            }
+          }
+          basicInfos.push(basicInfo);
+
+          var teacher = new teachers.Teacher(allTeachers[index].name);
+          teacher.id = allTeachers[index].id;
+          teacher.addBasicInfo(basicInfo, function(status) {
+            expect(status).toBe(true);
+            teacher.getBasicInfo(function(basicInfoData) {
+              var keys = Object.keys(basicInfoData);
+              for (var i = 0; i < keys.length; ++i) {
+                var key = keys[i];
+                if (basicInfoData[key]) {
+                  expect(basicInfoData[key]).toBe(basicInfo[key]);
+                }
+              }
+              done();
+            });
+          });
+
+          teacherList.push(teacher);
+        }
+      };
+      addBasicInfo();
+    });
+  }, 10000);
+
+  it('Should not be able to add BasicInfo with incorrect id', function(done) {
+    teachers.queryAll(function(allTeachers) {
+      var teacher = new teachers.Teacher(allTeachers[0].name);
+      teacher.id = allTeachers[0].id;
+
+      var basicInfo = new teachers.BasicInfo({
+        teacherId: faker.random.uuid(),
+        gender: faker.random.boolean() ? '男' : '女',
+        birthday: faker.date.between('1900-01-01', '2016-12-31').getTime(),
+        socialId: 'Z' + faker.random.number({min: 100000000, max: 999999999}),
+        address: faker.address.streetAddress('###'),
+        phone: faker.phone.phoneNumberFormat(1),
+        email: faker.internet.email(),
+      });
+      teacher.addBasicInfo(basicInfo, function(status) {
+        expect(status).toBe(false);
+        done();
+      });
+    });
+  });
+
   it('Should be able to update its BasicInfo', function(done) {
     teachers.queryAll(function(allTeachers) {
       var index = 0;
@@ -258,6 +330,44 @@ describe('Teacher BasicInfo Model', function() {
       addBasicInfo();
     });
   }, 10000);
+
+  it('Should not be able to update its basicInfo with incorrect id',
+     function(done) {
+       teachers.queryAll(function(allTeachers) {
+         var teacher = new teachers.Teacher(allTeachers[0].name);
+         teacher.id = allTeachers[0].id;
+
+         var basicInfo = new teachers.BasicInfo({
+           teacherId: teacher.id,
+           gender: faker.random.boolean() ? '男' : '女',
+           birthday: faker.date.between('1900-01-01', '2016-12-31').getTime(),
+           socialId:
+               'Z' + faker.random.number({min: 100000000, max: 999999999}),
+           address: faker.address.streetAddress('###'),
+           phone: faker.phone.phoneNumberFormat(1),
+           email: faker.internet.email(),
+         });
+         teacher.addBasicInfo(basicInfo, function(status) {
+           expect(status).toBe(true);
+
+           var newBasicInfo = new teachers.BasicInfo({
+             teacherId: faker.random.uuid(),
+             gender: faker.random.boolean() ? '男' : '女',
+             birthday:
+                 faker.date.between('1900-01-01', '2016-12-31').getTime(),
+             socialId:
+                 'Z' + faker.random.number({min: 100000000, max: 999999999}),
+             address: faker.address.streetAddress('###'),
+             phone: faker.phone.phoneNumberFormat(1),
+             email: faker.internet.email(),
+           });
+           teacher.updateBasicInfo(newBasicInfo, function(status) {
+             expect(status).toBe(false);
+             done();
+           });
+         });
+       });
+     });
 
   afterEach(function(done) {
     teachers.clear(function() {
