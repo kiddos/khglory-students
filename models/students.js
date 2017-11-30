@@ -70,6 +70,19 @@ function queryAll(callback) {
   });
 }
 
+function getBasicInfo(callback) {
+  db.serialize(function() {
+    db.all('SELECT * FROM studentInfo;', function(err, rows) {
+      if (err) {
+        console.log(colors.red(err.message));
+        callback([]);
+      } else {
+        callback(rows);
+      }
+    });
+  });
+}
+
 function clear(callback) {
   db.serialize(function() {
     db.beginTransaction(function(err, transaction) {
@@ -169,23 +182,28 @@ Student.prototype.insert = function(callback) {
 };
 
 Student.prototype.addBasicInfo = function(basicInfo, callback) {
-  var id = this.id;
-  db.serialize(function() {
-    db.run(
-        'INSERT INTO studentInfo VALUES(?, ?, ?, ?, ?, ?, ?, ?);',
-        [
-          id, basicInfo.gender, basicInfo.birthday, basicInfo.socialId,
-          basicInfo.marriage, basicInfo.address, basicInfo.phone,
-          basicInfo.email
-        ],
-        function(err) {
-          if (err) {
-            if (callback) callback(false);
-          } else {
-            if (callback) callback(true);
-          }
-        });
-  });
+  var student = this;
+  if (basicInfo.studentId !== this.id) {
+    if (callback) callback(false);
+  } else {
+    db.serialize(function() {
+      db.run(
+          'INSERT INTO studentInfo VALUES(?, ?, ?, ?, ?, ?, ?, ?);',
+          [
+            student.id, basicInfo.gender, basicInfo.birthday,
+            basicInfo.socialId, basicInfo.marriage, basicInfo.address,
+            basicInfo.phone, basicInfo.email
+          ],
+          function(err) {
+            if (err) {
+              console.error(colors.red(err.message));
+              if (callback) callback(false);
+            } else {
+              if (callback) callback(true);
+            }
+          });
+    });
+  }
 };
 
 Student.prototype.getBasicInfo = function(callback) {
@@ -411,10 +429,11 @@ function generateStudents(num, callback) {
 module.exports = {
   migrate: migrate,
   queryAll: queryAll,
+  getBasicInfo: getBasicInfo,
   clear: clear,
-  generateStudents: generateStudents,
   Student: Student,
   BasicInfo: BasicInfo,
   ExtraInfo: ExtraInfo,
   HardCopy: HardCopy,
+  generateStudents: generateStudents,
 };
