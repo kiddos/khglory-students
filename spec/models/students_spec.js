@@ -24,7 +24,7 @@ describe('Student Model', function() {
   }, 10000);
 
   it('Should be able to create multiple', function(done) {
-    var maxCount = 1000;
+    var maxCount = 600;
     var index = 0;
     var studentData = [];
     var insert = function() {
@@ -117,7 +117,7 @@ describe('Student Model', function() {
   });
 
   it('Should be able generate lots of students', function(done) {
-    var num = 3000;
+    var num = 1000;
     students.generateStudents(num, function(status) {
       expect(status).toBe(true);
       students.queryAll(function(allStudents) {
