@@ -7,8 +7,8 @@ var students = require('../../models/students');
 
 students.migrate();
 
-describe('Student Model', function() {
-  it('Should be able to create and delete', function(done) {
+describe('Student', function() {
+  it('Should be able to be created', function(done) {
     var name = faker.name.firstName() + ' ' + faker.name.lastName();
     var student = new students.Student(faker.random.uuid(), name);
 
@@ -95,6 +95,19 @@ describe('Student Model', function() {
       student.id = 'random id';
       student.find(function(studentData) {
         expect(studentData).toBe(undefined);
+        done();
+      });
+    });
+  });
+
+  it('Should be able to be removed', function(done) {
+    var name = faker.name.firstName() + ' ' + faker.name.lastName();
+    var student = new students.Student(faker.random.uuid(), name);
+
+    student.insert(function(status) {
+      expect(status).toBe(true);
+      student.remove(function(status) {
+        expect(status).toBe(true);
         done();
       });
     });
