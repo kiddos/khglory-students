@@ -63,6 +63,22 @@ describe('Teacher Model', function() {
     });
   });
 
+  it('Should not be able to be found with incorrect id', function(done) {
+    var name = '中文: ' + faker.name.firstName() + ' ' + faker.name.lastName();
+    var teacher = new teachers.Teacher(name);
+
+    teacher.insert(function(status) {
+      expect(status).toBe(true);
+
+      teacher.id = -1;
+
+      teacher.find(function(teacherData) {
+        expect(teacherData).toBe(undefined);
+        done();
+      });
+    });
+  });
+
   it('Should be able to be removed', function(done) {
     var name = '中文: ' + faker.name.firstName() + ' ' + faker.name.lastName();
     var teacher = new teachers.Teacher(name);
