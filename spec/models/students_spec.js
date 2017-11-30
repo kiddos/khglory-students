@@ -281,6 +281,43 @@ describe('Student BasicInfo', function() {
     });
   });
 
+  it('Should not be able to be updated with incorrect id', function(done) {
+    students.queryAll(function(allStudents) {
+      var student =
+          new students.Student(allStudents[0].id, allStudents[0].name);
+
+      var basicInfo = new students.BasicInfo({
+        studentId: student.id,
+        gender: faker.random.boolean() ? '男' : '女',
+        birthday: new Date().getTime(),
+        socialId: 'A' + faker.random.number({min: 100000000, max: 999999999}),
+        marriage: faker.random.boolean() ? '已婚' : '單身',
+        address: faker.address.streetAddress('###'),
+        phone: faker.phone.phoneNumberFormat(1),
+        email: faker.internet.email(),
+      });
+      student.addBasicInfo(basicInfo, function(status) {
+        expect(status).toBe(true);
+
+        var newBasicInfo = new students.BasicInfo({
+          studentId: faker.random.uuid(),
+          gender: faker.random.boolean() ? '男' : '女',
+          birthday: new Date().getTime(),
+          socialId:
+              'A' + faker.random.number({min: 100000000, max: 999999999}),
+          marriage: faker.random.boolean() ? '已婚' : '單身',
+          address: faker.address.streetAddress('###'),
+          phone: faker.phone.phoneNumberFormat(1),
+          email: faker.internet.email(),
+        });
+        student.updateBasicInfo(newBasicInfo, function(status) {
+          expect(status).toBe(false);
+          done();
+        });
+      });
+    });
+  });
+
   it('Should be deleted when the student is removed', function(done) {
     students.queryAll(function(allStudents) {
       var student =
