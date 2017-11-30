@@ -167,23 +167,27 @@ Teacher.prototype.remove = function(callback) {
 
 Teacher.prototype.addBasicInfo = function(basicInfo, callback) {
   var id = this.id;
-  db.serialize(function() {
-    db.run(
-        'INSERT INTO teacherInfo VALUES(?, ?, ?, ?, ?, ?, ?, ?);',
-        [
-          id, basicInfo.gender, basicInfo.birthday, basicInfo.socialId,
-          basicInfo.marriage, basicInfo.address, basicInfo.phone,
-          basicInfo.email
-        ],
-        function(err) {
-          if (err) {
-            console.log(colors.red(err.message));
-            if (callback) callback(false);
-          } else {
-            if (callback) callback(true);
-          }
-        });
-  });
+  if (id !== basicInfo.teacherId) {
+    if (callback) callback(false);
+  } else {
+    db.serialize(function() {
+      db.run(
+          'INSERT INTO teacherInfo VALUES(?, ?, ?, ?, ?, ?, ?, ?);',
+          [
+            id, basicInfo.gender, basicInfo.birthday, basicInfo.socialId,
+            basicInfo.marriage, basicInfo.address, basicInfo.phone,
+            basicInfo.email
+          ],
+          function(err) {
+            if (err) {
+              console.log(colors.red(err.message));
+              if (callback) callback(false);
+            } else {
+              if (callback) callback(true);
+            }
+          });
+    });
+  }
 };
 
 Teacher.prototype.getId = function(callback) {
@@ -224,7 +228,7 @@ Teacher.prototype.getBasicInfo = function(callback) {
 
 Teacher.prototype.updateBasicInfo = function(basicInfo, callback) {
   var id = this.id;
-  if (!id) {
+  if (id !== basicInfo.teacherId) {
     if (callback) callback(false);
   } else {
     db.serialize(function() {
