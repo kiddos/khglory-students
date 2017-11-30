@@ -83,14 +83,14 @@ function BasicInfo(obj) {
 
 Teacher.prototype.find = function(callback) {
   if (!this.id) {
-    if (callback) callback(false);
+    if (callback) callback({});
   } else {
     var id = this.id;
     db.serialize(function() {
       db.get('SELECT * FROM teachers WHERE id = ?;', [id], function(err, row) {
         if (err) {
           console.log(colors.red(err.message));
-          if (callback) callback([]);
+          if (callback) callback({});
         } else {
           if (callback) callback(row);
         }
