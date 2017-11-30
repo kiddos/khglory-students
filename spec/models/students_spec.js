@@ -150,7 +150,7 @@ describe('Student BasicInfo', function() {
     });
   });
 
-  it('Should be able to add BasicInfo', function(done) {
+  it('Should be able to be added', function(done) {
     students.queryAll(function(allStudents) {
       var student =
           new students.Student(allStudents[0].id, allStudents[0].name);
@@ -178,7 +178,7 @@ describe('Student BasicInfo', function() {
     });
   });
 
-  it('Should not be able to add BasicInfo with incorrect id', function(done) {
+  it('Should not be able to be added with incorrect id', function(done) {
     students.queryAll(function(allStudents) {
       var student =
           new students.Student(allStudents[0].id, allStudents[0].name);
@@ -200,7 +200,7 @@ describe('Student BasicInfo', function() {
     });
   });
 
-  it('Should be able to add BasicInfo with partial info', function(done) {
+  it('Should be able to be added with partial info', function(done) {
     students.queryAll(function(allStudents) {
       var student =
           new students.Student(allStudents[0].id, allStudents[0].name);
@@ -238,7 +238,7 @@ describe('Student BasicInfo', function() {
     });
   });
 
-  it('Should be able to update its BasicInfo', function(done) {
+  it('Should be able to be updated', function(done) {
     students.queryAll(function(allStudents) {
       var student =
           new students.Student(allStudents[0].id, allStudents[0].name);
