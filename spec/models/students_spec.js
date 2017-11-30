@@ -575,18 +575,25 @@ describe('Student ExtraInfo', function() {
 });
 
 describe('Student HardCopy', function() {
-  it('Should be able to add HardCopy', function(done) {
+  beforeEach(function(done) {
     var name = '中文' + faker.name.firstName() + ' ' + faker.name.lastName();
     var student = new students.Student(faker.random.uuid(), name);
 
     student.insert(function(status) {
       expect(status).toBe(true);
+      done();
+    });
+  });
 
-      var imageUrl = faker.image.image();
-      var tempImagePath = path.join(
+  it('Should be able to add HardCopy', function(done) {
+    students.queryAll(function(allStudents) {
+      var student =
+          new students.Student(allStudents[0].id, allStudents[0].name);
+
+      var imagePath = path.join(
           'node_modules', 'node-gallery', 'examples', 'resources', 'photos',
           'Doo Lough.jpg');
-      fs.readFile(tempImagePath, function(err, data) {
+      fs.readFile(imagePath, function(err, data) {
         if (err) throw err;
 
         var hardCopy = new students.HardCopy({
@@ -614,17 +621,38 @@ describe('Student HardCopy', function() {
     });
   }, 120000);
 
-  it('Should be able to update its HardCopy', function(done) {
-    var name = '中文' + faker.name.firstName() + ' ' + faker.name.lastName();
-    var student = new students.Student(faker.random.uuid(), name);
-    student.insert(function(status) {
-      expect(status).toBe(true);
+  it('Should not be able to be added with incorrect id', function(done) {
+    students.queryAll(function(allStudents) {
+      var student =
+          new students.Student(allStudents[0].id, allStudents[0].name);
 
-      var imageUrl = faker.image.image();
-      var tempImagePath = path.join(
+      var imagePath = path.join(
           'node_modules', 'node-gallery', 'examples', 'resources', 'photos',
           'Doo Lough.jpg');
-      fs.readFile(tempImagePath, function(err, data) {
+      fs.readFile(imagePath, function(err, data) {
+        if (err) throw err;
+
+        var hardCopy = new students.HardCopy({
+          studentId: faker.random.uuid(),
+          hardCopy: data,
+        });
+        student.addHardCopy(hardCopy, function(status) {
+          expect(status).toBe(false);
+          done();
+        });
+      });
+    });
+  });
+
+  it('Should be able to update its HardCopy', function(done) {
+    students.queryAll(function(allStudents) {
+      var student =
+          new students.Student(allStudents[0].id, allStudents[0].name);
+
+      var imagePath = path.join(
+          'node_modules', 'node-gallery', 'examples', 'resources', 'photos',
+          'Doo Lough.jpg');
+      fs.readFile(imagePath, function(err, data) {
         if (err) throw err;
 
         var hardCopy = new students.HardCopy({
@@ -665,6 +693,89 @@ describe('Student HardCopy', function() {
       });
     });
   }, 120000);
+
+  it('Should be not be able to be updated with incorrect id', function(done) {
+    students.queryAll(function(allStudents) {
+      var student =
+          new students.Student(allStudents[0].id, allStudents[0].name);
+
+      var imagePath = path.join(
+          'node_modules', 'node-gallery', 'examples', 'resources', 'photos',
+          'Doo Lough.jpg');
+      fs.readFile(imagePath, function(err, data) {
+        if (err) throw err;
+
+        var hardCopy = new students.HardCopy({
+          studentId: student.id,
+          hardCopy: data,
+        });
+
+        student.addHardCopy(hardCopy, function(status) {
+          expect(status).toBe(true);
+
+          var newImageUrl = faker.image.image();
+          fs.readFile('./public/images/background.jpg', function(err, data) {
+            if (err) throw err;
+
+            var newHardCopy = new students.HardCopy({
+              studentId: faker.random.uuid(),
+              hardCopy: data,
+            });
+            student.updateHardCopy(newHardCopy, function(status) {
+              expect(status).toBe(false);
+              done();
+            });
+          });
+        });
+      });
+    });
+  });
+
+  it('Should be deleted when the student is removed', function(done) {
+    students.queryAll(function(allStudents) {
+      var student =
+          new students.Student(allStudents[0].id, allStudents[0].name);
+
+      var imagePath = path.join(
+          'node_modules', 'node-gallery', 'examples', 'resources', 'photos',
+          'Doo Lough.jpg');
+      fs.readFile(imagePath, function(err, data) {
+        if (err) throw err;
+
+        var hardCopy = new students.HardCopy({
+          studentId: student.id,
+          hardCopy: data,
+        });
+        student.addHardCopy(hardCopy, function(status) {
+          expect(status).toBe(true);
+          student.getHardCopy(function(hc) {
+            for (var i = 0; i < Object.keys(hc).length; ++i) {
+              var key = Object.keys(hc)[i];
+              if (typeof(hc[key]) === 'object') {
+                for (var j = 0; j < hc[key].length; ++j) {
+                  expect(hc[key][j]).toBe(hardCopy[key][j]);
+                }
+              } else {
+                expect(hc[key]).toBe(hardCopy[key]);
+              }
+            }
+
+            student.remove(function(status) {
+              expect(status).toBe(true);
+              students.getHardCopy(function(hardCopies) {
+                var found = false;
+                for (var i = 0; i < hardCopies.length; ++i) {
+                  found = (hardCopies[i].studentId === hardCopy.studentId);
+                }
+                expect(found).toBe(false);
+                done();
+              });
+            });
+          });
+        });
+      });
+    });
+  });
 
   afterEach(function(done) {
     students.clear(function(status) {
