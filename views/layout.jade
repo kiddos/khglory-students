@@ -11,6 +11,7 @@ html
     script(type='text/javascript', src='/js/message_dialog.js')
     script(type='text/javascript', src='/js/popup_dialog.js')
     script(type='text/javascript', src='/js/logout.js')
+    script(type='text/javascript', src='/js/update.js')
     block script
   body
     .header
@@ -45,7 +46,8 @@ html
 
         if user
           p(class='user-status') 使用者:
-            span #{user.username}
+            span(class='admin-name', id='admin')
+              a(href='/admin')= user.username
         input(type='button', id='logout', class='logout', value='登出')
 
     div(class='message-dialog transparent')
