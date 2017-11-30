@@ -170,6 +170,70 @@ describe('Student BasicInfo', function() {
     });
   });
 
+  it('Should not be able to add BasicInfo with incorrect id', function(done) {
+    var name = '中文' + faker.name.firstName() + ' ' + faker.name.lastName();
+    var student = new students.Student(faker.random.uuid(), name);
+
+    student.insert(function(status) {
+      expect(status).toBe(true);
+
+      var basicInfo = new students.BasicInfo({
+        studentId: faker.random.uuid(),
+        gender: faker.random.boolean() ? '男' : '女',
+        birthday: new Date().getTime(),
+        socialId: 'A' + faker.random.number({min: 100000000, max: 999999999}),
+        marriage: faker.random.boolean() ? '已婚' : '單身',
+        address: faker.address.streetAddress('###'),
+        phone: faker.phone.phoneNumberFormat(1),
+        email: faker.internet.email(),
+      });
+      student.addBasicInfo(basicInfo, function(status) {
+        expect(status).toBe(false);
+        done();
+      });
+    });
+  });
+
+  it('Should be able to add BasicInfo with partial info', function(done) {
+    var name = '中文' + faker.name.firstName() + ' ' + faker.name.lastName();
+    var student = new students.Student(faker.random.uuid(), name);
+
+    student.insert(function(status) {
+      expect(status).toBe(true);
+
+      var basicInfo = new students.BasicInfo({
+        studentId: student.id,
+        gender: faker.random.boolean() ? '男' : '女',
+        birthday: new Date().getTime(),
+        socialId: 'A' + faker.random.number({min: 100000000, max: 999999999}),
+        marriage: faker.random.boolean() ? '已婚' : '單身',
+        address: faker.address.streetAddress('###'),
+        phone: faker.phone.phoneNumberFormat(1),
+        email: faker.internet.email(),
+      });
+      var keys = Object.keys(basicInfo);
+      for (var i = 0; i < keys.length; ++i) {
+        var key = keys[i];
+        if (key !== 'studentId') {
+          if (faker.random.boolean()) {
+            basicInfo[key] = null;
+          }
+        }
+      }
+      student.addBasicInfo(basicInfo, function(status) {
+        expect(status).toBe(true);
+        student.getBasicInfo(function(basicInfoData) {
+          var keys = Object.keys(basicInfo);
+          for (var i = 0; i < keys.length; ++i) {
+            var key = keys[i];
+            expect(basicInfo[key]).toBe(basicInfoData[key]);
+          }
+          done();
+        });
+      });
+    });
+  });
+
   it('Should be able to update its BasicInfo', function(done) {
     var name = '中文' + faker.name.firstName() + ' ' + faker.name.lastName();
     var student = new students.Student(faker.random.uuid(), name);
@@ -206,6 +270,41 @@ describe('Student BasicInfo', function() {
               var key = Object.keys(info)[i];
               expect(info[key]).toBe(newBasicInfo[key]);
             }
+            done();
+          });
+        });
+      });
+    });
+  });
+
+  it('Should be deleted when the student is removed', function(done) {
+    var name = '中文' + faker.name.firstName() + ' ' + faker.name.lastName();
+    var student = new students.Student(faker.random.uuid(), name);
+
+    student.insert(function(status) {
+      expect(status).toBe(true);
+
+      var basicInfo = new students.BasicInfo({
+        studentId: student.id,
+        gender: faker.random.boolean() ? '男' : '女',
+        birthday: new Date().getTime(),
+        socialId: 'A' + faker.random.number({min: 100000000, max: 999999999}),
+        marriage: faker.random.boolean() ? '已婚' : '單身',
+        address: faker.address.streetAddress('###'),
+        phone: faker.phone.phoneNumberFormat(1),
+        email: faker.internet.email(),
+      });
+      student.addBasicInfo(basicInfo, function(status) {
+        expect(status).toBe(true);
+
+        student.remove(function(status) {
+          expect(status).toBe(true);
+          students.getBasicInfo(function(basicInfos) {
+            var found = false;
+            for (var i = 0; i < basicInfos.length; ++i) {
+              found = (basicInfos[i].studentId === basicInfo.studentId);
+            }
+            expect(found).toBe(false);
             done();
           });
         });
