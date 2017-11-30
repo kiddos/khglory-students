@@ -140,12 +140,20 @@ describe('Student Model', function() {
 });
 
 describe('Student BasicInfo', function() {
-  it('Should be able to add BasicInfo', function(done) {
+  beforeEach(function(done) {
     var name = '中文' + faker.name.firstName() + ' ' + faker.name.lastName();
     var student = new students.Student(faker.random.uuid(), name);
 
     student.insert(function(status) {
       expect(status).toBe(true);
+      done();
+    });
+  });
+
+  it('Should be able to add BasicInfo', function(done) {
+    students.queryAll(function(allStudents) {
+      var student =
+          new students.Student(allStudents[0].id, allStudents[0].name);
 
       var basicInfo = new students.BasicInfo({
         studentId: student.id,
@@ -171,11 +179,9 @@ describe('Student BasicInfo', function() {
   });
 
   it('Should not be able to add BasicInfo with incorrect id', function(done) {
-    var name = '中文' + faker.name.firstName() + ' ' + faker.name.lastName();
-    var student = new students.Student(faker.random.uuid(), name);
-
-    student.insert(function(status) {
-      expect(status).toBe(true);
+    students.queryAll(function(allStudents) {
+      var student =
+          new students.Student(allStudents[0].id, allStudents[0].name);
 
       var basicInfo = new students.BasicInfo({
         studentId: faker.random.uuid(),
@@ -195,11 +201,9 @@ describe('Student BasicInfo', function() {
   });
 
   it('Should be able to add BasicInfo with partial info', function(done) {
-    var name = '中文' + faker.name.firstName() + ' ' + faker.name.lastName();
-    var student = new students.Student(faker.random.uuid(), name);
-
-    student.insert(function(status) {
-      expect(status).toBe(true);
+    students.queryAll(function(allStudents) {
+      var student =
+          new students.Student(allStudents[0].id, allStudents[0].name);
 
       var basicInfo = new students.BasicInfo({
         studentId: student.id,
@@ -235,10 +239,10 @@ describe('Student BasicInfo', function() {
   });
 
   it('Should be able to update its BasicInfo', function(done) {
-    var name = '中文' + faker.name.firstName() + ' ' + faker.name.lastName();
-    var student = new students.Student(faker.random.uuid(), name);
-    student.insert(function(status) {
-      expect(status).toBe(true);
+    students.queryAll(function(allStudents) {
+      var student =
+          new students.Student(allStudents[0].id, allStudents[0].name);
+
       var basicInfo = new students.BasicInfo({
         studentId: student.id,
         gender: faker.random.boolean() ? '男' : '女',
@@ -278,11 +282,9 @@ describe('Student BasicInfo', function() {
   });
 
   it('Should be deleted when the student is removed', function(done) {
-    var name = '中文' + faker.name.firstName() + ' ' + faker.name.lastName();
-    var student = new students.Student(faker.random.uuid(), name);
-
-    student.insert(function(status) {
-      expect(status).toBe(true);
+    students.queryAll(function(allStudents) {
+      var student =
+          new students.Student(allStudents[0].id, allStudents[0].name);
 
       var basicInfo = new students.BasicInfo({
         studentId: student.id,
@@ -411,8 +413,9 @@ describe('Student HardCopy', function() {
       expect(status).toBe(true);
 
       var imageUrl = faker.image.image();
-      var tempImagePath = path.join('node_modules', 'node-gallery',
-        'examples', 'resources', 'photos', 'Doo Lough.jpg');
+      var tempImagePath = path.join(
+          'node_modules', 'node-gallery', 'examples', 'resources', 'photos',
+          'Doo Lough.jpg');
       fs.readFile(tempImagePath, function(err, data) {
         if (err) throw err;
 
@@ -448,8 +451,9 @@ describe('Student HardCopy', function() {
       expect(status).toBe(true);
 
       var imageUrl = faker.image.image();
-      var tempImagePath = path.join('node_modules', 'node-gallery',
-        'examples', 'resources', 'photos', 'Doo Lough.jpg');
+      var tempImagePath = path.join(
+          'node_modules', 'node-gallery', 'examples', 'resources', 'photos',
+          'Doo Lough.jpg');
       fs.readFile(tempImagePath, function(err, data) {
         if (err) throw err;
 
