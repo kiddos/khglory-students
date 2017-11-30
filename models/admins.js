@@ -41,17 +41,18 @@ function Admin(username, password) {
 }
 
 Admin.prototype.login = function(callback) {
-  var username = this.username;
-  var password = this.password;
+  var admin = this;
   db.serialize(function() {
     db.all(
-        'SELECT username FROM admins WHERE username = ? AND passwordMD5 = ?',
-        [username, md5(password)], function(err, rows) {
+        'SELECT * FROM admins WHERE username = ? AND passwordMD5 = ?',
+        [admin.username, md5(admin.password)], function(err, rows) {
           if (err) {
+            console.error(colors.red(err.message));
             if (callback) callback(false);
           }
 
-          if (rows.length === 1 && rows[0].username === username) {
+          if (rows.length >= 1) {
+            admin.id = rows[rows.length - 1].id;
             if (callback) callback(true);
           } else {
             if (callback) callback(false);
@@ -66,10 +67,11 @@ Admin.prototype.edit = function(newUsername, newPassword, callback) {
     if (status) {
       db.run(
           'UPDATE admins SET username = ?, passwordMD5 = ?' +
-              'WHERE username = ?',
-          [newUsername, md5(newPassword), admin.username], function(err) {
+              'WHERE id = ?',
+          [newUsername, md5(newPassword), admin.id], function(err) {
             if (err) {
-             if (callback)  callback(false);
+              console.error(colors.red(err.message));
+              if (callback) callback(false);
             }
             admin.username = newUsername;
             admin.password = newPassword;
