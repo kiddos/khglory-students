@@ -48,6 +48,9 @@ html
           p(class='user-status') 使用者:
             span(class='admin-name', id='admin')
               a(href='/admin')= user.username
+
+      input(type='button', id='update', class='update', value='更新')
+      if login
         input(type='button', id='logout', class='logout', value='登出')
 
     div(class='message-dialog transparent')
