@@ -98,10 +98,21 @@ html
       .logout:hover
         @include button-hover(6px)
 
+      .update
+        position: absolute
+        right: 60px
+        @extend .button
+        cursor: pointer
+        background-color: $update-color
+        border: 1px solid $update-border-color
+
+      .update:hover
+        @include button-hover(6px)
+
       .user-status
         margin: 0
         position: absolute
-        right: 60px
+        right: 120px
 
         span
           margin-left: 5px
