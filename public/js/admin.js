@@ -16,6 +16,8 @@ $(document).ready(function() {
           errorMessage('更改失敗', 600);
         }
       });
+    } else {
+      errorMessage('更改失敗, 密碼輸入錯誤', 600);
     }
   });
 });
