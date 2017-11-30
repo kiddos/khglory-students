@@ -83,6 +83,32 @@ function getBasicInfo(callback) {
   });
 }
 
+function getExtraInfo(callback) {
+  db.serialize(function() {
+    db.all('SELECT * FROM studentExtraInfo;', function(err, rows) {
+      if (err) {
+        console.log(colors.red(err.message));
+        callback([]);
+      } else {
+        callback(rows);
+      }
+    });
+  });
+}
+
+function getHardCopy(callback) {
+  db.serialize(function() {
+    db.all('SELECT * FROM studentHardCopy;', function(err, rows) {
+      if (err) {
+        console.log(colors.red(err.message));
+        callback([]);
+      } else {
+        callback(rows);
+      }
+    });
+  });
+}
+
 function clear(callback) {
   db.serialize(function() {
     db.beginTransaction(function(err, transaction) {
@@ -223,30 +249,35 @@ Student.prototype.getBasicInfo = function(callback) {
 
 Student.prototype.updateBasicInfo = function(basicInfo, callback) {
   var id = this.id;
-  db.serialize(function() {
-    db.run(
-        'UPDATE studentInfo SET ' +
-            'gender = ?,' +
-            'birthday = ?,' +
-            'socialId = ?,' +
-            'marriage = ?,' +
-            'address = ?,' +
-            'phone = ?,' +
-            'email = ? ' +
-            'WHERE studentId = ?;',
-        [
-          basicInfo.gender, basicInfo.birthday, basicInfo.socialId,
-          basicInfo.marriage, basicInfo.address, basicInfo.phone,
-          basicInfo.email, id
-        ],
-        function(err) {
-          if (err) {
-            if (callback) callback(false);
-          } else {
-            if (callback) callback(true);
-          }
-        });
-  });
+  if (id !== basicInfo.studentId) {
+    if (callback) callback(false);
+  } else {
+    db.serialize(function() {
+      db.run(
+          'UPDATE studentInfo SET ' +
+              'gender = ?,' +
+              'birthday = ?,' +
+              'socialId = ?,' +
+              'marriage = ?,' +
+              'address = ?,' +
+              'phone = ?,' +
+              'email = ? ' +
+              'WHERE studentId = ?;',
+          [
+            basicInfo.gender, basicInfo.birthday, basicInfo.socialId,
+            basicInfo.marriage, basicInfo.address, basicInfo.phone,
+            basicInfo.email, id
+          ],
+          function(err) {
+            if (err) {
+              console.error(colors.red(err.message));
+              if (callback) callback(false);
+            } else {
+              if (callback) callback(true);
+            }
+          });
+    });
+  }
 };
 
 Student.prototype.remove = function(callback) {
@@ -265,22 +296,27 @@ Student.prototype.remove = function(callback) {
 
 Student.prototype.addExtraInfo = function(extraInfo, callback) {
   var id = this.id;
-  db.serialize(function() {
-    db.run(
-        'INSERT INTO studentExtraInfo VALUES(?, ?, ?, ?, ?, ?, ?);',
-        [
-          id, extraInfo.career, extraInfo.education, extraInfo.religion,
-          extraInfo.illness, extraInfo.emergencyContact,
-          extraInfo.emergencyContactPhone
-        ],
-        function(err) {
-          if (err) {
-            if (callback) callback(false);
-          } else {
-            if (callback) callback(true);
-          }
-        });
-  });
+  if (id !== extraInfo.studentId) {
+    if (callback) callback(false);
+  } else {
+    db.serialize(function() {
+      db.run(
+          'INSERT INTO studentExtraInfo VALUES(?, ?, ?, ?, ?, ?, ?);',
+          [
+            id, extraInfo.career, extraInfo.education, extraInfo.religion,
+            extraInfo.illness, extraInfo.emergencyContact,
+            extraInfo.emergencyContactPhone
+          ],
+          function(err) {
+            if (err) {
+              console.error(colors.red(err.message));
+              if (callback) callback(false);
+            } else {
+              if (callback) callback(true);
+            }
+          });
+    });
+  }
 };
 
 Student.prototype.getExtraInfo = function(callback) {
@@ -300,44 +336,54 @@ Student.prototype.getExtraInfo = function(callback) {
 
 Student.prototype.updateExtraInfo = function(extraInfo, callback) {
   var id = this.id;
-  db.serialize(function() {
-    db.run(
-        'UPDATE studentExtraInfo SET ' +
-            'career = ?,' +
-            'education = ?,' +
-            'religion = ?,' +
-            'illness = ?,' +
-            'emergencyContact = ?,' +
-            'emergencyContactPhone = ? ' +
-            'WHERE studentId = ?;',
-        [
-          extraInfo.career, extraInfo.education, extraInfo.religion,
-          extraInfo.illness, extraInfo.emergencyContact,
-          extraInfo.emergencyContactPhone, id
-        ],
-        function(err) {
-          if (err) {
-            if (callback) callback(false);
-          } else {
-            if (callback) callback(true);
-          }
-        });
-  });
+  if (id !== extraInfo.studentId) {
+    if (callback) callback(false);
+  } else {
+    db.serialize(function() {
+      db.run(
+          'UPDATE studentExtraInfo SET ' +
+              'career = ?,' +
+              'education = ?,' +
+              'religion = ?,' +
+              'illness = ?,' +
+              'emergencyContact = ?,' +
+              'emergencyContactPhone = ? ' +
+              'WHERE studentId = ?;',
+          [
+            extraInfo.career, extraInfo.education, extraInfo.religion,
+            extraInfo.illness, extraInfo.emergencyContact,
+            extraInfo.emergencyContactPhone, id
+          ],
+          function(err) {
+            if (err) {
+              console.error(colors.red(err.message));
+              if (callback) callback(false);
+            } else {
+              if (callback) callback(true);
+            }
+          });
+    });
+  }
 };
 
 Student.prototype.addHardCopy = function(hardCopy, callback) {
   var id = this.id;
-  db.serialize(function() {
-    db.run(
-        'INSERT INTO studentHardCopy VALUES(?, ?);', [id, hardCopy.hardCopy],
-        function(err) {
-          if (err) {
-            if (callback) callback(false);
-          } else {
-            if (callback) callback(true);
-          }
-        });
-  });
+  if (hardCopy.studentId !== id) {
+    if (callback) callback(false);
+  } else {
+    db.serialize(function() {
+      db.run(
+          'INSERT INTO studentHardCopy VALUES(?, ?);', [id, hardCopy.hardCopy],
+          function(err) {
+            if (err) {
+              console.error(colors.red(err.message));
+              if (callback) callback(false);
+            } else {
+              if (callback) callback(true);
+            }
+          });
+    });
+  }
 };
 
 Student.prototype.getHardCopy = function(callback) {
@@ -347,6 +393,7 @@ Student.prototype.getHardCopy = function(callback) {
         'SELECT * FROM studentHardCopy WHERE studentId = ?;', [id],
         function(err, row) {
           if (err) {
+            console.error(colors.red(err.message));
             if (callback) callback({});
           } else {
             if (callback) callback(row);
@@ -357,19 +404,24 @@ Student.prototype.getHardCopy = function(callback) {
 
 Student.prototype.updateHardCopy = function(hardCopy, callback) {
   var id = this.id;
-  db.serialize(function() {
-    db.run(
-        'UPDATE studentHardCopy SET ' +
-            'hardCopy = ? ' +
-            'WHERE studentId = ?;',
-        [hardCopy.hardCopy, id], function(err) {
-          if (err) {
-            if (callback) callback(false);
-          } else {
-            if (callback) callback(true);
-          }
-        });
-  });
+  if (hardCopy.studentId !== id) {
+    if (callback) callback(false);
+  } else {
+    db.serialize(function() {
+      db.run(
+          'UPDATE studentHardCopy SET ' +
+              'hardCopy = ? ' +
+              'WHERE studentId = ?;',
+          [hardCopy.hardCopy, id], function(err) {
+            if (err) {
+              console.error(colors.red(err.message));
+              if (callback) callback(false);
+            } else {
+              if (callback) callback(true);
+            }
+          });
+    });
+  }
 };
 
 function generateStudents(num, callback) {
@@ -430,6 +482,8 @@ module.exports = {
   migrate: migrate,
   queryAll: queryAll,
   getBasicInfo: getBasicInfo,
+  getExtraInfo: getExtraInfo,
+  getHardCopy: getHardCopy,
   clear: clear,
   Student: Student,
   BasicInfo: BasicInfo,
