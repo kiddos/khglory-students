@@ -211,7 +211,7 @@ Class.prototype.addTeachers = function(teachers, callback) {
     if (callback) callback(false);
   } else {
     db.serialize(function() {
-      var stmt = db.prepare("INSERT INTO classTeachers VALUES(?, ?)");
+      var stmt = db.prepare('INSERT INTO classTeachers VALUES(?, ?)');
       for (var i = 0; i < teachers.length; ++i) {
         stmt.run([id, teachers[i].id]);
       }
