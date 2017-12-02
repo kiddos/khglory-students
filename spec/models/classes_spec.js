@@ -1,3 +1,5 @@
+var faker = require('faker');
+
 var classes = require('../../models/classes');
 var students = require('../../models/students');
 var teachers = require('../../models/teachers');
@@ -8,32 +10,28 @@ classes.migrate();
 
 describe('Class Model', function() {
   beforeEach(function(done) {
-    var maxCount = 10;
-    var index = 0;
-    var insert = function() {
-      var student = new students.Student(String(index), 'Student' + index);
-      if (index < maxCount) {
-        index += 1;
-        student.insert(insert);
-      } else {
-        students.queryAll(function(data) {
-          expect(index).toBe(maxCount);
-          expect(data.length).toBe(maxCount);
+    students.generateStudents(200, function(status) {
+      expect(status).toBe(true);
 
-          var teacher = new teachers.Teacher('TeacherA');
-          teacher.insert(function(status) {
-            expect(status).toBe(true);
+      students.queryAll(function(allStudents) {
+        expect(allStudents.length).toBe(200);
+
+        teachers.generateTeachers(30, function(status) {
+          expect(status).toBe(true);
+
+          teachers.queryAll(function(allTeachers) {
+            expect(allTeachers.length).toBe(30);
             done();
           });
         });
-      }
-    };
-    insert();
+      });
+    });
   }, 10000);
 
   it('Should be able to insert', function(done) {
-    var c =
-        new classes.Class('Intro to Computer Science', new Date().toString());
+    var className = faker.company.companyName() + ' Class';
+    var c = new classes.Class(className, new Date().getTime());
+
     c.insert(function(status) {
       expect(status).toBe(true);
       expect(c.id).not.toBe(undefined);
@@ -47,43 +45,82 @@ describe('Class Model', function() {
                data[i].startDate === c.startDate);
         }
         expect(found).toBe(true);
-        classes.clear(function() {
-          done();
-        });
+        done();
       });
+    });
+  }, 10000);
+
+  it('Should not be able to insert with name not given', function(done) {
+    var c = new classes.Class(null, new Date().getTime());
+
+    c.insert(function(status) {
+      expect(status).toBe(false);
+      done();
     });
   });
 
   it('Should be able to add students', function(done) {
-    var c =
-        new classes.Class('Intro to Computer Science', new Date().toString());
+    var className = faker.company.companyName() + ' Class';
+    var c = new classes.Class(className, new Date().getTime());
+
     c.insert(function(status) {
       expect(status).toBe(true);
+
       students.queryAll(function(allStudents) {
-        expect(allStudents.length).toBeGreaterThan(0);
-        c.addStudents(allStudents, function(status) {
+        var classStudents = [];
+        for (var i = 1; i < classStudents.length; ++i) {
+          if (faker.random.boolean()) {
+            classStudents.push(allStudents[i]);
+          }
+        }
+
+        c.addStudents(classStudents, function(status) {
           expect(status).toBe(true);
-          c.getStudents(function(studentsData) {
-            expect(studentsData.length).toBe(10);
-            classes.clear(function() {
-              done();
-            });
+
+          c.getStudents(function(studentData) {
+            expect(studentData.length).toBe(classStudents.length);
+
+            for (var i = 0; i < studentData.length; ++i) {
+              var keys = Object.keys(studentData[i]);
+              for (var j = 0; j < keys.length; ++j) {
+                var key = keys[j];
+                expect(studentsData[i][key]).toBe(classStudents[i][key]);
+              }
+            }
+            done();
           });
         });
       });
     });
-  });
+  }, 10000);
 
   it('Should be able to add teacher', function(done) {
-    var c =
-        new classes.Class('Intro to Computer Science', new Date().toString());
+    var className = faker.company.companyName() + ' Class';
+    var c = new classes.Class(className, new Date().getTime());
+
     c.insert(function(status) {
       expect(status).toBe(true);
       teachers.queryAll(function(allTeachers) {
-        expect(allTeachers.length).toBe(1);
-        c.addTeachers(allTeachers, function(status) {
+        var classTeacher = [];
+        classTeacher.push(allTeachers[0]);
+        for (var i = 1; i < allTeachers.length; ++i) {
+          if (faker.random.boolean()) {
+            classTeacher.push(allTeachers[i]);
+          }
+        }
+
+        c.addTeachers(classTeacher, function(status) {
           expect(status).toBe(true);
-          classes.clear(function() {
+
+          c.getTeachers(function(classTeacherData) {
+            expect(classTeacher.length).toBe(classTeacher.length);
+            for (var i = 0; i < classTeacherData.length; ++i) {
+              var keys = Object.keys(classTeacherData[i]);
+              for (var j = 0; j < keys.length; ++j) {
+                var key = keys[j];
+                expect(classTeacherData[i][key]).toBe(classTeacher[i][key]);
+              }
+            }
             done();
           });
         });
@@ -92,8 +129,17 @@ describe('Class Model', function() {
   });
 
   afterEach(function(done) {
-    students.clear(function() {
-      teachers.clear(function() { done(); });
+    classes.clear(function(status) {
+      expect(status).toBe(true);
+      students.clear(function(status) {
+        expect(status).toBe(true);
+
+        teachers.clear(function(status) {
+          expect(status).toBe(true);
+
+          done();
+        });
+      });
     });
   });
 });
