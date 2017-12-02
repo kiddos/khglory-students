@@ -202,52 +202,41 @@ describe('Teacher BasicInfo Model', function() {
 
   it('Should be able to add BasicInfo with partial data', function(done) {
     teachers.queryAll(function(allTeachers) {
-      var index = 0;
-      var basicInfos = [];
-      var teacherList = [];
-      var addBasicInfo = function() {
-        if (index < allTeachers.length) {
-          index += 1;
+      var teacher = new teachers.Teacher(allTeachers[0].name);
+      teacher.id = allTeachers[0].id;
 
-          var basicInfo = new teachers.BasicInfo({
-            teacherId: allTeachers[index].id,
-            gender: faker.random.boolean() ? '男' : '女',
-            birthday: faker.date.between('1900-01-01', '2016-12-31').getTime(),
-            socialId:
-                'Z' + faker.random.number({min: 100000000, max: 999999999}),
-            address: faker.address.streetAddress('###'),
-            phone: faker.phone.phoneNumberFormat(1),
-            email: faker.internet.email(),
-          });
-          var keys = Object.keys(basicInfo);
+      var basicInfo = new teachers.BasicInfo({
+        teacherId: teacher.id,
+        gender: faker.random.boolean() ? '男' : '女',
+        birthday: faker.date.between('1900-01-01', '2016-12-31').getTime(),
+        socialId: 'Z' + faker.random.number({min: 100000000, max: 999999999}),
+        address: faker.address.streetAddress('###'),
+        phone: faker.phone.phoneNumberFormat(1),
+        email: faker.internet.email(),
+      });
+      var keys = Object.keys(basicInfo);
+      for (var i = 0; i < keys.length; ++i) {
+        if (faker.random.boolean()) {
+          var key = keys[i];
+          if (key !== 'teacherId') {
+            basicInfo[key] = null;
+          }
+        }
+      }
+
+      teacher.addBasicInfo(basicInfo, function(status) {
+        expect(status).toBe(true);
+        teacher.getBasicInfo(function(basicInfoData) {
+          var keys = Object.keys(basicInfoData);
           for (var i = 0; i < keys.length; ++i) {
-            if (faker.random.boolean()) {
-              var key = keys[i];
-              basicInfo[key] = null;
+            var key = keys[i];
+            if (basicInfoData[key]) {
+              expect(basicInfoData[key]).toBe(basicInfo[key]);
             }
           }
-          basicInfos.push(basicInfo);
-
-          var teacher = new teachers.Teacher(allTeachers[index].name);
-          teacher.id = allTeachers[index].id;
-          teacher.addBasicInfo(basicInfo, function(status) {
-            expect(status).toBe(true);
-            teacher.getBasicInfo(function(basicInfoData) {
-              var keys = Object.keys(basicInfoData);
-              for (var i = 0; i < keys.length; ++i) {
-                var key = keys[i];
-                if (basicInfoData[key]) {
-                  expect(basicInfoData[key]).toBe(basicInfo[key]);
-                }
-              }
-              done();
-            });
-          });
-
-          teacherList.push(teacher);
-        }
-      };
-      addBasicInfo();
+          done();
+        });
+      });
     });
   }, 10000);
 
@@ -337,8 +326,9 @@ describe('Teacher BasicInfo Model', function() {
          var teacher = new teachers.Teacher(allTeachers[0].name);
          teacher.id = allTeachers[0].id;
 
+         console.log(teacher.id);
          var basicInfo = new teachers.BasicInfo({
-           teacherId: teacher.id,
+           teacherId: allTeachers[0].id,
            gender: faker.random.boolean() ? '男' : '女',
            birthday: faker.date.between('1900-01-01', '2016-12-31').getTime(),
            socialId:
@@ -347,6 +337,8 @@ describe('Teacher BasicInfo Model', function() {
            phone: faker.phone.phoneNumberFormat(1),
            email: faker.internet.email(),
          });
+
+         console.log(basicInfo.teacherId);
          teacher.addBasicInfo(basicInfo, function(status) {
            expect(status).toBe(true);
 
