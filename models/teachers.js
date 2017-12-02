@@ -39,7 +39,7 @@ function queryAll(callback) {
             'LEFT JOIN teacherInfo ti ON t.id = ti.teacherId;',
         function(err, rows) {
           if (err) {
-            console.log(colors.red(err.message));
+            console.error(colors.red(err.message));
             callback([]);
           } else {
             callback(rows);
@@ -89,7 +89,7 @@ Teacher.prototype.find = function(callback) {
     db.serialize(function() {
       db.get('SELECT * FROM teachers WHERE id = ?;', [id], function(err, row) {
         if (err) {
-          console.log(colors.red(err.message));
+          console.error(colors.red(err.message));
           if (callback) callback({});
         } else {
           if (callback) callback(row);
@@ -110,7 +110,7 @@ Teacher.prototype.changeName = function(newName, callback) {
           'UPDATE teachers SET name = ? WHERE id = ?;', [newName, id],
           function(err) {
             if (err) {
-              console.log(colors.red(err.message));
+              console.error(colors.red(err.message));
               if (callback) callback(false);
             } else {
               if (callback) callback(true);
@@ -127,14 +127,14 @@ Teacher.prototype.insert = function(callback) {
         'INSERT INTO teachers(name) VALUES(?);', [teacher.name],
         function(err) {
           if (err) {
-            console.log(colors.red(err.message));
+            console.error(colors.red(err.message));
             if (callback) callback(false);
           } else {
             db.all(
                 'SELECT id FROM teachers WHERE name = ?;', [teacher.name],
                 function(err, rows) {
                   if (err) {
-                    console.log(colors.red(err.message));
+                    console.error(colors.red(err.message));
                     if (callback) callback(false);
                   } else {
                     teacher.id = rows[rows.length - 1].id;
@@ -180,7 +180,7 @@ Teacher.prototype.addBasicInfo = function(basicInfo, callback) {
           ],
           function(err) {
             if (err) {
-              console.log(colors.red(err.message));
+              console.error(colors.red(err.message));
               if (callback) callback(false);
             } else {
               if (callback) callback(true);
@@ -197,7 +197,7 @@ Teacher.prototype.getId = function(callback) {
         'SELECT id FROM teachers WHERE name = ?;', [name],
         function(err, rows) {
           if (err) {
-            console.log(colors.red(err.message));
+            console.error(colors.red(err.message));
             if (callback) callback([]);
           } else {
             if (callback) callback(rows);
@@ -216,7 +216,7 @@ Teacher.prototype.getBasicInfo = function(callback) {
           'SELECT * FROM teacherInfo WHERE teacherId = ?;', [id],
           function(err, row) {
             if (err) {
-              console.log(err.message);
+              console.error(err.message);
               if (callback) callback({});
             } else {
               if (callback) callback(row);
@@ -249,7 +249,7 @@ Teacher.prototype.updateBasicInfo = function(basicInfo, callback) {
           ],
           function(err) {
             if (err) {
-              console.log(err.message);
+              console.error(err.message);
               if (callback) callback(false);
             } else {
               if (callback) callback(true);
