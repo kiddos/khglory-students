@@ -326,7 +326,6 @@ describe('Teacher BasicInfo Model', function() {
          var teacher = new teachers.Teacher(allTeachers[0].name);
          teacher.id = allTeachers[0].id;
 
-         console.log(teacher.id);
          var basicInfo = new teachers.BasicInfo({
            teacherId: allTeachers[0].id,
            gender: faker.random.boolean() ? '男' : '女',
@@ -338,7 +337,6 @@ describe('Teacher BasicInfo Model', function() {
            email: faker.internet.email(),
          });
 
-         console.log(basicInfo.teacherId);
          teacher.addBasicInfo(basicInfo, function(status) {
            expect(status).toBe(true);
 
