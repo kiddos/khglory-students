@@ -18,9 +18,9 @@ $(document).ready(function() {
   function plotGenderPieChart(id, data) {
     var genderData = [{gender: '男', count: 0}, {gender: '女', count: 0}];
     for (var i = 0; i < data.length; ++i) {
-      if (data[i].gender === 'male') {
+      if (data[i].gender === '男') {
         genderData[0].count += 1;
-      } else if (data[i].gender === 'female') {
+      } else if (data[i].gender === '女') {
         genderData[1].count += 1;
       }
     }
@@ -88,7 +88,11 @@ $(document).ready(function() {
     arc.append('text').attr('transform', function(d) {
       return 'translate(' + label.centroid(d) + ')';
     }).attr('dy', '0.35em').text(function(d) {
-      return d.data.religion;
+      if (d.data.count > 0) {
+        return d.data.religion;
+      } else {
+        return '';
+      }
     });
   }
 
