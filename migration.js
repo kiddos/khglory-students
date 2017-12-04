@@ -11,6 +11,6 @@ admins.migrate();
 students.migrate();
 teachers.migrate();
 classes.migrate();
-cities.migration(function() {
-  regions.migration();
+cities.migrate(function() {
+  regions.migrate();
 });

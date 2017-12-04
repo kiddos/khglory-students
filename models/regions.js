@@ -1,7 +1,7 @@
 var db = require('./db_helper');
 var colors = require('colors');
 
-function migration(callback) {
+function migrate(callback) {
   db.serialize(function() {
     db.beginTransaction(function(err, transaction) {
       transaction.run(`DROP TABLE IF EXISTS regions;`);
@@ -86,7 +86,7 @@ function queryAll(callback) {
 }
 
 module.exports = {
-  migration: migration,
+  migrate: migrate,
   Region: Region,
   queryAll: queryAll,
 };
