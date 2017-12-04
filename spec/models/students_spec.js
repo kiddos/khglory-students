@@ -5,12 +5,17 @@ var fs = require('fs');
 
 var students = require('../../models/students');
 
-students.migrate();
-
 describe('Student', function() {
+  beforeAll(function(done) {
+    students.migrate(function(status) {
+      expect(status).toBe(true);
+      done();
+    });
+  });
+
   it('Should be able to be created', function(done) {
     var name = faker.name.firstName() + ' ' + faker.name.lastName();
-    var student = new students.Student(faker.random.uuid(), name);
+    var student = new students.Student(name);
 
     student.insert(function(status) {
       expect(status).toBe(true);
@@ -23,13 +28,22 @@ describe('Student', function() {
     });
   }, 10000);
 
+  it('Should not be able to be created if name not given', function(done) {
+    var student = new students.Student(null);
+
+    student.insert(function(status) {
+      expect(status).toBe(false);
+      done();
+    });
+  });
+
   it('Should be able to create multiple', function(done) {
     var maxCount = 600;
     var index = 0;
     var studentData = [];
     var insert = function() {
       var name = faker.name.firstName() + ' ' + faker.name.lastName();
-      var student = new students.Student(faker.random.uuid(), name);
+      var student = new students.Student(name);
       studentData.push(student);
 
       if (index < maxCount) {
@@ -57,7 +71,7 @@ describe('Student', function() {
 
   it('Should be able to be deleted', function(done) {
     var name = faker.name.firstName() + ' ' + faker.name.lastName();
-    var student = new students.Student(faker.random.uuid(), name);
+    var student = new students.Student(name);
 
     student.insert(function(status) {
       expect(status).toBe(true);
@@ -71,9 +85,9 @@ describe('Student', function() {
     });
   });
 
-  it('Should be found with given id', function(done) {
+  it('should be found with given id', function(done) {
     var name = faker.name.firstName() + ' ' + faker.name.lastName();
-    var student = new students.Student(faker.random.uuid(), name);
+    var student = new students.Student(name);
 
     student.insert(function(status) {
       student.find(function(studentData) {
@@ -89,7 +103,7 @@ describe('Student', function() {
 
   it('Should not be found with incorrect id', function(done) {
     var name = faker.name.firstName() + ' ' + faker.name.lastName();
-    var student = new students.Student(faker.random.uuid(), name);
+    var student = new students.Student(name);
 
     student.insert(function(status) {
       student.id = 'random id';
@@ -102,20 +116,28 @@ describe('Student', function() {
 
   it('Should be able to be removed', function(done) {
     var name = faker.name.firstName() + ' ' + faker.name.lastName();
-    var student = new students.Student(faker.random.uuid(), name);
+    var student = new students.Student(name);
 
     student.insert(function(status) {
       expect(status).toBe(true);
       student.remove(function(status) {
         expect(status).toBe(true);
-        done();
+
+        students.queryAll(function(studentData) {
+          var found = false;
+          for (var i = 0; i < studentData.length; ++i) {
+            found = (studentData[i].id === student.id);
+          }
+          expect(found).toBe(false);
+          done();
+        });
       });
     });
   });
 
   it('Should be able to change name', function(done) {
     var name = faker.name.firstName() + ' ' + faker.name.lastName();
-    var student = new students.Student(faker.random.uuid(), name);
+    var student = new students.Student(name);
 
     student.insert(function(status) {
       var newName = faker.name.firstName() + ' ' + faker.name.lastName();
@@ -155,7 +177,7 @@ describe('Student', function() {
 describe('Student BasicInfo', function() {
   beforeEach(function(done) {
     var name = '中文' + faker.name.firstName() + ' ' + faker.name.lastName();
-    var student = new students.Student(faker.random.uuid(), name);
+    var student = new students.Student(name);
 
     student.insert(function(status) {
       expect(status).toBe(true);
@@ -165,16 +187,17 @@ describe('Student BasicInfo', function() {
 
   it('Should be able to be added', function(done) {
     students.queryAll(function(allStudents) {
-      var student =
-          new students.Student(allStudents[0].id, allStudents[0].name);
+      var student = new students.Student(allStudents[0].name);
+      student.id = allStudents[0].id;
 
       var basicInfo = new students.BasicInfo({
         studentId: student.id,
-        gender: faker.random.boolean() ? '男' : '女',
+        gender: faker.random.boolean() ? 1 : 0,
         birthday: new Date().getTime(),
         socialId: 'A' + faker.random.number({min: 100000000, max: 999999999}),
         marriage: faker.random.boolean() ? '已婚' : '單身',
-        address: faker.address.streetAddress('###'),
+        city: faker.address.streetAddress('###'),
+        region: faker.address.streetAddress('###'),
         phone: faker.phone.phoneNumberFormat(1),
         email: faker.internet.email(),
       });
@@ -183,7 +206,8 @@ describe('Student BasicInfo', function() {
         student.getBasicInfo(function(info) {
           for (var i = 0; i < Object.keys(info).length; ++i) {
             var key = Object.keys(info)[i];
-            expect(info[key]).toBe(basicInfo[key]);
+            expect(info[key]).toBe(
+                basicInfo[key] !== undefined ? basicInfo[key] : null);
           }
           done();
         });
@@ -193,12 +217,12 @@ describe('Student BasicInfo', function() {
 
   it('Should not be able to be added with incorrect id', function(done) {
     students.queryAll(function(allStudents) {
-      var student =
-          new students.Student(allStudents[0].id, allStudents[0].name);
+      var student = new students.Student(allStudents[0].name);
+      student.id = allStudents[0].id;
 
       var basicInfo = new students.BasicInfo({
         studentId: faker.random.uuid(),
-        gender: faker.random.boolean() ? '男' : '女',
+        gender: faker.random.boolean() ? 1 : 0,
         birthday: new Date().getTime(),
         socialId: 'A' + faker.random.number({min: 100000000, max: 999999999}),
         marriage: faker.random.boolean() ? '已婚' : '單身',
@@ -215,16 +239,18 @@ describe('Student BasicInfo', function() {
 
   it('Should be able to be added with partial info', function(done) {
     students.queryAll(function(allStudents) {
-      var student =
-          new students.Student(allStudents[0].id, allStudents[0].name);
+      var student = new students.Student(allStudents[0].name);
+      student.id = allStudents[0].id;
 
       var basicInfo = new students.BasicInfo({
         studentId: student.id,
-        gender: faker.random.boolean() ? '男' : '女',
+        gender: faker.random.boolean() ? 1 : 0,
         birthday: new Date().getTime(),
         socialId: 'A' + faker.random.number({min: 100000000, max: 999999999}),
         marriage: faker.random.boolean() ? '已婚' : '單身',
-        address: faker.address.streetAddress('###'),
+        city: faker.address.streetAddress('###'),
+        region: faker.address.streetAddress('###'),
+        street: faker.address.streetAddress('###'),
         phone: faker.phone.phoneNumberFormat(1),
         email: faker.internet.email(),
       });
@@ -253,16 +279,15 @@ describe('Student BasicInfo', function() {
 
   it('Should be able to be updated', function(done) {
     students.queryAll(function(allStudents) {
-      var student =
-          new students.Student(allStudents[0].id, allStudents[0].name);
+      var student = new students.Student(allStudents[0].name);
+      student.id = allStudents[0].id;
 
       var basicInfo = new students.BasicInfo({
         studentId: student.id,
-        gender: faker.random.boolean() ? '男' : '女',
+        gender: faker.random.boolean() ? 1 : 0,
         birthday: new Date().getTime(),
         socialId: 'A' + faker.random.number({min: 100000000, max: 999999999}),
         marriage: faker.random.boolean() ? '已婚' : '單身',
-        address: faker.address.streetAddress('###'),
         phone: faker.phone.phoneNumberFormat(1),
         email: faker.internet.email(),
       });
@@ -271,7 +296,7 @@ describe('Student BasicInfo', function() {
 
         var newBasicInfo = new students.BasicInfo({
           studentId: student.id,
-          gender: faker.random.boolean() ? '男' : '女',
+          gender: faker.random.boolean() ? 1 : 0,
           birthday: new Date().getTime(),
           socialId:
               'A' + faker.random.number({min: 100000000, max: 999999999}),
@@ -285,7 +310,8 @@ describe('Student BasicInfo', function() {
           student.getBasicInfo(function(info) {
             for (var i = 0; i < Object.keys(info).length; ++i) {
               var key = Object.keys(info)[i];
-              expect(info[key]).toBe(newBasicInfo[key]);
+              expect(info[key]).toBe(
+                  newBasicInfo[key] !== undefined ? newBasicInfo[key] : null);
             }
             done();
           });
@@ -296,12 +322,12 @@ describe('Student BasicInfo', function() {
 
   it('Should not be able to be updated with incorrect id', function(done) {
     students.queryAll(function(allStudents) {
-      var student =
-          new students.Student(allStudents[0].id, allStudents[0].name);
+      var student = new students.Student(allStudents[0].name);
+      student.id = allStudents[0].id;
 
       var basicInfo = new students.BasicInfo({
         studentId: student.id,
-        gender: faker.random.boolean() ? '男' : '女',
+        gender: faker.random.boolean() ? 1 : 0,
         birthday: new Date().getTime(),
         socialId: 'A' + faker.random.number({min: 100000000, max: 999999999}),
         marriage: faker.random.boolean() ? '已婚' : '單身',
@@ -314,7 +340,7 @@ describe('Student BasicInfo', function() {
 
         var newBasicInfo = new students.BasicInfo({
           studentId: faker.random.uuid(),
-          gender: faker.random.boolean() ? '男' : '女',
+          gender: faker.random.boolean() ? 1 : 0,
           birthday: new Date().getTime(),
           socialId:
               'A' + faker.random.number({min: 100000000, max: 999999999}),
@@ -333,16 +359,15 @@ describe('Student BasicInfo', function() {
 
   it('Should be deleted when the student is removed', function(done) {
     students.queryAll(function(allStudents) {
-      var student =
-          new students.Student(allStudents[0].id, allStudents[0].name);
+      var student = new students.Student(allStudents[0].name);
+      student.id = allStudents[0].id;
 
       var basicInfo = new students.BasicInfo({
         studentId: student.id,
-        gender: faker.random.boolean() ? '男' : '女',
+        gender: faker.random.boolean() ? 1 : 0,
         birthday: new Date().getTime(),
         socialId: 'A' + faker.random.number({min: 100000000, max: 999999999}),
         marriage: faker.random.boolean() ? '已婚' : '單身',
-        address: faker.address.streetAddress('###'),
         phone: faker.phone.phoneNumberFormat(1),
         email: faker.internet.email(),
       });
@@ -378,7 +403,7 @@ describe('Student BasicInfo', function() {
 describe('Student ExtraInfo', function() {
   beforeEach(function(done) {
     var name = '中文' + faker.name.firstName() + ' ' + faker.name.lastName();
-    var student = new students.Student(faker.random.uuid(), name);
+    var student = new students.Student(name);
 
     student.insert(function(status) {
       expect(status).toBe(true);
@@ -388,8 +413,8 @@ describe('Student ExtraInfo', function() {
 
   it('Should be able to be added', function(done) {
     students.queryAll(function(allStudents) {
-      var student =
-          new students.Student(allStudents[0].id, allStudents[0].name);
+      var student = new students.Student(allStudents[0].name);
+      student.id = allStudents[0].id;
 
       var extraInfo = new students.ExtraInfo({
         studentId: student.id,
@@ -415,8 +440,8 @@ describe('Student ExtraInfo', function() {
 
   it('Should not be able to be added with incorrect id', function(done) {
     students.queryAll(function(allStudents) {
-      var student =
-          new students.Student(allStudents[0].id, allStudents[0].name);
+      var student = new students.Student(allStudents[0].name);
+      student.id = allStudents[0].id;
 
       var extraInfo = new students.ExtraInfo({
         studentId: faker.random.uuid(),
@@ -436,8 +461,8 @@ describe('Student ExtraInfo', function() {
 
   it('Should be able to be added with partial info', function(done) {
     students.queryAll(function(allStudents) {
-      var student =
-          new students.Student(allStudents[0].id, allStudents[0].name);
+      var student = new students.Student(allStudents[0].name);
+      student.id = allStudents[0].id;
 
       var extraInfo = new students.ExtraInfo({
         studentId: student.id,
@@ -473,8 +498,8 @@ describe('Student ExtraInfo', function() {
 
   it('Should be able to be updated', function(done) {
     students.queryAll(function(allStudents) {
-      var student =
-          new students.Student(allStudents[0].id, allStudents[0].name);
+      var student = new students.Student(allStudents[0].name);
+      student.id = allStudents[0].id;
 
       var extraInfo = new students.ExtraInfo({
         studentId: student.id,
@@ -513,8 +538,8 @@ describe('Student ExtraInfo', function() {
 
   it('Should be not be able to be updated with incorrect id', function(done) {
     students.queryAll(function(allStudents) {
-      var student =
-          new students.Student(allStudents[0].id, allStudents[0].name);
+      var student = new students.Student(allStudents[0].name);
+      student.id = allStudents[0].id;
 
       var extraInfo = new students.ExtraInfo({
         studentId: student.id,
@@ -546,8 +571,8 @@ describe('Student ExtraInfo', function() {
 
   it('Should be deleted when the student is removed', function(done) {
     students.queryAll(function(allStudents) {
-      var student =
-          new students.Student(allStudents[0].id, allStudents[0].name);
+      var student = new students.Student(allStudents[0].name);
+      student.id = allStudents[0].id;
 
       var extraInfo = new students.ExtraInfo({
         studentId: student.id,
@@ -558,6 +583,7 @@ describe('Student ExtraInfo', function() {
         emergencyContact: faker.random.boolean() ? '父' : '母',
         emergencyContactPhone: faker.phone.phoneNumberFormat(1),
       });
+
       student.addExtraInfo(extraInfo, function(status) {
         expect(status).toBe(true);
 
@@ -570,220 +596,6 @@ describe('Student ExtraInfo', function() {
             }
             expect(found).toBe(false);
             done();
-          });
-        });
-      });
-    });
-  });
-
-  afterEach(function(done) {
-    students.clear(function(status) {
-      expect(status).toBe(true);
-      students.queryAll(function(allStudents) {
-        expect(allStudents.length).toBe(0);
-        done();
-      });
-    });
-  });
-});
-
-describe('Student HardCopy', function() {
-  beforeEach(function(done) {
-    var name = '中文' + faker.name.firstName() + ' ' + faker.name.lastName();
-    var student = new students.Student(faker.random.uuid(), name);
-
-    student.insert(function(status) {
-      expect(status).toBe(true);
-      done();
-    });
-  });
-
-  it('Should be able to add HardCopy', function(done) {
-    students.queryAll(function(allStudents) {
-      var student =
-          new students.Student(allStudents[0].id, allStudents[0].name);
-
-      var imagePath = path.join(
-          'node_modules', 'node-gallery', 'examples', 'resources', 'photos',
-          'Doo Lough.jpg');
-      fs.readFile(imagePath, function(err, data) {
-        if (err) throw err;
-
-        var hardCopy = new students.HardCopy({
-          studentId: student.id,
-          hardCopy: data,
-        });
-        student.addHardCopy(hardCopy, function(status) {
-          expect(status).toBe(true);
-          student.getHardCopy(function(hc) {
-            for (var i = 0; i < Object.keys(hc).length; ++i) {
-              var key = Object.keys(hc)[i];
-              if (typeof(hc[key]) === 'object') {
-                for (var j = 0; j < hc[key].length; ++j) {
-                  expect(hc[key][j]).toBe(hardCopy[key][j]);
-                }
-              } else {
-                expect(hc[key]).toBe(hardCopy[key]);
-              }
-            }
-
-            done();
-          });
-        });
-      });
-    });
-  }, 120000);
-
-  it('Should not be able to be added with incorrect id', function(done) {
-    students.queryAll(function(allStudents) {
-      var student =
-          new students.Student(allStudents[0].id, allStudents[0].name);
-
-      var imagePath = path.join(
-          'node_modules', 'node-gallery', 'examples', 'resources', 'photos',
-          'Doo Lough.jpg');
-      fs.readFile(imagePath, function(err, data) {
-        if (err) throw err;
-
-        var hardCopy = new students.HardCopy({
-          studentId: faker.random.uuid(),
-          hardCopy: data,
-        });
-        student.addHardCopy(hardCopy, function(status) {
-          expect(status).toBe(false);
-          done();
-        });
-      });
-    });
-  });
-
-  it('Should be able to update its HardCopy', function(done) {
-    students.queryAll(function(allStudents) {
-      var student =
-          new students.Student(allStudents[0].id, allStudents[0].name);
-
-      var imagePath = path.join(
-          'node_modules', 'node-gallery', 'examples', 'resources', 'photos',
-          'Doo Lough.jpg');
-      fs.readFile(imagePath, function(err, data) {
-        if (err) throw err;
-
-        var hardCopy = new students.HardCopy({
-          studentId: student.id,
-          hardCopy: data,
-        });
-
-        student.addHardCopy(hardCopy, function(status) {
-          expect(status).toBe(true);
-
-          var newImageUrl = faker.image.image();
-          fs.readFile('./public/images/background.jpg', function(err, data) {
-            if (err) throw err;
-
-            var newHardCopy = new students.HardCopy({
-              studentId: student.id,
-              hardCopy: data,
-            });
-            student.updateHardCopy(newHardCopy, function(status) {
-              expect(status).toBe(true);
-              student.getHardCopy(function(hc) {
-                for (var i = 0; i < Object.keys(hc).length; ++i) {
-                  var key = Object.keys(hc)[i];
-                  if (typeof(hc[key]) === 'object') {
-                    for (var j = 0; j < hc[key].length; ++j) {
-                      expect(hc[key][j]).toBe(newHardCopy[key][j]);
-                    }
-                  } else {
-                    expect(hc[key]).toBe(newHardCopy[key]);
-                  }
-                }
-
-                done();
-              });
-            });
-          });
-        });
-      });
-    });
-  }, 120000);
-
-  it('Should be not be able to be updated with incorrect id', function(done) {
-    students.queryAll(function(allStudents) {
-      var student =
-          new students.Student(allStudents[0].id, allStudents[0].name);
-
-      var imagePath = path.join(
-          'node_modules', 'node-gallery', 'examples', 'resources', 'photos',
-          'Doo Lough.jpg');
-      fs.readFile(imagePath, function(err, data) {
-        if (err) throw err;
-
-        var hardCopy = new students.HardCopy({
-          studentId: student.id,
-          hardCopy: data,
-        });
-
-        student.addHardCopy(hardCopy, function(status) {
-          expect(status).toBe(true);
-
-          var newImageUrl = faker.image.image();
-          fs.readFile('./public/images/background.jpg', function(err, data) {
-            if (err) throw err;
-
-            var newHardCopy = new students.HardCopy({
-              studentId: faker.random.uuid(),
-              hardCopy: data,
-            });
-            student.updateHardCopy(newHardCopy, function(status) {
-              expect(status).toBe(false);
-              done();
-            });
-          });
-        });
-      });
-    });
-  });
-
-  it('Should be deleted when the student is removed', function(done) {
-    students.queryAll(function(allStudents) {
-      var student =
-          new students.Student(allStudents[0].id, allStudents[0].name);
-
-      var imagePath = path.join(
-          'node_modules', 'node-gallery', 'examples', 'resources', 'photos',
-          'Doo Lough.jpg');
-      fs.readFile(imagePath, function(err, data) {
-        if (err) throw err;
-
-        var hardCopy = new students.HardCopy({
-          studentId: student.id,
-          hardCopy: data,
-        });
-        student.addHardCopy(hardCopy, function(status) {
-          expect(status).toBe(true);
-          student.getHardCopy(function(hc) {
-            for (var i = 0; i < Object.keys(hc).length; ++i) {
-              var key = Object.keys(hc)[i];
-              if (typeof(hc[key]) === 'object') {
-                for (var j = 0; j < hc[key].length; ++j) {
-                  expect(hc[key][j]).toBe(hardCopy[key][j]);
-                }
-              } else {
-                expect(hc[key]).toBe(hardCopy[key]);
-              }
-            }
-
-            student.remove(function(status) {
-              expect(status).toBe(true);
-              students.getHardCopy(function(hardCopies) {
-                var found = false;
-                for (var i = 0; i < hardCopies.length; ++i) {
-                  found = (hardCopies[i].studentId === hardCopy.studentId);
-                }
-                expect(found).toBe(false);
-                done();
-              });
-            });
           });
         });
       });
