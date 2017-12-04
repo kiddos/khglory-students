@@ -1,12 +1,10 @@
 var cities = require('../../models/cities');
 var regions = require('../../models/regions');
 
-
 describe('Cities', function() {
   beforeAll(function(done) {
-    cities.migration(function() {
-      regions.migration();
-      done();
+    cities.migrate(function() {
+      regions.migrate(done);
     });
   });
 
