@@ -6,7 +6,7 @@ function migrate(callback) {
     db.beginTransaction(function(err, transaction) {
       transaction.run(`DROP TABLE IF EXISTS cities;`);
 
-      transaction.run(`CREATE TABLE cities(
+      transaction.run(`CREATE TABLE IF NOT EXISTS cities(
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT NOT NULL);`);
 
