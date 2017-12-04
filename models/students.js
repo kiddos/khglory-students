@@ -4,6 +4,8 @@ var faker = require('faker');
 var path = require('path');
 var fs = require('fs');
 
+var cities = require('./cities');
+
 function migrate(callback) {
   db.serialize(function() {
     db.beginTransaction(function(err, transaction) {
@@ -11,7 +13,6 @@ function migrate(callback) {
         console.error(colors.red(err.message));
         if (callback) callback(false);
       } else {
-        console.log(colors.green('students migration done.'));
         transaction.run(`CREATE TABLE IF NOT EXISTS students(
           id INTEGER PRIMARY KEY AUTOINCREMENT,
           name TEXT NOT NULL);`);
@@ -29,7 +30,7 @@ function migrate(callback) {
           email TEXT);`);
 
         transaction.run(`CREATE TABLE IF NOT EXISTS studentExtraInfo(
-          studentId TEXT REFERENCES students(id) ON DELETE CASCADE NOT NULL,
+          studentId INTEGER REFERENCES students(id) ON DELETE CASCADE NOT NULL,
           career TEXT,
           education TEXT,
           religion TEXT,
@@ -42,6 +43,7 @@ function migrate(callback) {
             console.error(colors.red(err.message));
             if (callback) callback(false);
           } else {
+            console.log(colors.green('students migration done.'));
             if (callback) callback(true);
           }
         });
@@ -138,7 +140,9 @@ function BasicInfo(obj) {
   this.birthday = obj.birthday;
   this.socialId = obj.socialId;
   this.marriage = obj.marriage;
-  this.address = obj.address;
+  this.city = obj.city;
+  this.region = obj.region;
+  this.street = obj.street;
   this.phone = obj.phone;
   this.email = obj.email;
 }
@@ -257,19 +261,21 @@ Student.prototype.updateBasicInfo = function(basicInfo, callback) {
   } else {
     db.serialize(function() {
       db.run(
-          'UPDATE studentInfo SET ' +
-              'gender = ?,' +
-              'birthday = ?,' +
-              'socialId = ?,' +
-              'marriage = ?,' +
-              'address = ?,' +
-              'phone = ?,' +
-              'email = ? ' +
-              'WHERE studentId = ?;',
+          `UPDATE studentInfo SET
+              gender = ?,
+              birthday = ?,
+              socialId = ?,
+              marriage = ?,
+              city = ?,
+              region = ?,
+              street = ?,
+              phone = ?,
+              email = ?
+              WHERE studentId = ?;`,
           [
             basicInfo.gender, basicInfo.birthday, basicInfo.socialId,
-            basicInfo.marriage, basicInfo.address, basicInfo.phone,
-            basicInfo.email, id
+            basicInfo.marriage, basicInfo.city, basicInfo.region,
+            basicInfo.street, basicInfo.phone, basicInfo.email, id
           ],
           function(err) {
             if (err) {
@@ -286,7 +292,7 @@ Student.prototype.updateBasicInfo = function(basicInfo, callback) {
 Student.prototype.remove = function(callback) {
   var id = this.id;
   db.serialize(function() {
-    db.run('DELETE FROM students WHERE id = ?', [id], function(err) {
+    db.run('DELETE FROM students WHERE id = ?;', [id], function(err) {
       if (err) {
         console.error(colors.red(err.message));
         if (callback) callback(false);
@@ -370,68 +376,72 @@ Student.prototype.updateExtraInfo = function(extraInfo, callback) {
 };
 
 function generateStudents(num, callback) {
-  db.serialize(function() {
-    db.beginTransaction(function(err, transaction) {
-      for (var i = 0; i < num; ++i) {
-        var name = faker.name.firstName() + ' ' + faker.name.lastName();
-        transaction.run('INSERT INTO students(name) VALUES(?);', [name]);
-      }
-
-      transaction.commit(function(err) {
-        if (err) {
-          console.error(colors.red(err.message));
-          if (callback) callback(false);
-        } else {
-          queryAll(function(studentData) {
-            db.beginTransaction(function(err, transaction) {
-              if (err) {
-                console.error(colors.red(err.message));
-                if (callback) callback(false);
-              } else {
-                for (var i = 0; i < studentData.length / 2; ++i) {
-                  transaction.run(
-                      `INSERT INTO studentInfo
-                          VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`,
-                      [
-                        studentData[i].id,
-                        faker.random.boolean() ? 1 : 0,
-                        faker.date.between('1900-01-01', '2016-12-31'),
-                        'Z' +
-                            faker.random.number(
-                                {min: 100000000, max: 999999999}),
-                        faker.random.boolean() ? '已婚' : '單生',
-                        faker.address.streetAddress('###'),
-                        faker.address.streetAddress('###'),
-                        faker.address.streetAddress('###'),
-                        faker.phone.phoneNumberFormat(1),
-                        faker.internet.email(),
-                      ]);
-                  transaction.run(
-                      `INSERT INTO studentExtraInfo
-                          VALUES(?, ?, ?, ?, ?, ?, ?);`,
-                      [
-                        studentData[i].id,
-                        faker.name.jobTitle(),
-                        faker.random.boolean() ? '高中以下' : '大學畢業',
-                        faker.random.boolean() ? '基督教' : '天主教',
-                        faker.random.boolean() ? '無' : '感冒',
-                        faker.random.boolean() ? '母' : '父',
-                        faker.phone.phoneNumberFormat(1),
-                      ]);
-                }
-
-                transaction.commit(function(err) {
-                  if (err) {
-                    console.error(colors.red(err.message));
-                    if (callback) callback(false);
-                  } else {
-                    if (callback) callback(true);
-                  }
-                });
-              }
-            });
-          });
+  var city = new cities.City('高雄');
+  city.id = 1;
+  city.getRegions(function(regions) {
+    db.serialize(function() {
+      db.beginTransaction(function(err, transaction) {
+        for (var i = 0; i < num; ++i) {
+          var name = faker.name.firstName() + ' ' + faker.name.lastName();
+          transaction.run('INSERT INTO students(name) VALUES(?);', [name]);
         }
+
+        transaction.commit(function(err) {
+          if (err) {
+            console.error(colors.red(err.message));
+            if (callback) callback(false);
+          } else {
+            queryAll(function(studentData) {
+              db.beginTransaction(function(err, transaction) {
+                if (err) {
+                  console.error(colors.red(err.message));
+                  if (callback) callback(false);
+                } else {
+                  for (var i = 0; i < studentData.length / 2; ++i) {
+                    transaction.run(
+                        `INSERT INTO studentInfo
+                          VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`,
+                        [
+                          studentData[i].id,
+                          faker.random.boolean() ? 1 : 0,
+                          faker.date.between('1900-01-01', '2016-12-31'),
+                          'Z' +
+                              faker.random.number(
+                                  {min: 100000000, max: 999999999}),
+                          faker.random.boolean() ? '已婚' : '單生',
+                          city.name,
+                          regions[faker.random.number({min: 0, max: 37})],
+                          faker.address.streetAddress('###'),
+                          faker.phone.phoneNumberFormat(1),
+                          faker.internet.email(),
+                        ]);
+                    transaction.run(
+                        `INSERT INTO studentExtraInfo
+                          VALUES(?, ?, ?, ?, ?, ?, ?);`,
+                        [
+                          studentData[i].id,
+                          faker.name.jobTitle(),
+                          faker.random.boolean() ? '高中以下' : '大學畢業',
+                          faker.random.boolean() ? '基督教' : '天主教',
+                          faker.random.boolean() ? '無' : '感冒',
+                          faker.random.boolean() ? '母' : '父',
+                          faker.phone.phoneNumberFormat(1),
+                        ]);
+                  }
+
+                  transaction.commit(function(err) {
+                    if (err) {
+                      console.error(colors.red(err.message));
+                      if (callback) callback(false);
+                    } else {
+                      if (callback) callback(true);
+                    }
+                  });
+                }
+              });
+            });
+          }
+        });
       });
     });
   });
