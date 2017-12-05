@@ -130,7 +130,7 @@ router.get('/add', function(req, res, next) {
   }
 });
 
-router.post('/add', upload.single('hardCopy'), function(req, res, next) {
+router.post('/add', function(req, res, next) {
   var student = new students.Student(req.body.id, req.body.name);
 
   student.insert(function(status) {
@@ -157,18 +157,6 @@ router.post('/add', upload.single('hardCopy'), function(req, res, next) {
         emergencyContactPhone: req.body.emergencyContactPhone,
       });
       student.addExtraInfo(extraInfo);
-
-      if (req.file) {
-        fs.readFile(req.file, function(err, data) {
-          if (!err) {
-            var hardCopy = new students.HardCopy({
-              studentId: student.id,
-              hardCopy: data,
-            });
-            student.addHardCopy(hardCopy);
-          }
-        });
-      }
 
       res.end('success');
     } else {
@@ -243,31 +231,6 @@ router.post('/edit', function(req, res, next) {
             student.updateExtraInfo(extraInfo, function(status) {
               if (!status) {
                 console.error('fail to update extra info for ' + student.name);
-              }
-            });
-          }
-        });
-
-        student.getHardCopy(function(hardCopy) {
-          if (!hardCopy) {
-            hardCopy = new students.HardCopy({studentId: student.id});
-          }
-
-          var mod = false;
-          var keys = Object.keys(hardCopy);
-          for (var i = 0; i < keys.length; ++i) {
-            var key = keys[i];
-            if (req.body[key] && req.body[key] !== hardCopy[key]) {
-              hardCopy[key] = req.body[key];
-              mod = true;
-            }
-          }
-
-          if (mod) {
-            console.log('updating hard copy for ' + student.name);
-            student.updateHardCopy(hardCopy, function(status) {
-              if (!status) {
-                console.error('fail to update hard copy for ' + student.name);
               }
             });
           }
