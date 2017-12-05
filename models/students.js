@@ -198,7 +198,7 @@ Student.prototype.insert = function(callback) {
             if (callback) callback(false);
           } else {
             db.all(
-                `SELECT id FROM students WHERE name = ?`, [student.name],
+                `SELECT id FROM students WHERE name = ?;`, [student.name],
                 function(err, rows) {
                   if (err) {
                     console.log(colors.red(err.message));
