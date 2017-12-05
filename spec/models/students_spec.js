@@ -67,7 +67,7 @@ describe('Student', function() {
       }
     };
     insert();
-  }, 10000);
+  }, 100000);
 
   it('Should be able to be deleted', function(done) {
     var name = faker.name.firstName() + ' ' + faker.name.lastName();
