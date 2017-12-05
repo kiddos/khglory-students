@@ -14,7 +14,7 @@ function migrate(callback) {
         transaction.run(`CREATE TABLE IF NOT EXISTS regions(
           id INTEGER PRIMARY KEY AUTOINCREMENT,
           name TEXT NOT NULL,
-          city INTEGER NOT NULL REFERENCES cities(id));`);
+          city INTEGER NOT NULL REFERENCES cities(id) ON DELETE CASCADE);`);
 
         var regions = [
           '鳳山區',   '三民區', '左營區', '前鎮區', '楠梓區', '苓雅區',
