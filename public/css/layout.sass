@@ -4,6 +4,7 @@ $header-height: 70px
 $main-content-width: 1280px
 $main-content-height: 500px
 $main-content-padding: 20px
+$message-dialog-height: 120px
 
 @font-face
   font-family: 'SourceHanSerifTC'
@@ -127,6 +128,7 @@ html
     .message-dialog
       max-width: $main-content-width
       margin: 10px auto
+      max-height: $message-dialog-height
       padding: 0
       opacity: $transparent
       transition: opacity 1s ease-in-out
@@ -156,11 +158,12 @@ html
 
     .main-content
       width: calc(100% - 2 * #{$main-content-padding})
-      height: calc(80% - #{$header-height})
+      height: calc(100% - #{$header-height} - #{$message-dialog-height})
       max-width: $main-content-width
       margin: 0 auto
       padding: $main-content-padding
       padding-bottom: 0
+      padding-top: 0
 
       .button-panel
         display: flex
