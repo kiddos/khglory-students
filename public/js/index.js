@@ -99,14 +99,20 @@ $(document).ready(function() {
   $.get('/students', function(students) {
     animateNumbers($('#student-count'),
       parseInt($('#student-count').text()), students.length, 1000);
-    plotGenderPieChart('student-gender', students);
-    plotReligionPieChart('student-religion', students);
+
+    if (student.length > 0) {
+      plotGenderPieChart('student-gender', students);
+      plotReligionPieChart('student-religion', students);
+    }
   });
 
   $.get('/teachers', function(teachers) {
     animateNumbers($('#teacher-count'),
       parseInt($('#teacher-count').text()), teachers.length, 1000);
-    plotGenderPieChart('teacher-gender', teachers);
+
+    if (teachers.length > 0) {
+      plotGenderPieChart('teacher-gender', teachers);
+    }
   });
 
   $.get('/classes', function(classes) {
