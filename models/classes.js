@@ -1,23 +1,38 @@
 var db = require('./db_helper');
 var colors = require('colors');
 
-function migrate() {
+function migrate(callback) {
   db.serialize(function() {
-    db.run(
-        'CREATE TABLE IF NOT EXISTS classes(' +
-        'id INTEGER PRIMARY KEY AUTOINCREMENT,' +
-        'name TEXT NOT NULL,' +
-        'startDate INTEGER);');
-    db.run(
-        'CREATE TABLE IF NOT EXISTS classStudents(' +
-        'classId REFERENCES classes(id) ON DELETE CASCADE NOT NULL,' +
-        'studentId REFERENCES students(id) NOT NULL);');
-    db.run(
-        'CREATE TABLE IF NOT EXISTS classTeachers(' +
-        'classId REFERENCES classes(id) ON DELETE CASCADE NOT NULL,' +
-        'teacherId REFERENCES teachers(id) NOT NULL);');
+    db.beginTransaction(function(err, transaction) {
+      if (err) {
+        console.error(colors.red(err.message));
+        if (callback) callback(false);
+      } else {
+        transaction.run('PRAGMA foreign_keys = ON;');
+        transaction.run(`CREATE TABLE IF NOT EXISTS classes(
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          name TEXT NOT NULL,
+          startDate INTEGER);`);
 
-    console.log(colors.green('classes migration done.'));
+        transaction.run(`CREATE TABLE IF NOT EXISTS classStudents(
+          classId REFERENCES classes(id) ON DELETE CASCADE NOT NULL,
+          studentId REFERENCES students(id) NOT NULL);`);
+
+        transaction.run(`CREATE TABLE IF NOT EXISTS classTeachers(
+          classId REFERENCES classes(id) ON DELETE CASCADE NOT NULL,
+          teacherId REFERENCES teachers(id) NOT NULL);`);
+
+        transaction.commit(function(err) {
+          if (err) {
+            console.error(colors.red(err.message));
+            if (callback) callback(false);
+          } else {
+            console.log(colors.green('classes migration done.'));
+            if (callback) callback(true);
+          }
+        });
+      }
+    });
   });
 }
 
