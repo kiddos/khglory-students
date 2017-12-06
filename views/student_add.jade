@@ -12,56 +12,107 @@ block content
     h2.content-title= title
 
     .info-form
-      for field in basicFields
-        if field.name === 'birthday'
-          label(class='field-label', for='#{field.name}')= field.text
-          label(class='small field-label', for='year') 年
-          input(type='text', class='small field-inputs', name='year')
-          label(class='small field-label', for='month') 月
-          input(type='text', class='small field-inputs', name='month')
-          label(class='small field-label', for='day') 日
-          input(type='text', class='small field-inputs', name='day')
-        else
-          if field.type === 'text'
-            label(class='field-label', for='#{field.name}')= field.text
-              if field.require
-                span(class='require-text') 必填
-              span(class='error')
-            input(type='text', class='field-inputs', name='#{field.name}')
-          else if field.type === 'radio'
-            label(class='field-label', for='#{field.name}')= field.text
-            for option in field.options
-              input(type='radio', name='#{field.name}',
-                class='field-options', value='#{option}')
-              span(class='field-options') #{option}
-              if option === '其他'
-                input(type='text', class='field-inputs option',
-                  name='#{field.name}')
-        <br>
+      label(class='field-label', for='name') 姓名
+        span(class='require-text') 必填
+        span(class='error')
+      input(type='text', name='name', class='field-inputs')
+      br
+
+      label(class='field-label', for='gender') 性別
+      input(type='radio', name='gender', class='field-options', value='1')
+      span(class='field-options') 男
+      input(type='radio', name='gender', class='field-options', value='0')
+      span(class='field-options') 女
+      br
+
+      label(class='field-label', for='birthday') 生日
+      label(class='small field-label', for='year') 年
+      input(type='text', class='small field-inputs', name='year')
+      label(class='small field-label', for='month') 月
+      input(type='text', class='small field-inputs', name='month')
+      label(class='small field-label', for='day') 日
+      input(type='text', class='small field-inputs', name='day')
+      br
+
+      label(class='field-label', for='socialId') 身分證字號
+      input(type='text', name='socialId', class='field-inputs')
+      br
+
+      label(class='field-label', for='marriage') 婚姻
+      input(type='radio', name='marriage', class='field-options', value='單身')
+      span(class='field-options') 單身
+      input(type='radio', name='marriage', class='field-options', value='已婚')
+      span(class='field-options') 已婚
+      input(type='radio', name='marriage', class='field-options', value='離婚')
+      span(class='field-options') 離婚
+      br
+
+      label(class='field-label', for='address') 地址
+      input(type='text', name='address', class='field-inputs')
+      br
+
+      label(class='field-label', for='phone') 電話
+      input(type='text', name='phone', class='field-inputs')
+      br
+
+      label(class='field-label', for='email') 電子郵件
+      input(type='text', name='email', class='field-inputs')
+      br
 
     div(class='info-form hide')
       label(class='field-label', for='student-name') 學生姓名
       input(type='text', class='field-inputs', name='student-name' disabled)
+      br
 
-      for field in extraFields
-        if field.type === 'text'
-          label(class='field-label', for='#{field.name}')= field.text
-            if field.require
-              span(class='require-text') 必填
-            span(class='error')
-          input(type='text', class='field-inputs', name='#{field.name}')
-        else if field.type === 'radio'
-          label(class='field-label', for='#{field.name}')= field.text
-          for option in field.options
-            input(type='radio', name='#{field.name}',
-              class='field-options', value='#{option}')
-            span(class='field-options') #{option}
-            if option === '其他'
-              input(type='text', class='field-inputs option',
-                name='#{field.name}')
-        <br>
-      label(class='field-label', for='hardCopy') 紙本備份
-      input(type='file', name='hardCopy')
+      label(class='field-label', for='career') 職業
+      input(type='text', name='career', class='field-inputs')
+      br
+
+      label(class='field-label', for='education') 教育
+      input(type='radio', name='education', class='field-options',
+        value='高中以下')
+      span(class='field-options') 高中以下
+      input(type='radio', name='education', class='field-options',
+        value='大學')
+      span(class='field-options') 大學
+      input(type='radio', name='education', class='field-options',
+        value='碩士')
+      span(class='field-options') 碩士
+      input(type='radio', name='education', class='field-options',
+        value='博士')
+      span(class='field-options') 博士
+      br
+
+      label(class='field-label', for='religion') 宗教信仰
+      input(type='radio', name='religion', class='field-options',
+        value='基督教')
+      span(class='field-options') 基督教
+      input(type='radio', name='religion', class='field-options',
+        value='天主教')
+      span(class='field-options') 天主教
+      input(type='radio', name='religion', class='field-options',
+        value='佛教')
+      span(class='field-options') 佛教
+      input(type='radio', name='religion', class='field-options',
+        value='伊斯蘭教')
+      span(class='field-options') 伊斯蘭教
+      input(type='radio', name='religion', class='field-options',
+        value='其他')
+      span(class='field-options') 其他
+      input(type='text', name='religion', class='field-inputs option')
+      br
+
+      label(class='field-label', for='illness') 個人疾病
+      input(type='text', name='illness', class='field-inputs')
+      br
+
+      label(class='field-label', for='emergencyContact') 緊急聯絡人
+      input(type='text', name='emergencyContact', class='field-inputs')
+      br
+
+      label(class='field-label', for='emergencyContactPhone') 緊急聯絡人電話
+      input(type='text', name='emergencyContactPhone', class='field-inputs')
+      br
 
     .info-button-panel
       input(type='button', class='button', id='main-menu', value='回選單')
