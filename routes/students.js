@@ -37,7 +37,7 @@ router.get('/add', function(req, res, next) {
 });
 
 router.post('/add', function(req, res, next) {
-  var student = new students.Student(req.body.id, req.body.name);
+  var student = new students.Student(req.body.name);
 
   student.insert(function(status) {
     if (status) {
@@ -85,7 +85,8 @@ router.get('/edit', function(req, res, next) {
 
 router.post('/edit', function(req, res, next) {
   if (req.session.login) {
-    var student = new students.Student(req.body.id, req.body.name);
+    var student = new students.Student(req.body.name);
+    student.id = req.body.id;
     student.find(function(studentData) {
       if (studentData) {
         if (studentData.name !== student.name) {
@@ -155,7 +156,8 @@ router.post('/edit', function(req, res, next) {
 
 router.post('/delete', function(req, res, next) {
   if (req.session.login) {
-    var student = new students.Student(req.body.id, req.body.name);
+    var student = new students.Student(req.body.name);
+    student.id = req.body.id;
     student.find(function(status) {
       if (status) {
         student.remove();
