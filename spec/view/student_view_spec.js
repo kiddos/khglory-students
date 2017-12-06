@@ -31,7 +31,7 @@ describe('Student Web Function', function() {
 
   it('Should be able to add new students', function(done) {
     var name = '中文' + faker.name.firstName() + ' ' + faker.name.lastName();
-    var student = new students.Student(String(faker.random.uuid()), name);
+    var student = new students.Student(name);
 
     var birthday = new Date(faker.date.between('1900-01-01', '2016-12-31'));
     var basicInfo = new students.BasicInfo({
