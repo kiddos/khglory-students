@@ -5,6 +5,7 @@ var fs = require('fs');
 var router = express.Router();
 
 var students = require('../models/students');
+var cities = require('../models/cities');
 
 var uploadPath = path.join(__dirname, 'uploads/');
 if (!fs.existsSync(uploadPath)) {
@@ -22,10 +23,13 @@ router.get('/', function(req, res, next) {
 
 router.get('/add', function(req, res, next) {
   if (req.session.login) {
-    res.render('student_add', {
-      title: '加入學生資料',
-      login: true,
-      user: req.session.user,
+    cities.queryAll(function(cityData) {
+      res.render('student_add', {
+        title: '加入學生資料',
+        login: true,
+        user: req.session.user,
+        city: cityData,
+      });
     });
   } else {
     res.redirect('/login');
