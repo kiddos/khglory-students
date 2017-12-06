@@ -12,17 +12,21 @@ describe('Student Web Function', function() {
   var driver;
 
   beforeEach(function(done) {
-    driver = new webdriver.Builder().forBrowser('chrome').build();
-    driver.get('http://localhost:3000').then(function() {
-      driver.wait(until.titleIs('Login'), 6000).then(function() {
-        var userField = driver.findElement(By.css('input[name="username"]'));
-        userField.sendKeys('admin1');
-        var passField = driver.findElement(By.css('input[name="password"]'));
-        passField.sendKeys('admin1');
-        var submit = driver.findElement(By.css('input[name="submit"]'));
-        submit.sendKeys(Key.RETURN).then(function() {
-          driver.wait(until.titleIs('高雄榮光堂統計系統')).then(function() {
-            done();
+    students.generateStudents(100, function(status) {
+      expect(status).toBe(true);
+
+      driver = new webdriver.Builder().forBrowser('chrome').build();
+      driver.get('http://localhost:3000').then(function() {
+        driver.wait(until.titleIs('Login'), 6000).then(function() {
+          var userField = driver.findElement(By.css('input[name="username"]'));
+          userField.sendKeys('admin1');
+          var passField = driver.findElement(By.css('input[name="password"]'));
+          passField.sendKeys('admin1');
+          var submit = driver.findElement(By.css('input[name="submit"]'));
+          submit.sendKeys(Key.RETURN).then(function() {
+            driver.wait(until.titleIs('高雄榮光堂統計系統')).then(function() {
+              done();
+            });
           });
         });
       });
@@ -65,10 +69,6 @@ describe('Student Web Function', function() {
     driver.wait(until.elementIsVisible(addStudentTab), 1000).then(function() {
       addStudentTab.click();
       driver.wait(until.titleIs('加入學生資料'), 6000).then(function() {
-        // fill in the form
-        var idField = driver.findElement(By.css('input[name="id"]'));
-        idField.sendKeys(student.id);
-
         var nameField = driver.findElement(By.css('input[name="name"]'));
         nameField.sendKeys(student.name);
 
@@ -93,8 +93,8 @@ describe('Student Web Function', function() {
             driver.findElement(By.css('input[name="marriage"]'));
         marriageButton.click();
 
-        var addressField = driver.findElement(By.css('input[name="address"]'));
-        addressField.sendKeys(basicInfo.address);
+        var cityButton = driver.findElement(By.css('input[name="city"]'));
+        cityButton.click();
 
         var phoneField = driver.findElement(By.css('input[name="phone"]'));
         phoneField.sendKeys(basicInfo.phone);
@@ -130,28 +130,18 @@ describe('Student Web Function', function() {
             var messageDialog = driver.findElement(By.id('message-text'));
             driver.wait(until.elementIsVisible(messageDialog), 3000)
                 .then(function() {
-                  student.find(function(studentData) {
-                    expect(studentData).not.toBe(null);
-                    expect(studentData.id).toBe(student.id);
-                    expect(studentData.name).toBe(student.name);
-
-                    student.getBasicInfo(function(basicInfoData) {
-                      var keys = Object.keys(basicInfoData);
-                      for (var i = 0; i < keys.length; ++i) {
-                        var key = keys[i];
-                        expect(String(basicInfo[key]))
-                            .toBe(String(basicInfoData[key]));
+                  students.queryAll(function(studentData) {
+                    var found = false;
+                    for (var i = 0; i < studentData.length; ++i) {
+                      found = (studentData[i].name === student.name);
+                      if (found) {
+                        student.id = studentData[i].id;
                       }
-
-                      student.getExtraInfo(function(extraInfoData) {
-                        keys = Object.keys(basicInfoData);
-                        for (var i = 0; i < keys.length; ++i) {
-                          var key = keys[i];
-                          expect(extraInfo[key]).toBe(extraInfoData[key]);
-                        }
-
-                        student.remove(function(status) { done(); });
-                      });
+                    }
+                    expect(found).toBe(true);
+                    student.remove(function(status) {
+                      expect(status).toBe(true);
+                      done();
                     });
                   });
                 });
@@ -171,10 +161,7 @@ describe('Student Web Function', function() {
       driver.wait(until.titleIs('加入學生資料'), 6000).then(function() {
         var name =
             '中文' + faker.name.firstName() + ' ' + faker.name.lastName();
-        var student = new students.Student(String(faker.random.uuid()), name);
-
-        var idField = driver.findElement(By.css('input[name="id"]'));
-        idField.sendKeys(student.id);
+        var student = new students.Student(name);
 
         var nameField = driver.findElement(By.css('input[name="name"]'));
         nameField.sendKeys(student.name);
@@ -226,15 +213,53 @@ describe('Student Web Function', function() {
     });
   });
 
+  it('Should be able to delete student', function(done) {
+    var studentNav = driver.findElement(By.css('.menu-item:first-of-type'));
+    studentNav.click();
+
+    var editStudentTab = driver.findElement(By.linkText('編輯學生資料'));
+    driver.wait(until.elementIsVisible(editStudentTab), 1000).then(function() {
+      editStudentTab.click();
+      driver.wait(until.titleIs('學生資料編輯'), 1000).then(function() {
+        setTimeout(function() {
+          var nameField = driver.findElement(By.className('edit-field'));
+
+          var deleteButton = driver.findElement(By.className('delete'));
+          deleteButton.click();
+
+          var yesButton = driver.findElement(By.id('yes'));
+          driver.wait(until.elementIsVisible(yesButton), 3000)
+              .then(function() {
+                yesButton.click();
+
+                var messageDialog = driver.findElement(By.id('message-text'));
+                driver.wait(until.elementIsVisible(messageDialog), 3000)
+                    .then(function() {
+                      messageDialog.getText().then(function(text) {
+                        expect(text).toBe('刪除成功');
+                        setTimeout(function() {
+                          done();
+                        }, 2000);
+                      });
+                    });
+              }, 2000);
+        });
+      });
+    });
+  });
+
   afterEach(function(done) {
-    // logout
-    var logoutButton = driver.findElement(By.id('logout'));
-    logoutButton.click().then(function() {
-      var yesButton = driver.findElement(By.id('yes'));
-      driver.wait(until.elementIsVisible(yesButton), 6000).then(function() {
-        yesButton.click();
-        driver.wait(until.titleIs('Login'), 6000).then(function() {
-          driver.close().then(done);
+    students.clear(function(status) {
+      expect(status).toBe(true);
+      // logout
+      var logoutButton = driver.findElement(By.id('logout'));
+      logoutButton.click().then(function() {
+        var yesButton = driver.findElement(By.id('yes'));
+        driver.wait(until.elementIsVisible(yesButton), 6000).then(function() {
+          yesButton.click();
+          driver.wait(until.titleIs('Login'), 6000).then(function() {
+            driver.close().then(done);
+          });
         });
       });
     });
