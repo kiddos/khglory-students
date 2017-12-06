@@ -54,7 +54,7 @@ $(document).ready(function() {
     }
 
     // check id exist
-    if (student.id && student.name) {
+    if (student.name) {
       $.ajax({
         url: '/students/add',
         method: 'POST',
