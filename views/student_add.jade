@@ -47,8 +47,18 @@ block content
       span(class='field-options') 離婚
       br
 
-      label(class='field-label', for='address') 地址
-      input(type='text', name='address', class='field-inputs')
+      label(class='field-label', for='city') 市區
+      for c in city
+        input(type='radio', name='city', class='field-options', value='#{c.name}')
+        span(class='field-options')= c.name
+      br
+
+      label(class='field-label', for='region') 區域
+      select(id='region', class='field-select')
+      br
+
+      label(class='field-label', for='street') 住址
+      input(type='text', name='street', class='field-inputs')
       br
 
       label(class='field-label', for='phone') 電話
