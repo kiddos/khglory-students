@@ -86,7 +86,7 @@ router.get('/edit', function(req, res, next) {
 router.post('/edit', function(req, res, next) {
   if (req.session.login) {
     var student = new students.Student(req.body.name);
-    student.id = req.body.id;
+    student.id = parseInt(req.body.id);
     student.find(function(studentData) {
       if (studentData) {
         if (studentData.name !== student.name) {
@@ -157,7 +157,7 @@ router.post('/edit', function(req, res, next) {
 router.post('/delete', function(req, res, next) {
   if (req.session.login) {
     var student = new students.Student(req.body.name);
-    student.id = req.body.id;
+    student.id = parseInt(req.body.id);
     student.find(function(status) {
       if (status) {
         student.remove();
